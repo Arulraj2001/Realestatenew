@@ -1,0 +1,452 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-surface: #fcfbfa;
+    --bg-card: #ffffff;
+    --text-primary: #111827;
+    --text-muted: #6b7280;
+
+    --brand-primary: #0f2e21;
+    --brand-primary-light: #1b4b37;
+    --brand-gold: #c59b27;
+    --brand-gold-hover: #b0881e;
+    --brand-accent: #f4ece1;
+
+    --border-subtle: #e5e7eb;
+    --border-gold: #e6d7a8;
+  }
+
+  body {
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+    font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, .font-serif {
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Body shifts to light when .light-theme wrapper present */
+body:has(.light-theme) {
+  background-color: #f5f7fa !important;
+  color: #1a2332 !important;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--brand-gold);
+  outline-offset: 2px;
+}
+
+/* ==============================================================
+   LIGHT THEME DESIGN SYSTEM
+   Palette:
+     Page BG      #f5f7fa   very light blue-grey
+     Section alt  #eef2f7   soft cool grey
+     Card BG      #ffffff   pure white
+     Headings     #0f1e2e   rich navy
+     Body text    #2d3e50   dark slate-blue
+     Muted text   #5c7080   medium grey-blue
+     Border       #d4dce8   subtle blue-grey
+     Header       white 97% opacity — brand nav stays elegant
+     Footer       #091b13   always dark brand
+   ============================================================== */
+
+/* Smooth cross-theme transitions */
+.light-theme *,
+.light-theme *::before,
+.light-theme *::after {
+  transition:
+    background-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.light-theme img,
+.light-theme video {
+  transition: transform 350ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ── Layout shells ──────────────────────────────────────── */
+.light-theme .bg-slate-950 {
+  background-color: #f5f7fa !important;
+}
+.light-theme .bg-slate-900 {
+  background-color: #eef2f7 !important;
+}
+.light-theme .bg-slate-800 {
+  background-color: #dde5ef !important;
+}
+.light-theme .min-h-screen {
+  background-color: #f5f7fa !important;
+}
+
+/* ── Semi-transparent slate variants using [class*] ─────── */
+.light-theme [class*="bg-slate-900/"] {
+  background-color: rgba(238, 242, 247, 0.9) !important;
+}
+.light-theme [class*="bg-slate-950/"] {
+  background-color: rgba(245, 247, 250, 0.88) !important;
+}
+
+/* ── Sections ───────────────────────────────────────────── */
+.light-theme section {
+  background-color: #f5f7fa;
+}
+.light-theme section[class*="bg-slate-900"] {
+  background-color: #eef2f7 !important;
+}
+.light-theme section[class*="bg-slate-950"] {
+  background-color: #f5f7fa !important;
+}
+
+/* ── HEADER: elegant white nav ──────────────────────────── */
+.light-theme header {
+  background-color: rgba(255, 255, 255, 0.97) !important;
+  border-bottom-color: #d4dce8 !important;
+  box-shadow: 0 1px 16px rgba(15, 30, 46, 0.09) !important;
+}
+/* Top notification bar keeps dark brand green */
+.light-theme header > div:first-child {
+  background-color: #0f2e21 !important;
+  border-bottom-color: rgba(15, 46, 33, 0.4) !important;
+}
+.light-theme header > div:first-child * {
+  color: #a7f3d0 !important;
+}
+.light-theme header > div:first-child a:hover {
+  color: #fbbf24 !important;
+}
+/* Desktop nav links */
+.light-theme header nav a {
+  color: #1a3020 !important;
+}
+.light-theme header nav a:hover {
+  color: #c59b27 !important;
+}
+/* "Call Us" outline button in header */
+.light-theme header .border-slate-700 {
+  border-color: #c8d6e5 !important;
+}
+.light-theme header .text-slate-200 {
+  color: #2d3e50 !important;
+}
+/* Mobile menu burger */
+.light-theme header .text-slate-200.hover\:text-amber-400 {
+  color: #2d3e50 !important;
+}
+
+/* ── BORDERS ────────────────────────────────────────────── */
+.light-theme .border-slate-800,
+.light-theme [class*="border-slate-800"] {
+  border-color: #d4dce8 !important;
+}
+.light-theme .border-slate-700 {
+  border-color: #bfccd8 !important;
+}
+.light-theme .border-slate-900 {
+  border-color: #d4dce8 !important;
+}
+.light-theme [class*="border-emerald-900"] {
+  border-color: rgba(6, 78, 59, 0.2) !important;
+}
+
+/* ── TEXT COLORS ────────────────────────────────────────── */
+.light-theme .text-white {
+  color: #0f1e2e !important;
+}
+.light-theme .text-slate-100,
+.light-theme .text-slate-200 {
+  color: #2d3e50 !important;
+}
+.light-theme .text-slate-300 {
+  color: #3d526a !important;
+}
+.light-theme .text-slate-400 {
+  color: #5c7080 !important;
+}
+.light-theme .text-slate-500 {
+  color: #7a8fa0 !important;
+}
+/* Darken amber for light bg contrast */
+.light-theme .text-amber-400 {
+  color: #b45309 !important;
+}
+.light-theme .text-amber-300 {
+  color: #92400e !important;
+}
+/* Darken emerald for light bg */
+.light-theme .text-emerald-400 {
+  color: #047857 !important;
+}
+.light-theme .text-emerald-300 {
+  color: #065f46 !important;
+}
+
+/* ── HOVER TEXT ─────────────────────────────────────────── */
+.light-theme .hover\:text-amber-400:hover {
+  color: #92400e !important;
+}
+.light-theme .hover\:text-amber-300:hover {
+  color: #78350f !important;
+}
+.light-theme .hover\:text-white:hover {
+  color: #0f1e2e !important;
+}
+
+/* ── CARDS ──────────────────────────────────────────────── */
+/* All rounded cards with slate-900 bg become white */
+.light-theme .rounded-2xl.bg-slate-900,
+.light-theme .rounded-3xl.bg-slate-900,
+.light-theme .rounded-xl.bg-slate-900,
+.light-theme .rounded-2xl.bg-slate-950,
+.light-theme .rounded-3xl.bg-slate-950 {
+  background-color: #ffffff !important;
+  border-color: #d4dce8 !important;
+  box-shadow: 0 2px 12px rgba(15, 30, 46, 0.06), 0 0 0 1px rgba(15, 30, 46, 0.03) !important;
+}
+.light-theme .rounded-2xl.bg-slate-900:hover,
+.light-theme .rounded-3xl.bg-slate-900:hover,
+.light-theme .rounded-2xl.bg-slate-950:hover,
+.light-theme .rounded-3xl.bg-slate-950:hover {
+  border-color: rgba(197, 155, 39, 0.45) !important;
+  box-shadow: 0 8px 32px rgba(15, 30, 46, 0.11), 0 2px 8px rgba(197, 155, 39, 0.08) !important;
+}
+
+/* Stat bars within cards */
+.light-theme [class*="bg-slate-950/60"] {
+  background-color: #eef2f7 !important;
+  border-color: #d4dce8 !important;
+}
+.light-theme [class*="bg-slate-950/30"] {
+  background-color: rgba(238, 242, 247, 0.7) !important;
+}
+
+/* ── Icon boxes ─────────────────────────────────────────── */
+.light-theme .bg-slate-950.border.rounded-xl {
+  background-color: #f0f4f8 !important;
+  border-color: #d4dce8 !important;
+}
+
+/* ── Feature chips / pills (amber tint) ─────────────────── */
+.light-theme [class*="bg-amber-500/10"],
+.light-theme [class*="bg-amber-500/15"] {
+  background-color: rgba(197, 155, 39, 0.1) !important;
+  border-color: rgba(197, 155, 39, 0.28) !important;
+}
+.light-theme [class*="bg-emerald-500/10"] {
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+/* ── Checklist items (Company intro) ────────────────────── */
+.light-theme [class*="bg-slate-950/60"].rounded-xl {
+  background-color: #f0f4f8 !important;
+  border-color: #d4dce8 !important;
+}
+
+/* ── CTA gradient section ───────────────────────────────── */
+.light-theme [class*="from-\[#0f2e21\]"],
+.light-theme [class*="bg-gradient-to-br"] {
+  background: linear-gradient(135deg, #0f2e21 0%, #1b4b37 18%, #eef2f7 65%, #f5f7fa 100%) !important;
+}
+
+/* ── Mobile Drawer ──────────────────────────────────────── */
+.light-theme .bg-slate-900.shadow-2xl {
+  background-color: #ffffff !important;
+  border-color: #d4dce8 !important;
+  box-shadow: -4px 0 32px rgba(15, 30, 46, 0.12) !important;
+}
+/* Drawer nav link buttons */
+.light-theme [class*="bg-slate-950/60"].rounded-xl.text-slate-200 {
+  background-color: #f0f4f8 !important;
+  color: #2d3e50 !important;
+  border-color: #d4dce8 !important;
+}
+
+/* ── Modal / Dialog backdrop ────────────────────────────── */
+.light-theme [class*="bg-slate-950/80"] {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+}
+
+/* ── HERO: stays cinematic (has image bg) ───────────────── */
+/* Hero section does not need bg override — it's a full-bleed image */
+/* Hero gradient overlay lightens slightly in light mode */
+.light-theme section.relative.min-h-\[85vh\] .text-white {
+  color: #ffffff !important;
+}
+.light-theme section.relative.min-h-\[85vh\] .text-slate-300 {
+  color: #e2e8f0 !important;
+}
+.light-theme section.relative.min-h-\[85vh\] .text-slate-400 {
+  color: #cbd5e1 !important;
+}
+.light-theme section.relative.min-h-\[85vh\] .text-slate-200 {
+  color: #f1f5f9 !important;
+}
+/* Location badges on hero image */
+.light-theme section.relative.min-h-\[85vh\] [class*="bg-slate-900/80"] {
+  background-color: rgba(15, 23, 42, 0.72) !important;
+  color: #f1f5f9 !important;
+}
+.light-theme section.relative.min-h-\[85vh\] .text-amber-400 {
+  color: #fbbf24 !important;
+}
+
+/* ── FOOTER always stays dark ───────────────────────────── */
+.light-theme footer {
+  background-color: #091b13 !important;
+}
+.light-theme footer .text-white {
+  color: #ffffff !important;
+}
+.light-theme footer .text-slate-300,
+.light-theme footer .text-slate-400 {
+  color: #94a3b8 !important;
+}
+.light-theme footer .text-slate-500 {
+  color: #64748b !important;
+}
+.light-theme footer .text-amber-400 {
+  color: #fbbf24 !important;
+}
+.light-theme footer .border-slate-800 {
+  border-color: rgba(30, 41, 59, 0.5) !important;
+}
+.light-theme footer .hover\:text-amber-400:hover {
+  color: #fbbf24 !important;
+}
+.light-theme footer .hover\:text-white:hover {
+  color: #ffffff !important;
+}
+
+/* ── Stars (testimonials) ───────────────────────────────── */
+.light-theme .fill-amber-400 {
+  color: #d97706 !important;
+}
+
+/* ── Quote icon (testimonials) ──────────────────────────── */
+.light-theme [class*="text-amber-500/20"] {
+  color: rgba(197, 155, 39, 0.15) !important;
+}
+
+/* ── Arrow circle (location cards) ─────────────────────── */
+.light-theme [class*="bg-amber-500/10"].rounded-full {
+  background-color: rgba(197, 155, 39, 0.1) !important;
+  border-color: rgba(197, 155, 39, 0.25) !important;
+}
+
+/* ── Divide lines ───────────────────────────────────────── */
+.light-theme [class*="divide-slate-950"] > * + * {
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+/* ── Selection ──────────────────────────────────────────── */
+.light-theme ::selection {
+  background-color: #c59b27;
+  color: #ffffff;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────── */
+.light-theme ::-webkit-scrollbar { width: 8px; }
+.light-theme ::-webkit-scrollbar-track { background: #eef2f7; }
+.light-theme ::-webkit-scrollbar-thumb { background: #bfccd8; border-radius: 4px; }
+.light-theme ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ==============================================================
+   CARD ANIMATIONS — Spring physics for light theme
+   ============================================================== */
+
+/* Project cards */
+.light-theme .group.rounded-2xl.overflow-hidden {
+  transition:
+    transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 320ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 240ms ease !important;
+}
+.light-theme .group.rounded-2xl.overflow-hidden:hover {
+  transform: translateY(-6px) scale(1.006) !important;
+  box-shadow: 0 16px 48px rgba(15, 30, 46, 0.13), 0 4px 16px rgba(197, 155, 39, 0.1) !important;
+  border-color: rgba(197, 155, 39, 0.5) !important;
+}
+
+/* Location cards */
+.light-theme .group.rounded-3xl {
+  transition:
+    transform 350ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 240ms ease !important;
+}
+.light-theme .group.rounded-3xl:hover {
+  transform: translateY(-8px) !important;
+  box-shadow: 0 20px 60px rgba(15, 30, 46, 0.14), 0 4px 16px rgba(197, 155, 39, 0.1) !important;
+  border-color: rgba(197, 155, 39, 0.5) !important;
+}
+
+/* Why Choose Us feature cards */
+.light-theme .grid .rounded-2xl.space-y-3 {
+  transition:
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms ease !important;
+}
+.light-theme .grid .rounded-2xl.space-y-3:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 10px 30px rgba(15, 30, 46, 0.1) !important;
+  border-color: rgba(197, 155, 39, 0.38) !important;
+}
+
+/* Testimonial cards */
+.light-theme .grid .rounded-2xl.flex.flex-col {
+  transition:
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms ease !important;
+}
+.light-theme .grid .rounded-2xl.flex.flex-col:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 14px 40px rgba(15, 30, 46, 0.11) !important;
+  border-color: rgba(197, 155, 39, 0.4) !important;
+}
+
+/* Gallery items */
+.light-theme .grid .aspect-\[4\/3\].rounded-2xl {
+  transition:
+    transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.light-theme .grid .aspect-\[4\/3\].rounded-2xl:hover {
+  transform: scale(1.025) !important;
+  box-shadow: 0 20px 48px rgba(15, 30, 46, 0.15) !important;
+}
+
+/* Amenity cards */
+.light-theme .grid .rounded-2xl.flex.items-start {
+  transition:
+    transform 270ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 270ms ease,
+    border-color 220ms ease !important;
+}
+.light-theme .grid .rounded-2xl.flex.items-start:hover {
+  transform: translateY(-3px) translateX(2px) !important;
+  box-shadow: 0 8px 24px rgba(15, 30, 46, 0.1), 0 0 0 1px rgba(197, 155, 39, 0.2) !important;
+  border-color: rgba(197, 155, 39, 0.35) !important;
+}
+
+/* Accordion items */
+.light-theme .space-y-3 .rounded-xl {
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    border-color 180ms ease !important;
+}
+.light-theme .space-y-3 .rounded-xl:hover {
+  transform: translateX(4px) !important;
+  box-shadow: 0 4px 16px rgba(15, 30, 46, 0.08) !important;
+  border-color: rgba(197, 155, 39, 0.3) !important;
+}
