@@ -76,7 +76,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {mobileVideo && <source src={mobileVideo} type="video/mp4" />}
           </video>
         ) : (
-          <picture className="w-full h-full">
+          <picture className="relative block w-full h-full">
             {mobileImage && <source media="(max-width: 640px)" srcSet={mobileImage} />}
             <Image
               src={desktopImage || posterImage}

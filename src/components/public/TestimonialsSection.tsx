@@ -128,6 +128,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
               src={getThumbnailUrl(list[prevIndex])}
               alt={list[prevIndex].name}
               fill
+              sizes="(max-width: 768px) 100vw, 300px"
               className="object-cover mix-blend-overlay opacity-60"
             />
             <div className="absolute inset-0 bg-blue-900/60" />
@@ -148,6 +149,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
               alt={list[activeIndex].name}
               fill
               priority
+              sizes="(max-width: 768px) 100vw, 400px"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
 
@@ -188,6 +190,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
               src={getThumbnailUrl(list[nextIndex])}
               alt={list[nextIndex].name}
               fill
+              sizes="(max-width: 768px) 100vw, 300px"
               className="object-cover mix-blend-overlay opacity-60"
             />
             <div className="absolute inset-0 bg-blue-900/60" />
