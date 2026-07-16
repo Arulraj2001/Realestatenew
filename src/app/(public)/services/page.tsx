@@ -1,127 +1,136 @@
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { Compass, Home, Car, FileCheck, Landmark, Layers, ChevronRight } from 'lucide-react';
+import {
+  Layers,
+  Maximize,
+  Building2,
+  Car,
+  FileCheck,
+  Landmark,
+  ArrowRight,
+} from 'lucide-react';
+import { getContentPage } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
 
 export const metadata: Metadata = {
-  title: 'Real Estate & Property Development Services',
+  title: 'Our Services | Plots, Villas and Houses in Namakkal',
   description:
-    'Explore plot sales, custom villa construction, legal title verification, free site visits, and bank housing loan assistance.',
+    'Explore plot sales, villa and house sales, site visits, documentation support and home-loan guidance from Your Choice Properties in Namakkal and Paramathi Velur.',
   alternates: {
     canonical: `${siteConfig.domain}/services`,
   },
 };
 
+export interface ServiceItem {
+  id: string;
+  title: string;
+  icon?: string;
+  content: string;
+}
+
 export default async function ServicesPage() {
-  const services = [
+  const contentRecord = await getContentPage('services');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const contentJson = (contentRecord?.content as Record<string, any>) || {};
+
+  const defaultServices: ServiceItem[] = [
     {
-      title: 'Residential Plot & Land Sales',
-      description:
-        'DTCP approved gated layout plots with 30ft/40ft blacktop roads, underground water lines, electricity, and 100% legal title clearance.',
-      icon: <Compass className="w-8 h-8 text-amber-400" />,
+      id: 'srv-1',
+      title: 'Residential Plot Sales',
+      icon: 'Maximize',
+      content:
+        'We offer DTCP-approved residential plots in Namakkal and Paramathi Velur for buyers who want to build a home or invest in land. Our team explains the location, available plot sizes, documents and current price before you decide.',
     },
     {
-      title: 'Custom Villa Construction & Sales',
-      description:
-        'Architectural design and turnkey villa construction (2BHK, 3BHK, 4BHK) tailored to family vastu preferences and budget.',
-      icon: <Home className="w-8 h-8 text-emerald-400" />,
+      id: 'srv-2',
+      title: 'Villa and House Sales — 2BHK, 3BHK and 4BHK',
+      icon: 'Building2',
+      content:
+        'We help families explore 2BHK, 3BHK and 4BHK villas and independent houses across Rasi Garden, Kongu Nagar and Kongu Garden. Available choices depend on the project and current construction status.',
     },
     {
-      title: 'Complimentary Site Visit Pick & Drop',
-      description:
-        'Free chauffeured private car transport facility for buyers and families to visit layouts in Namakkal and Paramathi Velur.',
-      icon: <Car className="w-8 h-8 text-amber-500" />,
+      id: 'srv-3',
+      title: 'Site Visits and Consultation',
+      icon: 'Car',
+      content:
+        'Our local team arranges guided site visits so you can compare the location, roads, layout, villa design and nearby facilities before making a decision.',
     },
     {
-      title: 'Legal Title Verification & Registration',
-      description:
-        'Complete end-to-end guidance from title search verification to sub-registrar deed registration and encumbrance certificate (EC) issuance.',
-      icon: <FileCheck className="w-8 h-8 text-blue-400" />,
+      id: 'srv-4',
+      title: 'Documentation and Registration Support',
+      icon: 'FileCheck',
+      content:
+        'We guide buyers through available title documents, patta-related information, booking paperwork and registration. Buyers should independently verify all legal documents before purchase.',
     },
     {
-      title: 'Housing Loan Assistance',
-      description:
-        'Hassle-free housing loan processing with leading nationalized banks (SBI, HDFC, Canara Bank) with minimal documentation.',
-      icon: <Landmark className="w-8 h-8 text-amber-400" />,
+      id: 'srv-5',
+      title: 'Home-Loan Assistance',
+      icon: 'Landmark',
+      content:
+        'We guide eligible buyers in understanding available loan and financing options. Final approval, interest rates and terms are decided by the bank or financial institution.',
     },
   ];
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: siteConfig.domain,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Services',
-        item: `${siteConfig.domain}/services`,
-      },
-    ],
+  const servicesList: ServiceItem[] = contentJson.services_list || defaultServices;
+
+  const iconsMap: Record<string, React.ReactNode> = {
+    Maximize: <Maximize className="w-6 h-6 text-amber-400" />,
+    Building2: <Building2 className="w-6 h-6 text-emerald-400" />,
+    Car: <Car className="w-6 h-6 text-blue-400" />,
+    FileCheck: <FileCheck className="w-6 h-6 text-amber-500" />,
+    Landmark: <Landmark className="w-6 h-6 text-emerald-500" />,
   };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-
-      <div className="bg-slate-950 text-slate-100 min-h-screen">
-        {/* Banner Header */}
-        <section className="py-20 bg-slate-900 border-b border-slate-800">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-              <Link href="/" className="hover:text-amber-400 transition-colors">
-                Home
-              </Link>
-              <ChevronRight className="w-3.5 h-3.5" />
-              <span className="text-amber-400">Services</span>
-            </div>
-
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-              <Layers className="w-3.5 h-3.5" /> Full Spectrum Solutions
-            </div>
-
-            <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Our Real-Estate Services
-            </h1>
-
-            <p className="text-slate-300 text-sm sm:text-base max-w-2xl">
-              From layout planning and plot purchasing to custom villa construction and legal deed registration.
-            </p>
-          </div>
-        </section>
-
-        {/* Services Grid */}
-        <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {services.map((service, index) => (
-              <div
-                key={index}
-                className="p-8 bg-slate-900 border border-slate-800 rounded-2xl space-y-4 hover:border-amber-500/50 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div className="space-y-4">
-                  <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl w-fit">
-                    {service.icon}
-                  </div>
-                  <h2 className="font-serif text-xl font-bold text-white">{service.title}</h2>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">{service.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <SiteVisitCTASection />
+    <div className="bg-slate-950 text-slate-100 min-h-screen py-16 px-4 sm:px-6 lg:px-8 space-y-16">
+      {/* Header Section */}
+      <div className="max-w-7xl mx-auto border-b border-slate-800 pb-8">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
+          <Layers className="w-3.5 h-3.5" /> End-to-End Real Estate Support
+        </div>
+        <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl">
+          {contentJson.services_h1 || 'Our Real Estate Services in Namakkal and Paramathi Velur'}
+        </h1>
+        <p className="text-slate-300 text-sm sm:text-base max-w-3xl mt-3 leading-relaxed">
+          {contentJson.services_intro ||
+            'Our team helps you choose the right plot or villa and supports you from your first enquiry through site visit, documentation and registration.'}
+        </p>
       </div>
-    </>
+
+      {/* 5 Service Cards Grid */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {servicesList.map((srv, idx) => (
+          <div
+            key={srv.id || idx}
+            className="p-8 bg-slate-900 border border-slate-800 rounded-3xl space-y-4 shadow-xl hover:border-amber-500/50 transition-all duration-300 flex flex-col justify-between"
+          >
+            <div className="space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center shadow-inner">
+                {iconsMap[srv.icon || 'Maximize'] || <Maximize className="w-6 h-6 text-amber-400" />}
+              </div>
+              <h2 className="font-serif text-xl font-bold text-white leading-snug">{srv.title}</h2>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">{srv.content}</p>
+            </div>
+
+            <div className="pt-4 border-t border-slate-800">
+              <Link href="/contact-us" className="text-xs font-bold uppercase tracking-wider text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                <span>Enquire About Service</span> <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Final CTA Section */}
+      <SiteVisitCTASection
+        heading={contentJson.cta_heading || 'Need Help Choosing the Right Plot or Villa?'}
+        description={
+          contentJson.cta_description ||
+          'Talk to our team and explore suitable property options in Namakkal and Paramathi Velur.'
+        }
+      />
+    </div>
   );
 }

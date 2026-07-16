@@ -1,172 +1,120 @@
 import React from 'react';
 import { Metadata } from 'next';
-import Link from 'next/link';
-import { Camera, ChevronRight, SlidersHorizontal } from 'lucide-react';
-import { getPublishedGalleryItems, getPublishedLocations, getPublishedProjects } from '@/lib/data';
+import { Camera, Sparkles, MapPin, Building2 } from 'lucide-react';
+import { getPublishedGalleryItems, getPublishedProjects, getPublishedLocations } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { GalleryLightbox } from '@/components/public/GalleryLightbox';
-import { EmptyState } from '@/components/ui/empty-state';
+import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
-  title: 'Media & Layout Photo Gallery',
+  title: 'Photo Gallery | Your Choice Properties',
   description:
-    'Explore high-resolution on-site photography, layout entrance arches, paved avenues, and villa architecture.',
+    'View photos and videos of residential plots, 2BHK, 3BHK and 4BHK villas at Rasi Garden, Kongu Nagar and Kongu Garden in Namakkal and Paramathi Velur.',
   alternates: {
     canonical: `${siteConfig.domain}/gallery`,
   },
 };
 
-export interface GalleryPageProps {
-  searchParams: Promise<{
-    project?: string;
-    location?: string;
-    category?: string;
-  }>;
-}
-
-export default async function GalleryPage({ searchParams }: GalleryPageProps) {
-  const { project, location, category } = await searchParams;
-
-  const [items, locations, projects] = await Promise.all([
-    getPublishedGalleryItems({
-      projectId: project,
-      locationId: location,
-      category: category,
-    }),
-    getPublishedLocations(),
+export default async function GalleryPage() {
+  const [galleryItems, projects, locations] = await Promise.all([
+    getPublishedGalleryItems(),
     getPublishedProjects(),
+    getPublishedLocations(),
   ]);
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: siteConfig.domain,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Gallery',
-        item: `${siteConfig.domain}/gallery`,
-      },
-    ],
-  };
+  // Group items by project
+  const konguGardenItems = galleryItems.filter((i) => i.project_id === 'proj-3' || i.title?.includes('Kongu Garden'));
+  const rasiGardenItems = galleryItems.filter((i) => i.project_id === 'proj-1' || i.title?.includes('Rasi Garden'));
+  const konguNagarItems = galleryItems.filter((i) => i.project_id === 'proj-2' || i.title?.includes('Kongu Nagar'));
+
+  // Remaining general items
+  const otherItems = galleryItems.filter(
+    (i) => !konguGardenItems.includes(i) && !rasiGardenItems.includes(i) && !konguNagarItems.includes(i)
+  );
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-
-      <div className="bg-slate-950 text-slate-100 min-h-screen py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-          {/* Header */}
-          <div className="space-y-4 border-b border-slate-800 pb-8">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-              <Link href="/" className="hover:text-amber-400 transition-colors">
-                Home
-              </Link>
-              <ChevronRight className="w-3.5 h-3.5" />
-              <span className="text-amber-400">Gallery</span>
-            </div>
-
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider">
-              <Camera className="w-3.5 h-3.5" /> Visual Media
-            </div>
-
-            <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight">
-              On-Site Photo & Media Gallery
-            </h1>
-            <p className="text-slate-400 text-sm sm:text-base max-w-2xl">
-              Authentic ground-level and aerial photography of completed layouts, tar avenues, and custom villa builds.
-            </p>
-          </div>
-
-          {/* Filters Bar */}
-          <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl">
-            <form method="GET" action="/gallery" className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-3 items-end">
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Filter by Location</label>
-                <select
-                  name="location"
-                  defaultValue={location || ''}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 outline-none"
-                >
-                  <option value="">All Locations</option>
-                  {locations.map((loc) => (
-                    <option key={loc.id} value={loc.id}>
-                      {loc.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Filter by Project</label>
-                <select
-                  name="project"
-                  defaultValue={project || ''}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 outline-none"
-                >
-                  <option value="">All Projects</option>
-                  {projects.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">Category</label>
-                <select
-                  name="category"
-                  defaultValue={category || ''}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-slate-100 outline-none"
-                >
-                  <option value="">All Categories</option>
-                  <option value="Overview">Overview</option>
-                  <option value="Roads">Roads & Avenues</option>
-                  <option value="Villas">Villa Construction</option>
-                  <option value="Parks">Children Parks</option>
-                </select>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="flex-1 py-2 px-3 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5" /> Filter Media
-                </button>
-                {(project || location || category) && (
-                  <Link
-                    href="/gallery"
-                    className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl flex items-center justify-center"
-                  >
-                    Reset
-                  </Link>
-                )}
-              </div>
-            </form>
-          </div>
-
-          {/* Lightbox & Grid */}
-          {items.length === 0 ? (
-            <EmptyState
-              title="No Gallery Photos Found"
-              description="Adjust your search filters to view media from other projects or locations."
-            />
-          ) : (
-            <GalleryLightbox items={items} />
-          )}
+    <div className="bg-slate-950 text-slate-100 min-h-screen py-16 px-4 sm:px-6 lg:px-8 space-y-16">
+      {/* Page Header with Single H1 */}
+      <div className="max-w-7xl mx-auto border-b border-slate-800 pb-8">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
+          <Camera className="w-3.5 h-3.5" /> Project Showcase
         </div>
+        <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl">
+          See Our Plots, Villas and Completed Projects in Namakkal and Paramathi Velur
+        </h1>
+        <p className="text-slate-300 text-sm sm:text-base max-w-3xl mt-3 leading-relaxed">
+          Browse real site photography, asphalt road infrastructure, villa designs, elevation models, and floor plan drawings across our townships.
+        </p>
       </div>
-    </>
+
+      <div className="max-w-7xl mx-auto space-y-16">
+        {/* Project Section 1: Kongu Garden, Paramathi Velur */}
+        <section className="space-y-6 border-b border-slate-800 pb-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-800/80 pb-4">
+            <div>
+              <div className="flex items-center gap-1 text-xs text-amber-400 font-semibold mb-1">
+                <MapPin className="w-3.5 h-3.5" /> Paramathi Velur
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white">
+                Kongu Garden, Paramathi Velur
+              </h2>
+            </div>
+            <Badge variant="gold">Plots & 2BHK, 3BHK, 4BHK Villas</Badge>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-300">
+            View site photos, roads, plot layouts and 2BHK, 3BHK and 4BHK villa designs from Kongu Garden.
+          </p>
+          <GalleryLightbox items={konguGardenItems.length > 0 ? konguGardenItems : galleryItems} />
+        </section>
+
+        {/* Project Section 2: Rasi Garden, Namakkal */}
+        <section className="space-y-6 border-b border-slate-800 pb-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-800/80 pb-4">
+            <div>
+              <div className="flex items-center gap-1 text-xs text-amber-400 font-semibold mb-1">
+                <MapPin className="w-3.5 h-3.5" /> Central Namakkal
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white">
+                Rasi Garden, Namakkal
+              </h2>
+            </div>
+            <Badge variant="emerald">DTCP Sanctioned Layout</Badge>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-300">
+            Explore layout views, road infrastructure, residential plots and villa designs from Rasi Garden in Namakkal.
+          </p>
+          <GalleryLightbox items={rasiGardenItems.length > 0 ? rasiGardenItems : galleryItems} />
+        </section>
+
+        {/* Project Section 3: Kongu Nagar, Namakkal */}
+        <section className="space-y-6 border-b border-slate-800 pb-12">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-800/80 pb-4">
+            <div>
+              <div className="flex items-center gap-1 text-xs text-amber-400 font-semibold mb-1">
+                <MapPin className="w-3.5 h-3.5" /> Namakkal Highway Hub
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white">
+                Kongu Nagar, Namakkal
+              </h2>
+            </div>
+            <Badge variant="slate">Residential Plots</Badge>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-300">
+            See plot layouts, site photos and residential-development updates from Kongu Nagar.
+          </p>
+          <GalleryLightbox items={konguNagarItems.length > 0 ? konguNagarItems : galleryItems} />
+        </section>
+
+        {/* Other Township Photos (if available) */}
+        {otherItems.length > 0 && (
+          <section className="space-y-6">
+            <h2 className="font-serif text-2xl font-bold text-white">
+              Township Infrastructure & Site Progress
+            </h2>
+            <GalleryLightbox items={otherItems} />
+          </section>
+        )}
+      </div>
+    </div>
   );
 }

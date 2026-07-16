@@ -40,6 +40,8 @@ export interface Location {
   display_order: number;
   published: boolean;
   featured: boolean;
+  location_status: 'current' | 'upcoming';
+  show_in_navigation: boolean;
   created_at: string;
   updated_at: string;
   projects?: Project[];
@@ -148,6 +150,8 @@ export interface GalleryItem {
   caption: string | null;
   alt_text: string | null;
   category: string | null;
+  video_url?: string | null;
+  embed_type?: 'supabase' | 'youtube' | 'instagram' | null;
   featured: boolean;
   published: boolean;
   display_order: number;

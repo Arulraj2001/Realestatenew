@@ -45,7 +45,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ admin }) => {
     {
       title: 'Content & Leads',
       items: [
-        { href: '/admin/enquiries', label: 'Messages & Leads', icon: <MessageSquare className="w-4 h-4" /> },
+        { href: '/admin/messages', label: 'Messages & Leads', icon: <MessageSquare className="w-4 h-4" /> },
         { href: '/admin/pages', label: 'Content Pages', icon: <FileText className="w-4 h-4" /> },
         { href: '/admin/seo', label: 'SEO Management', icon: <Search className="w-4 h-4" /> },
         { href: '/admin/settings', label: 'Website Settings', icon: <Settings className="w-4 h-4" /> },

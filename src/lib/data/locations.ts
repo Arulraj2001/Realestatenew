@@ -1,8 +1,9 @@
 import { createPublicClient } from '@/lib/supabase/server';
-import { Location } from '@/types/database';
+import { Location, Project } from '@/types/database';
 
 export interface LocationWithCounts extends Location {
   projectCount: number;
+  projects?: Project[];
 }
 
 const FALLBACK_LOCATIONS: LocationWithCounts[] = [
@@ -21,6 +22,8 @@ const FALLBACK_LOCATIONS: LocationWithCounts[] = [
     display_order: 1,
     published: true,
     featured: true,
+    location_status: 'current',
+    show_in_navigation: true,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     projectCount: 2,
@@ -40,43 +43,79 @@ const FALLBACK_LOCATIONS: LocationWithCounts[] = [
     display_order: 2,
     published: true,
     featured: true,
+    location_status: 'current',
+    show_in_navigation: true,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
     projectCount: 1,
   },
 ];
 
-export async function getPublishedLocations(): Promise<LocationWithCounts[]> {
+export async function getPublishedLocations(options?: {
+  status?: 'current' | 'upcoming';
+  navOnly?: boolean;
+  featuredOnly?: boolean;
+}): Promise<LocationWithCounts[]> {
   try {
     const supabase = createPublicClient();
-    const { data: rawLocations, error } = await supabase
+    let query = supabase
       .from('locations')
-      .select('*, projects(id)')
+      .select('*, projects(*)')
       .eq('published', true)
       .order('display_order', { ascending: true });
 
-    if (error || !rawLocations || rawLocations.length === 0) {
-      return FALLBACK_LOCATIONS;
+    if (options?.status) {
+      query = query.eq('location_status', options.status);
+    }
+    if (options?.navOnly) {
+      query = query.eq('show_in_navigation', true);
+    }
+    if (options?.featuredOnly) {
+      query = query.eq('featured', true);
     }
 
-    const locations = (rawLocations as unknown) as Array<Location & { projects: Array<{ id: string }> }>;
+    const { data: rawLocations, error } = await query;
+
+    if (error || !rawLocations || rawLocations.length === 0) {
+      let filtered = FALLBACK_LOCATIONS;
+      if (options?.status) filtered = filtered.filter((l) => l.location_status === options.status);
+      if (options?.navOnly) filtered = filtered.filter((l) => l.show_in_navigation);
+      if (options?.featuredOnly) filtered = filtered.filter((l) => l.featured);
+      return filtered;
+    }
+
+    const locations = (rawLocations as unknown) as Array<Location & { projects: Project[] }>;
 
     return locations.map((loc) => ({
       ...loc,
-      projects: undefined,
-      projectCount: Array.isArray(loc.projects) ? loc.projects.length : 0,
+      location_status: loc.location_status || 'current',
+      show_in_navigation: loc.show_in_navigation ?? true,
+      projectCount: Array.isArray(loc.projects) ? loc.projects.filter((p) => p.published).length : 0,
+      projects: Array.isArray(loc.projects) ? loc.projects.filter((p) => p.published) : [],
     }));
   } catch {
-    return FALLBACK_LOCATIONS;
+    let filtered = FALLBACK_LOCATIONS;
+    if (options?.status) filtered = filtered.filter((l) => l.location_status === options.status);
+    if (options?.navOnly) filtered = filtered.filter((l) => l.show_in_navigation);
+    if (options?.featuredOnly) filtered = filtered.filter((l) => l.featured);
+    return filtered;
   }
 }
 
-export async function getLocationBySlug(slug: string): Promise<Location | null> {
+export async function getNavLocations() {
+  const allNavLocations = await getPublishedLocations({ navOnly: true });
+  return {
+    current: allNavLocations.filter((l) => l.location_status === 'current'),
+    upcoming: allNavLocations.filter((l) => l.location_status === 'upcoming'),
+  };
+}
+
+export async function getLocationBySlug(slug: string): Promise<LocationWithCounts | null> {
   try {
     const supabase = createPublicClient();
     const { data, error } = await supabase
       .from('locations')
-      .select('*')
+      .select('*, projects(*)')
       .eq('slug', slug)
       .eq('published', true)
       .maybeSingle();
@@ -85,7 +124,14 @@ export async function getLocationBySlug(slug: string): Promise<Location | null> 
       return FALLBACK_LOCATIONS.find((l) => l.slug === slug) || null;
     }
 
-    return data;
+    const loc = data as Location & { projects: Project[] };
+    return {
+      ...loc,
+      location_status: loc.location_status || 'current',
+      show_in_navigation: loc.show_in_navigation ?? true,
+      projectCount: Array.isArray(loc.projects) ? loc.projects.filter((p) => p.published).length : 0,
+      projects: Array.isArray(loc.projects) ? loc.projects.filter((p) => p.published) : [],
+    };
   } catch {
     return FALLBACK_LOCATIONS.find((l) => l.slug === slug) || null;
   }

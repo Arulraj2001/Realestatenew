@@ -4,24 +4,28 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  MapPin,
   Building2,
   ChevronRight,
-  ShieldCheck,
-  Compass,
   CheckCircle2,
   PhoneCall,
   MessageSquare,
-  Sparkles,
+  BedDouble,
+  Bath,
+  Car,
+  IndianRupee,
 } from 'lucide-react';
 import {
   getConfigurationBySlug,
   getPublishedConfigurations,
   getProjectAmenities,
+  getPublishedGalleryItems,
 } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
+import { PropertyMediaGallery } from '@/components/public/PropertyMediaGallery';
+import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
 
 export interface PropertyDetailPageProps {
   params: Promise<{
@@ -41,23 +45,16 @@ export async function generateMetadata({ params }: PropertyDetailPageProps): Pro
   const config = await getConfigurationBySlug(propertySlug);
 
   if (!config) {
-    return {
-      title: 'Property Not Found',
-    };
+    return { title: 'Property Not Found' };
   }
 
   return {
     title: `${config.name} | ${config.project?.name || 'Gated Layout'}`,
     description:
       config.short_description ||
-      `Explore specs for ${config.name} at ${config.project?.name} in ${config.project?.location?.name || 'Namakkal'}.`,
+      `Explore details for ${config.name} at ${config.project?.name} in ${config.project?.location?.name || 'Namakkal'}.`,
     alternates: {
       canonical: `${siteConfig.domain}/properties/${config.slug}`,
-    },
-    openGraph: {
-      title: `${config.name} | ${siteConfig.name}`,
-      description: config.short_description || undefined,
-      url: `${siteConfig.domain}/properties/${config.slug}`,
     },
   };
 }
@@ -70,206 +67,269 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     notFound();
   }
 
-  const amenities = config.project_id ? await getProjectAmenities(config.project_id) : [];
+  // Fetch parallel relations
+  const [projectAmenities, galleryItems, siblingConfigurations] = await Promise.all([
+    config.project_id ? getProjectAmenities(config.project_id) : Promise.resolve([]),
+    getPublishedGalleryItems({ propertyConfigurationId: config.id }),
+    config.project_id ? getPublishedConfigurations({ projectId: config.project_id }) : Promise.resolve([]),
+  ]);
 
-  const fallbackImage =
+  // Related properties (excluding current property, sorted: 4BHK -> 3BHK -> 2BHK -> Plots)
+  const relatedProperties = siblingConfigurations
+    .filter((c) => c.id !== config.id)
+    .sort((a, b) => {
+      const bhkA = a.bhk || 0;
+      const bhkB = b.bhk || 0;
+      return bhkB - bhkA;
+    });
+
+  const fallbackHero =
     config.hero_image_path ||
     config.project?.hero_image_path ||
     'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
 
-  const featureList = Array.isArray(config.feature_list)
+  const floorPlanItems = galleryItems.filter((i) => i.category === 'floor_plan');
+
+  const formattedPrice = config.starting_price
+    ? `₹${(config.starting_price / 100000).toFixed(2)} Lakhs*`
+    : null;
+
+  const featuresList = Array.isArray(config.feature_list)
     ? (config.feature_list as string[])
+    : typeof config.feature_list === 'string'
+    ? JSON.parse(config.feature_list || '[]')
     : [];
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: siteConfig.domain,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Properties',
-        item: `${siteConfig.domain}/properties`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: config.name,
-        item: `${siteConfig.domain}/properties/${config.slug}`,
-      },
-    ],
-  };
-
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
-      />
-
-      <div className="bg-slate-950 text-slate-100 min-h-screen">
-        {/* Header Hero */}
-        <section className="relative py-20 bg-slate-900 border-b border-slate-800 overflow-hidden">
-          <div className="absolute inset-0 z-0 opacity-20">
-            <Image src={fallbackImage} alt={config.name} fill className="object-cover" />
-            <div className="absolute inset-0 bg-slate-950/85" />
-          </div>
-
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            {/* Breadcrumb Navigation */}
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-              <Link href="/" className="hover:text-amber-400 transition-colors">
-                Home
+    <div className="bg-slate-950 text-slate-100 min-h-screen">
+      {/* Breadcrumb Header */}
+      <div className="bg-slate-900 border-b border-slate-800 py-4 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto flex items-center gap-2 text-xs font-semibold text-slate-400">
+          <Link href="/" className="hover:text-amber-400">Home</Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <Link href="/projects" className="hover:text-amber-400">Projects</Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          {config.project && (
+            <>
+              <Link href={`/projects/${config.project.slug}`} className="hover:text-amber-400">
+                {config.project.name}
               </Link>
               <ChevronRight className="w-3.5 h-3.5" />
-              <Link href="/properties" className="hover:text-amber-400 transition-colors">
-                Properties
-              </Link>
-              <ChevronRight className="w-3.5 h-3.5" />
-              <span className="text-amber-400">{config.name}</span>
-            </div>
+            </>
+          )}
+          <span className="text-amber-400">{config.name}</span>
+        </div>
+      </div>
 
-            <div className="flex flex-wrap gap-2 items-center">
-              <Badge variant="gold">{config.property_type}</Badge>
-              <Badge variant="emerald">{config.availability_status}</Badge>
-            </div>
-
-            <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              {config.name}
-            </h1>
-
-            <div className="flex flex-wrap gap-4 text-xs font-semibold text-slate-300">
-              <Link
-                href={`/projects/${config.project?.slug}`}
-                className="flex items-center gap-1 text-amber-400 hover:underline"
-              >
-                <Building2 className="w-4 h-4" /> Project: {config.project?.name}
-              </Link>
-              <Link
-                href={`/locations/${config.project?.location?.slug}`}
-                className="flex items-center gap-1 text-slate-300 hover:text-amber-400"
-              >
-                <MapPin className="w-4 h-4 text-amber-400" /> Location: {config.project?.location?.name}
-              </Link>
-            </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Required Desktop Two-Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          {/* Left Side: Property Media Gallery (60% Width) */}
+          <div className="lg:col-span-7 space-y-6">
+            <PropertyMediaGallery
+              propertyName={config.name}
+              fallbackImage={fallbackHero}
+              galleryItems={galleryItems}
+            />
           </div>
-        </section>
 
-        {/* Specifications & Price Grid */}
-        <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            {/* Specs Column */}
-            <div className="lg:col-span-8 space-y-8">
-              <div className="space-y-4">
-                <h2 className="font-serif text-2xl font-bold text-white flex items-center gap-2 border-b border-slate-800 pb-3">
-                  <Compass className="w-6 h-6 text-amber-400" />
-                  Key Specifications
-                </h2>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                    <span className="block text-[10px] uppercase font-bold text-slate-500">Property Type</span>
-                    <span className="font-bold text-slate-100 text-sm">{config.property_type}</span>
-                  </div>
-                  <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                    <span className="block text-[10px] uppercase font-bold text-slate-500">Plot Dimensions</span>
-                    <span className="font-bold text-slate-100 text-sm">{config.plot_area || 'Standard'}</span>
-                  </div>
-                  <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                    <span className="block text-[10px] uppercase font-bold text-slate-500">Total Area</span>
-                    <span className="font-bold text-amber-400 text-sm">{config.built_up_area || config.plot_area || 'Standard'}</span>
-                  </div>
-                  <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl">
-                    <span className="block text-[10px] uppercase font-bold text-slate-500">Bedrooms / BHK</span>
-                    <span className="font-bold text-slate-100 text-sm">{config.bhk > 0 ? `${config.bhk} BHK` : 'N/A Plot'}</span>
-                  </div>
-                </div>
+          {/* Right Side: Sticky Property-Information Panel (40% Width) */}
+          <div className="lg:col-span-5 sticky top-24 space-y-6 bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+            <div className="space-y-3 border-b border-slate-800 pb-5">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="gold">{config.property_type}</Badge>
+                {config.bhk > 0 && <Badge variant="emerald">{config.bhk} BHK</Badge>}
+                <Badge variant="slate">{config.availability_status || 'Available'}</Badge>
               </div>
 
-              {/* Description */}
-              <div className="space-y-3">
-                <h3 className="font-serif text-xl font-bold text-white">Full Configuration Description</h3>
-                <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">
-                  {config.full_description || config.short_description ||
-                    'Vasthu compliant planning with instant construction feasibility, road access, and utility connections.'}
+              <h1 className="font-serif text-3xl font-bold text-white tracking-tight">
+                {config.name}
+              </h1>
+
+              {config.project && (
+                <p className="text-xs text-slate-300 flex items-center gap-1">
+                  <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Part of </span>
+                  <Link href={`/projects/${config.project.slug}`} className="text-amber-400 font-bold hover:underline">
+                    {config.project.name}
+                  </Link>
+                  <span> in {config.project.location?.name || 'Namakkal'}</span>
                 </p>
-              </div>
+              )}
+            </div>
 
-              {/* Features List */}
-              {featureList.length > 0 && (
-                <div className="space-y-4 pt-4">
-                  <h3 className="font-serif text-xl font-bold text-white">Included Features</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                    {featureList.map((feat, idx) => (
-                      <div key={idx} className="flex items-center gap-2 p-3 bg-slate-900 border border-slate-800 rounded-xl">
-                        <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
-                  </div>
+            {/* Fact Grid (Only non-empty values rendered!) */}
+            <div className="grid grid-cols-2 gap-3 p-4 bg-slate-950/80 rounded-2xl border border-slate-800 text-xs">
+              {config.plot_area && (
+                <div>
+                  <span className="block text-[10px] uppercase font-bold text-slate-500">Plot Area</span>
+                  <span className="font-bold text-amber-400">{config.plot_area}</span>
+                </div>
+              )}
+              {config.built_up_area && (
+                <div>
+                  <span className="block text-[10px] uppercase font-bold text-slate-500">Built-up Area</span>
+                  <span className="font-bold text-slate-200">{config.built_up_area}</span>
+                </div>
+              )}
+              {config.bedrooms > 0 && (
+                <div>
+                  <span className="block text-[10px] uppercase font-bold text-slate-500">Bedrooms</span>
+                  <span className="font-bold text-slate-200 flex items-center gap-1"><BedDouble className="w-3.5 h-3.5 text-amber-400" /> {config.bedrooms} BHK</span>
+                </div>
+              )}
+              {config.bathrooms > 0 && (
+                <div>
+                  <span className="block text-[10px] uppercase font-bold text-slate-500">Bathrooms</span>
+                  <span className="font-bold text-slate-200 flex items-center gap-1"><Bath className="w-3.5 h-3.5 text-emerald-400" /> {config.bathrooms}</span>
+                </div>
+              )}
+              {config.parking && (
+                <div>
+                  <span className="block text-[10px] uppercase font-bold text-slate-500">Covered Parking</span>
+                  <span className="font-bold text-slate-200 flex items-center gap-1"><Car className="w-3.5 h-3.5 text-blue-400" /> {config.parking}</span>
+                </div>
+              )}
+              {formattedPrice && (
+                <div>
+                  <span className="block text-[10px] uppercase font-bold text-slate-500">Starting Price</span>
+                  <span className="font-bold text-amber-400 text-sm flex items-center"><IndianRupee className="w-3.5 h-3.5" /> {formattedPrice}</span>
                 </div>
               )}
             </div>
 
-            {/* Price & Inquiry Sidebar */}
-            <div className="lg:col-span-4">
-              <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-6 sticky top-24 shadow-2xl">
-                <div className="space-y-1 border-b border-slate-800 pb-4">
-                  <span className="text-[10px] uppercase font-bold text-slate-500">Pricing Mode: {config.price_display_mode}</span>
-                  <div className="text-3xl font-extrabold text-amber-400 font-serif">
-                    {config.starting_price ? `₹${(config.starting_price / 100000).toFixed(2)} Lakhs*` : 'Price On Request'}
-                  </div>
-                  <span className="text-[11px] text-slate-500 block">*Excluding legal registration & stamp duty charges</span>
-                </div>
-
-                <div className="space-y-3">
-                  <a
-                    href={`https://wa.me/${siteConfig.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hi, I am interested in inquiring about ${config.name} at ${config.project?.name}.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full text-center py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs uppercase tracking-wider transition-colors"
-                  >
-                    <MessageSquare className="w-4 h-4 inline mr-1 fill-current" /> Direct WhatsApp Inquiry
-                  </a>
-
-                  <a
-                    href={`tel:${siteConfig.contact.phone}`}
-                    className="block w-full text-center py-3 bg-slate-950 border border-slate-800 text-slate-200 hover:text-white rounded-xl text-xs font-semibold"
-                  >
-                    <PhoneCall className="w-4 h-4 inline mr-1 text-emerald-400" /> Call Sales Advisor
-                  </a>
+            {/* Included Key Features Checklist */}
+            {featuresList.length > 0 && (
+              <div className="space-y-2.5 border-t border-slate-800 pt-4">
+                <h3 className="text-xs uppercase font-extrabold tracking-wider text-amber-400">
+                  Key Highlights & Features
+                </h3>
+                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                  {featuresList.map((feature: string, idx: number) => (
+                    <div key={idx} className="flex items-start gap-2 text-xs text-slate-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />
+                      <span className="font-medium leading-tight">{feature}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="space-y-3 pt-2">
+              <a href={`tel:${siteConfig.contact.phone}`}>
+                <Button variant="gold" size="lg" className="w-full font-bold shadow-lg">
+                  <PhoneCall className="w-4 h-4 mr-2" /> Call Sales Advisor
+                </Button>
+              </a>
+
+              <a
+                href={buildWhatsAppUrl({
+                  customMessage: `Hi! I'm interested in ${config.name} at ${config.project?.name || 'Your Choice Properties'}. Please share layout details & pricing.`,
+                })}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" size="lg" className="w-full font-bold border-emerald-600/60 text-emerald-400 bg-slate-950 hover:bg-emerald-950">
+                  <MessageSquare className="w-4 h-4 mr-2" /> Enquire Now on WhatsApp
+                </Button>
+              </a>
             </div>
           </div>
+        </div>
 
-          {/* Inherited Project Amenities */}
-          {amenities.length > 0 && (
-            <div className="space-y-6 pt-8 border-t border-slate-800">
-              <h2 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-emerald-400" />
-                Amenities Inherited From {config.project?.name}
-              </h2>
+        {/* Content Below Main Area */}
+        <div className="mt-16 space-y-16 border-t border-slate-800 pt-16">
+          {/* 1. Property Overview */}
+          <section className="space-y-4 max-w-4xl">
+            <h2 className="font-serif text-3xl font-bold text-white">Property Overview</h2>
+            <p className="text-slate-300 text-base leading-relaxed">
+              This {config.bhk > 0 ? `${config.bhk}BHK` : ''} {config.property_type.toLowerCase()} is part of {config.project?.name || 'our township'} in {config.project?.location?.name || 'Namakkal'}. It is planned for families who need comfortable living space and clear documentation. Contact our team to confirm current pricing, layout orientation, and site visit schedules.
+            </p>
+            {config.full_description && (
+              <p className="text-slate-300 text-base leading-relaxed">{config.full_description}</p>
+            )}
+          </section>
+
+          {/* 2. Included Features */}
+          {featuresList.length > 0 && (
+            <section className="space-y-4 border-t border-slate-800 pt-12">
+              <h2 className="font-serif text-2xl font-bold text-white">Included Layout Features</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {amenities.map((item) => (
-                  <div key={item.amenity_id} className="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center gap-3">
-                    <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0" />
-                    <span className="text-xs font-bold text-slate-200">{item.amenity?.name}</span>
+                {featuresList.map((feat: string, idx: number) => (
+                  <div key={idx} className="p-4 bg-slate-900 border border-slate-800 rounded-2xl flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-amber-400 shrink-0" />
+                    <span className="text-xs font-semibold text-slate-200">{feat}</span>
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
           )}
-        </section>
 
-        <SiteVisitCTASection />
+          {/* 3. Floor Plan */}
+          {floorPlanItems.length > 0 && (
+            <section className="space-y-4 border-t border-slate-800 pt-12">
+              <h2 className="font-serif text-2xl font-bold text-white">Floor Plan Drawing</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {floorPlanItems.map((fp) => (
+                  <div key={fp.id} className="p-4 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+                    <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-950">
+                      <Image src={fp.storage_path_or_url} alt={fp.title || 'Floor Plan'} fill className="object-contain" />
+                    </div>
+                    <h4 className="font-bold text-white text-sm">{fp.title || 'Architectural Layout Plan'}</h4>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* 4. Parent Project Amenities */}
+          {projectAmenities.length > 0 && (
+            <section className="space-y-4 border-t border-slate-800 pt-12">
+              <h2 className="font-serif text-2xl font-bold text-white">
+                Township Amenities ({config.project?.name})
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {projectAmenities.map((pa) => (
+                  <div key={pa.amenity_id} className="p-4 bg-slate-900 border border-slate-800 rounded-2xl flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                    <span className="text-xs font-bold text-white">{pa.amenity?.name}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* 5. Related Properties from Same Project */}
+          {relatedProperties.length > 0 && (
+            <section className="space-y-6 border-t border-slate-800 pt-12">
+              <h2 className="font-serif text-2xl font-bold text-white">
+                More Available Configurations in {config.project?.name}
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {relatedProperties.map((rel) => (
+                  <div key={rel.id} className="p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-3">
+                    <Badge variant="gold">{rel.property_type}</Badge>
+                    <h3 className="font-serif font-bold text-white text-lg">{rel.name}</h3>
+                    <p className="text-xs text-slate-400 line-clamp-2">{rel.short_description || 'Gated community layout configuration.'}</p>
+                    <Link href={`/properties/${rel.slug}`} className="block pt-2">
+                      <Button variant="outline" size="sm" className="w-full font-bold border-slate-700 text-slate-200">
+                        View Specs →
+                      </Button>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       </div>
-    </>
+
+      {/* 6. Site-Visit CTA */}
+      <SiteVisitCTASection
+        heading={`Schedule a Guided Inspection for ${config.name}`}
+        description="Pick a date and time that works best for your family. We will arrange transport to inspect the layout."
+      />
+    </div>
   );
 }

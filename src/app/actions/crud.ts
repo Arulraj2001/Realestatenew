@@ -412,3 +412,60 @@ export async function saveSeoMetadataAction(data: Record<string, unknown>, id?: 
     return { success: false, error: 'Failed to save SEO metadata entry.' };
   }
 }
+
+export async function updateAdminUserAction(
+  id: string,
+  data: { full_name: string; role: 'super_admin' | 'content_admin' | 'sales_admin'; is_active: boolean }
+) {
+  try {
+    await requireAdmin(['super_admin']);
+    const supabase = await getSupabaseAdmin();
+
+    const { error } = await supabase
+      .from('admin_profiles')
+      .update({
+        full_name: data.full_name,
+        role: data.role,
+        is_active: data.is_active,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error updating admin profile:', error.message);
+      return { success: false, error: 'Database error updating admin profile.' };
+    }
+
+    revalidatePath('/admin/users');
+    return { success: true };
+  } catch (err) {
+    console.error('Permission or error in updateAdminUserAction:', err);
+    return { success: false, error: 'Permission denied or update error.' };
+  }
+}
+
+export async function saveSiteSettingAction(key: string, value: Record<string, unknown> | unknown[]) {
+  try {
+    await requireAdmin(['super_admin', 'content_admin']);
+    const supabase = await getSupabaseAdmin();
+
+    const { error } = await supabase
+      .from('site_settings')
+      .upsert({
+        key,
+        value,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: 'key' });
+
+    if (error) {
+      console.error('Error saving site setting:', error.message);
+      return { success: false, error: 'Database error saving site setting.' };
+    }
+
+    revalidatePath('/', 'layout');
+    return { success: true };
+  } catch (err) {
+    console.error('Permission error in saveSiteSettingAction:', err);
+    return { success: false, error: 'Permission denied or update error.' };
+  }
+}

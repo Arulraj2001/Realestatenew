@@ -43,6 +43,7 @@ const FALLBACK_GALLERY: GalleryItem[] = [
 export async function getPublishedGalleryItems(options?: {
   projectId?: string;
   locationId?: string;
+  propertyConfigurationId?: string;
   category?: string;
   featuredOnly?: boolean;
 }): Promise<GalleryItem[]> {
@@ -56,17 +57,26 @@ export async function getPublishedGalleryItems(options?: {
 
     if (options?.projectId) query = query.eq('project_id', options.projectId);
     if (options?.locationId) query = query.eq('location_id', options.locationId);
+    if (options?.propertyConfigurationId) query = query.eq('property_configuration_id', options.propertyConfigurationId);
     if (options?.category) query = query.eq('category', options.category);
     if (options?.featuredOnly) query = query.eq('featured', true);
 
     const { data, error } = await query;
 
     if (error || !data || data.length === 0) {
-      return FALLBACK_GALLERY;
+      let filtered = FALLBACK_GALLERY;
+      if (options?.projectId) filtered = filtered.filter((g) => g.project_id === options.projectId);
+      if (options?.locationId) filtered = filtered.filter((g) => g.location_id === options.locationId);
+      if (options?.propertyConfigurationId) filtered = filtered.filter((g) => g.property_configuration_id === options.propertyConfigurationId);
+      return filtered;
     }
 
     return data;
   } catch {
-    return FALLBACK_GALLERY;
+    let filtered = FALLBACK_GALLERY;
+    if (options?.projectId) filtered = filtered.filter((g) => g.project_id === options.projectId);
+    if (options?.locationId) filtered = filtered.filter((g) => g.location_id === options.locationId);
+    if (options?.propertyConfigurationId) filtered = filtered.filter((g) => g.property_configuration_id === options.propertyConfigurationId);
+    return filtered;
   }
 }

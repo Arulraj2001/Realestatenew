@@ -6,9 +6,9 @@ import { SearchFilterPanel } from '@/components/public/SearchFilterPanel';
 import { PropertyStatus, PropertyType } from '@/types/database';
 
 export const metadata: Metadata = {
-  title: 'All Projects & Townships | Your Choice Properties',
+  title: 'Our Residential Projects | Your Choice Properties',
   description:
-    'Browse DTCP and RERA approved plot layouts, gated communities, and luxury residential developments across Namakkal and Paramathi Velur.',
+    'Explore our residential plots and villa projects in Namakkal and Paramathi Velur. Compare the location, available property types and project details before arranging a site visit.',
 };
 
 export interface ProjectsPageProps {
@@ -33,20 +33,23 @@ export default async function ProjectsPage({ searchParams }: ProjectsPageProps) 
 
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8 space-y-12">
-      <div className="max-w-7xl mx-auto">
-        <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Our Portfolio</span>
-        <h1 className="font-serif text-3xl sm:text-4xl font-extrabold text-white mt-1">
-          Featured Townships & Gated Communities
+      {/* H1 & Overview Description Header */}
+      <div className="max-w-7xl mx-auto border-b border-slate-800 pb-6">
+        <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Layout Projects</span>
+        <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white mt-1">
+          Our Residential Projects
         </h1>
-        <p className="text-slate-400 text-xs sm:text-sm max-w-2xl mt-2">
-          Explore DTCP/RERA sanctioned house sites, premium plot developments, and luxury gated villas.
+        <p className="text-slate-300 text-sm sm:text-base max-w-3xl mt-2 leading-relaxed">
+          Explore our residential plots and villa projects in Namakkal and Paramathi Velur. Compare the location, available property types and project details before arranging a site visit.
         </p>
       </div>
 
+      {/* Filter Toolbar */}
       <div className="max-w-7xl mx-auto">
         <SearchFilterPanel locations={locations} projects={projects} />
       </div>
 
+      {/* Projects List Section */}
       <FeaturedProjectsSection projects={projects} />
     </div>
   );

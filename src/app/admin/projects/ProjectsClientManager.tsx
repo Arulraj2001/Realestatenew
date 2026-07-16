@@ -1,22 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, Edit3, Trash2, Eye, EyeOff, Building2, Search } from 'lucide-react';
-import { Project, Location } from '@/types/database';
+import { Building2, Plus, Edit3, Trash2, Eye, EyeOff, Search, MapPin, Video } from 'lucide-react';
+import { Location, Project } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
 import { Dialog } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
 import { MediaUploader } from '@/components/admin/MediaUploader';
-import { generateSlug } from '@/lib/utils/slug';
 import { saveProjectAction, deleteProjectAction, togglePublishProjectAction } from '@/app/actions/crud';
+import { generateSlug } from '@/lib/utils/slug';
 import { useToast } from '@/components/ui/toast';
 
-export const ProjectsClientManager: React.FC<{
+export interface ProjectsClientManagerProps {
   initialProjects: Project[];
   locations: Location[];
-}> = ({ initialProjects, locations }) => {
+}
+
+export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
+  initialProjects,
+  locations,
+}) => {
   const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [searchQuery, setSearchQuery] = useState('');
@@ -31,15 +37,12 @@ export const ProjectsClientManager: React.FC<{
     full_description: '',
     project_status: 'Ongoing' as Project['project_status'],
     approval_type: 'DTCP Approved',
-    approval_number: '',
-    total_area: '',
-    starting_price: 1500000,
     address: '',
     map_url: '',
     hero_image_path: '',
-    display_order: 0,
+    hero_video_path: '',
     published: true,
-    featured: false,
+    featured: true,
   });
 
   const handleOpenCreate = () => {
@@ -52,15 +55,12 @@ export const ProjectsClientManager: React.FC<{
       full_description: '',
       project_status: 'Ongoing',
       approval_type: 'DTCP Approved',
-      approval_number: '',
-      total_area: '',
-      starting_price: 1500000,
       address: '',
       map_url: '',
       hero_image_path: '',
-      display_order: projects.length + 1,
+      hero_video_path: '',
       published: true,
-      featured: false,
+      featured: true,
     });
     setIsDialogOpen(true);
   };
@@ -73,17 +73,14 @@ export const ProjectsClientManager: React.FC<{
       slug: proj.slug,
       short_description: proj.short_description || '',
       full_description: proj.full_description || '',
-      project_status: proj.project_status,
-      approval_type: proj.approval_type || '',
-      approval_number: proj.approval_number || '',
-      total_area: proj.total_area || '',
-      starting_price: proj.starting_price || 1500000,
+      project_status: proj.project_status || 'Ongoing',
+      approval_type: proj.approval_type || 'DTCP Approved',
       address: proj.address || '',
       map_url: proj.map_url || '',
       hero_image_path: proj.hero_image_path || '',
-      display_order: proj.display_order,
+      hero_video_path: proj.hero_video_path || '',
       published: proj.published,
-      featured: proj.featured,
+      featured: proj.featured || true,
     });
     setIsDialogOpen(true);
   };
@@ -93,7 +90,10 @@ export const ProjectsClientManager: React.FC<{
     const res = await saveProjectAction(formData, editingProject?.id);
 
     if (res.success) {
-      toast({ type: 'success', title: 'Project Record Saved' });
+      toast({
+        type: 'success',
+        title: editingProject ? 'Project Updated' : 'Project Created',
+      });
       setIsDialogOpen(false);
       window.location.reload();
     } else {
@@ -136,7 +136,7 @@ export const ProjectsClientManager: React.FC<{
           <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
             <Building2 className="w-6 h-6 text-emerald-400" /> Township Projects Management
           </h1>
-          <p className="text-xs text-slate-400">Manage residential gated community layouts and approvals</p>
+          <p className="text-xs text-slate-400">Manage residential gated community layouts, video links, addresses & map locations</p>
         </div>
         <Button variant="gold" size="sm" onClick={handleOpenCreate}>
           <Plus className="w-4 h-4" /> Add Project
@@ -162,6 +162,8 @@ export const ProjectsClientManager: React.FC<{
                 <th className="p-4">Location</th>
                 <th className="p-4">Status</th>
                 <th className="p-4">Approval</th>
+                <th className="p-4">Video Link</th>
+                <th className="p-4">Map & Address</th>
                 <th className="p-4">Visibility</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
@@ -178,6 +180,24 @@ export const ProjectsClientManager: React.FC<{
                     <Badge variant="gold">{proj.project_status}</Badge>
                   </td>
                   <td className="p-4 font-semibold text-emerald-400">{proj.approval_type || 'DTCP'}</td>
+                  <td className="p-4 text-[11px]">
+                    {proj.hero_video_path ? (
+                      <span className="text-amber-400 font-medium flex items-center gap-1">
+                        <Video className="w-3.5 h-3.5" /> Video Set
+                      </span>
+                    ) : (
+                      <span className="text-slate-500">No Video</span>
+                    )}
+                  </td>
+                  <td className="p-4 text-[11px] text-slate-400 max-w-xs truncate">
+                    {proj.map_url ? (
+                      <span className="text-emerald-400 font-medium flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5" /> Map Set
+                      </span>
+                    ) : (
+                      <span className="text-slate-500">No Map</span>
+                    )}
+                  </td>
                   <td className="p-4">
                     <button onClick={() => handleTogglePublish(proj)} className="cursor-pointer">
                       {proj.published ? (
@@ -215,9 +235,9 @@ export const ProjectsClientManager: React.FC<{
       <Dialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        title={editingProject ? 'Edit Project' : 'Add New Project'}
+        title={editingProject ? 'Edit Township Project' : 'Add New Township Project'}
       >
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
           <div>
             <Label required>Parent Location</Label>
             <select
@@ -234,30 +254,32 @@ export const ProjectsClientManager: React.FC<{
             </select>
           </div>
 
-          <div>
-            <Label required>Project Name</Label>
-            <Input
-              required
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  name: e.target.value,
-                  slug: editingProject ? formData.slug : generateSlug(e.target.value),
-                })
-              }
-              placeholder="Royal Palms Avenue"
-            />
-          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label required>Project Name</Label>
+              <Input
+                required
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    name: e.target.value,
+                    slug: editingProject ? formData.slug : generateSlug(e.target.value),
+                  })
+                }
+                placeholder="Rasi Garden"
+              />
+            </div>
 
-          <div>
-            <Label required>URL Slug</Label>
-            <Input
-              required
-              value={formData.slug}
-              onChange={(e) => setFormData({ ...formData, slug: generateSlug(e.target.value) })}
-              placeholder="royal-palms-avenue"
-            />
+            <div>
+              <Label required>URL Slug</Label>
+              <Input
+                required
+                value={formData.slug}
+                onChange={(e) => setFormData({ ...formData, slug: generateSlug(e.target.value) })}
+                placeholder="rasi-garden"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -284,14 +306,62 @@ export const ProjectsClientManager: React.FC<{
               <Input
                 value={formData.approval_type}
                 onChange={(e) => setFormData({ ...formData, approval_type: e.target.value })}
-                placeholder="DTCP / RERA Approved"
+                placeholder="DTCP Approved"
               />
             </div>
           </div>
 
           <div>
+            <Label>Project Walkthrough Video Link (YouTube / Instagram Reel URL)</Label>
+            <Input
+              value={formData.hero_video_path}
+              onChange={(e) => setFormData({ ...formData, hero_video_path: e.target.value })}
+              placeholder="https://www.youtube.com/watch?v=... or Instagram Reel link"
+            />
+            <p className="text-[11px] text-slate-500 mt-1">Paste YouTube video URL or Instagram Reel URL to play walkthrough video on the project page.</p>
+          </div>
+
+          <div>
+            <Label>Google Maps Link / Share URL</Label>
+            <Input
+              value={formData.map_url}
+              onChange={(e) => setFormData({ ...formData, map_url: e.target.value })}
+              placeholder="https://maps.google.com/?q=Rasi+Garden+Namakkal"
+            />
+            <p className="text-[11px] text-slate-500 mt-1">Paste Google Maps share link or iframe embed URL for real interactive map.</p>
+          </div>
+
+          <div>
+            <Label>Physical Street Address</Label>
+            <Input
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              placeholder="Main Road, Mohanur Road Junction, Namakkal - 637001"
+            />
+          </div>
+
+          <div>
+            <Label>Short Card Summary</Label>
+            <Input
+              value={formData.short_description}
+              onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
+              placeholder="Premium DTCP approved villa plots and luxury independent homes."
+            />
+          </div>
+
+          <div>
+            <Label>Full Project Overview Description</Label>
+            <Textarea
+              rows={3}
+              value={formData.full_description}
+              onChange={(e) => setFormData({ ...formData, full_description: e.target.value })}
+              placeholder="Detailed description of the township project..."
+            />
+          </div>
+
+          <div>
             <MediaUploader
-              label="Hero Layout Image"
+              label="Hero Layout Cover Image"
               value={formData.hero_image_path}
               folder="projects"
               onChange={(url) => setFormData({ ...formData, hero_image_path: url })}

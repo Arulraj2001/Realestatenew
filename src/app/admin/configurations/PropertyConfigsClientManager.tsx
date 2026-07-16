@@ -37,6 +37,7 @@ export const PropertyConfigsClientManager: React.FC<{
     availability_status: 'Available' as PropertyConfiguration['availability_status'],
     short_description: '',
     full_description: '',
+    feature_list: [] as string[],
     hero_image_path: '',
     display_order: 0,
     published: true,
@@ -59,6 +60,7 @@ export const PropertyConfigsClientManager: React.FC<{
       availability_status: 'Available',
       short_description: '',
       full_description: '',
+      feature_list: [],
       hero_image_path: '',
       display_order: configs.length + 1,
       published: true,
@@ -69,6 +71,12 @@ export const PropertyConfigsClientManager: React.FC<{
 
   const handleOpenEdit = (config: PropertyConfiguration) => {
     setEditingConfig(config);
+    const parsedFeatures = Array.isArray(config.feature_list)
+      ? (config.feature_list as string[])
+      : typeof config.feature_list === 'string'
+      ? JSON.parse(config.feature_list || '[]')
+      : [];
+
     setFormData({
       project_id: config.project_id,
       name: config.name,
@@ -83,6 +91,7 @@ export const PropertyConfigsClientManager: React.FC<{
       availability_status: config.availability_status,
       short_description: config.short_description || '',
       full_description: config.full_description || '',
+      feature_list: parsedFeatures,
       hero_image_path: config.hero_image_path || '',
       display_order: config.display_order,
       published: config.published,
@@ -273,6 +282,28 @@ export const PropertyConfigsClientManager: React.FC<{
                 placeholder="1200 Sq.Ft (30x40)"
               />
             </div>
+          </div>
+
+          <div>
+            <Label>Key Highlights & Features (One item per line)</Label>
+            <textarea
+              rows={4}
+              value={
+                Array.isArray(formData.feature_list)
+                  ? formData.feature_list.join('\n')
+                  : typeof formData.feature_list === 'string'
+                  ? formData.feature_list
+                  : ''
+              }
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  feature_list: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean),
+                })
+              }
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white focus:outline-none focus:border-amber-400"
+              placeholder="Premium Duplex Villa&#10;Internal Staircase&#10;Covered Car Parking&#10;3 Bedrooms with Attached Bathrooms"
+            />
           </div>
 
           <div>

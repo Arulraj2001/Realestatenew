@@ -4,39 +4,58 @@ import React from 'react';
 import { HelpCircle } from 'lucide-react';
 import { Accordion } from '@/components/ui/accordion';
 
-export const FAQSection: React.FC = () => {
-  const faqItems = [
-    {
-      id: 'faq-1',
-      title: 'Are all plots and villas DTCP & RERA approved?',
-      content:
-        'Yes, 100% of our layout developments in Namakkal and Paramathi Velur hold full DTCP and RERA statutory approvals. All planning permissions and title deeds are verified by senior legal advisors.',
-    },
-    {
-      id: 'faq-2',
-      title: 'How do I book a site visit?',
-      content:
-        'You can click "Schedule Site Visit" on our website or call +91 98765 43210. We provide free private car pickup and drop facilities for families anywhere in Namakkal, Tiruchengodu, or Paramathi Velur.',
-    },
-    {
-      id: 'faq-3',
-      title: 'Do you offer assistance with bank housing loans?',
-      content:
-        'Yes, our dedicated documentation team manages the complete bank loan application process. We are pre-approved with nationalized banks including State Bank of India, HDFC Bank, and Canara Bank.',
-    },
-    {
-      id: 'faq-4',
-      title: 'Can I request custom villa construction on my purchased plot?',
-      content:
-        'Absolutely. We offer complete turn-key villa construction services. Our architects will customize floor plans (2BHK, 3BHK, 4BHK) according to your family requirements and vastu preferences.',
-    },
-    {
-      id: 'faq-5',
-      title: 'What basic infrastructure is provided in the gated layouts?',
-      content:
-        'All townships are delivered with 30ft & 40ft blacktop asphalt roads, underground drainage network, individual water supply tap connections, street lighting, compound wall, and children park zones.',
-    },
-  ];
+export interface FAQItem {
+  id: string;
+  title: string;
+  content: string;
+}
+
+export interface FAQSectionProps {
+  faqs?: FAQItem[];
+}
+
+const DEFAULT_FAQS: FAQItem[] = [
+  {
+    id: 'faq-1',
+    title: 'Are all plots and villas DTCP & RERA approved?',
+    content:
+      'Yes, 100% of our layout developments in Namakkal and Paramathi Velur hold full DTCP and RERA statutory approvals. All planning permissions and title deeds are verified by senior legal advisors.',
+  },
+  {
+    id: 'faq-2',
+    title: 'How do I book a site visit?',
+    content:
+      'You can click "Schedule Site Visit" on our website or call +91 98765 43210. We provide free private car pickup and drop facilities for families anywhere in Namakkal, Tiruchengodu, or Paramathi Velur.',
+  },
+  {
+    id: 'faq-3',
+    title: 'Do you offer assistance with bank housing loans?',
+    content:
+      'Yes, our dedicated documentation team manages the complete bank loan application process. We are pre-approved with nationalized banks including State Bank of India, HDFC Bank, and Canara Bank.',
+  },
+  {
+    id: 'faq-4',
+    title: 'Can I request custom villa construction on my purchased plot?',
+    content:
+      'Absolutely. We offer complete turn-key villa construction services. Our architects will customize floor plans (2BHK, 3BHK, 4BHK) according to your family requirements and vastu preferences.',
+  },
+  {
+    id: 'faq-5',
+    title: 'What basic infrastructure is provided in the gated layouts?',
+    content:
+      'All townships are delivered with 30ft & 40ft blacktop asphalt roads, underground drainage network, individual water supply tap connections, street lighting, compound wall, and children park zones.',
+  },
+];
+
+export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
+  const list = faqs && faqs.length > 0 ? faqs : DEFAULT_FAQS;
+
+  // Ensure each item has a unique id for accordion
+  const faqItems = list.map((item, idx) => ({
+    id: item.id || `faq-${idx + 1}`,
+    title: item.title,
+    content: item.content,
+  }));
 
   return (
     <section className="py-20 bg-slate-950 text-slate-100 border-t border-slate-800">

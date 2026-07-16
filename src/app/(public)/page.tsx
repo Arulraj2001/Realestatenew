@@ -3,24 +3,19 @@ import { Metadata } from 'next';
 import {
   getPublishedLocations,
   getPublishedProjects,
-  getActiveAmenities,
   getPublishedGalleryItems,
   getContentPage,
 } from '@/lib/data';
+import { getTestimonials } from '@/lib/data/settings';
 import { generateHomePageMetadata, getHomePageJsonLd } from '@/lib/seo/metadata';
 
 import { HeroSection } from '@/components/public/HeroSection';
-import { SearchFilterPanel } from '@/components/public/SearchFilterPanel';
 import { LocationCardsSection } from '@/components/public/LocationCardsSection';
-import { FeaturedProjectsSection } from '@/components/public/FeaturedProjectsSection';
-import { PropertyTypeGrid } from '@/components/public/PropertyTypeGrid';
 import { CompanyIntroSection } from '@/components/public/CompanyIntroSection';
-import { WhyChooseUsSection } from '@/components/public/WhyChooseUsSection';
-import { StatsSection } from '@/components/public/StatsSection';
-import { AmenitiesSection } from '@/components/public/AmenitiesSection';
+import { FeaturedProjectsSection } from '@/components/public/FeaturedProjectsSection';
+import { WhyChooseUsSection, WhyChooseUsItem } from '@/components/public/WhyChooseUsSection';
 import { GalleryPreviewSection } from '@/components/public/GalleryPreviewSection';
 import { TestimonialsSection } from '@/components/public/TestimonialsSection';
-import { FAQSection } from '@/components/public/FAQSection';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -28,18 +23,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  // Fetch all dynamic data server-side
-  const [locations, projects, amenities, galleryItems, homeContent] = await Promise.all([
-    getPublishedLocations(),
+  // Fetch dynamic content and records from data access layer
+  const [locations, projects, galleryItems, homeContent, testimonials] = await Promise.all([
+    getPublishedLocations({ featuredOnly: true }),
     getPublishedProjects({ featuredOnly: true }),
-    getActiveAmenities(),
     getPublishedGalleryItems({ featuredOnly: true }),
     getContentPage('home'),
+    getTestimonials(),
   ]);
 
   const jsonLd = getHomePageJsonLd();
-
-  const contentJson = (homeContent?.content as Record<string, string>) || {};
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const contentJson = (homeContent?.content as Record<string, any>) || {};
 
   return (
     <>
@@ -50,50 +45,55 @@ export default async function HomePage() {
       />
 
       <div className="space-y-0">
-        {/* 1. Cinematic Hero */}
+        {/* 1. Hero with Background Video/Image & Admin Opacity Controls */}
         <HeroSection
-          heroTitle={contentJson.hero_title || homeContent?.title}
-          heroSubtitle={contentJson.hero_subtitle}
+          heroEnabled={contentJson.hero_enabled !== false}
+          heroTitle={contentJson.hero_h1 || contentJson.hero_title}
+          heroDescription={contentJson.hero_description || contentJson.hero_subtitle}
+          primaryCtaLabel={contentJson.primary_cta_label}
+          primaryCtaLink={contentJson.primary_cta_link}
+          secondaryCtaLabel={contentJson.secondary_cta_label}
+          mediaType={contentJson.hero_media_type || 'image'}
+          desktopVideo={contentJson.desktop_video}
+          mobileVideo={contentJson.mobile_video}
+          desktopImage={contentJson.desktop_image}
+          mobileImage={contentJson.mobile_image}
+          posterImage={contentJson.poster_image}
+          overlayOpacity={contentJson.overlay_opacity !== undefined ? Number(contentJson.overlay_opacity) : 70}
+          textAlignment={contentJson.text_alignment || 'center'}
         />
 
-        {/* 2. Property Search Panel */}
-        <SearchFilterPanel locations={locations} projects={projects} />
-
-        {/* 3. Location Cards */}
+        {/* 2. Two Central Location-Selection Cards (Overlapping Hero Lower Area) */}
         <LocationCardsSection locations={locations} />
 
-        {/* 4. Featured Flagship Projects */}
-        <FeaturedProjectsSection projects={projects} />
-
-        {/* 5. Browse By Property Type */}
-        <PropertyTypeGrid />
-
-        {/* 6. Company Introduction */}
+        {/* 3. Short Company Introduction Section */}
         <CompanyIntroSection
-          heading={contentJson.heading as string}
-          body={contentJson.body as string}
+          introHeading={contentJson.intro_h2}
+          introContent={contentJson.intro_content}
         />
 
-        {/* 7. Why Choose Us */}
-        <WhyChooseUsSection />
+        {/* 4. Featured Projects (Rasi Garden, Kongu Nagar, Kongu Garden) */}
+        <FeaturedProjectsSection projects={projects} />
 
-        {/* 8. Operational Statistics */}
-        <StatsSection />
+        {/* 5. Small Compact Why Choose Us Section */}
+        <WhyChooseUsSection items={contentJson.why_choose_us_items as WhyChooseUsItem[]} />
 
-        {/* 9. Amenities & Infrastructure */}
-        <AmenitiesSection amenities={amenities} />
+        {/* 6. Gallery Preview Section */}
+        <GalleryPreviewSection
+          galleryItems={galleryItems}
+          heading={contentJson.gallery_heading}
+          description={contentJson.gallery_description}
+          ctaLabel={contentJson.gallery_cta}
+        />
 
-        {/* 10. Visual Gallery Preview */}
-        <GalleryPreviewSection galleryItems={galleryItems} />
+        {/* 7. Testimonials Scrolling Ticker */}
+        <TestimonialsSection testimonials={testimonials ?? undefined} />
 
-        {/* 11. Testimonials */}
-        <TestimonialsSection />
-
-        {/* 12. Frequently Asked Questions */}
-        <FAQSection />
-
-        {/* 13. Site Visit Booking Call To Action */}
-        <SiteVisitCTASection />
+        {/* 8. Final Site-Visit CTA Section */}
+        <SiteVisitCTASection
+          heading={contentJson.final_cta_heading}
+          description={contentJson.final_cta_description}
+        />
       </div>
     </>
   );

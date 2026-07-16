@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 type Theme = 'dark' | 'light';
 
@@ -10,38 +10,55 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'dark',
+  theme: 'light',
   toggleTheme: () => {},
 });
 
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>('dark');
+  const [theme, setTheme] = useState<Theme>('light');
 
+  // Sync theme class to html/document root so all portals, modals, and popups inherit the theme
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      if (theme === 'light') {
+        document.documentElement.classList.add('light-theme');
+        document.documentElement.classList.remove('dark-theme');
+      } else {
+        document.documentElement.classList.add('dark-theme');
+        document.documentElement.classList.remove('light-theme');
+      }
+    }
+  }, [theme]);
+
+  // Read saved theme preference on mount
   useEffect(() => {
     const saved = localStorage.getItem('ycp-theme') as Theme | null;
-    const initial: Theme = saved === 'light' ? 'light' : 'dark';
-    setTheme(initial);
+    if (saved === 'light' || saved === 'dark') {
+      requestAnimationFrame(() => {
+        setTheme(saved);
+      });
+    }
   }, []);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
       const next: Theme = prev === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('ycp-theme', next);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('ycp-theme', next);
+      }
       return next;
     });
   }, []);
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
-      {/*
-        We wrap children in a div with a theme class.
-        The CSS in globals.css uses `.light-theme` as a parent selector
-        to override all dark Tailwind utility classes with explicit !important rules.
-        `display: contents` makes this wrapper invisible to layout.
-      */}
-      <div className={theme === 'light' ? 'light-theme' : 'dark-theme'} style={{ display: 'contents' }}>
+      <div
+        className={theme === 'light' ? 'light-theme' : 'dark-theme'}
+        style={{ display: 'contents' }}
+        suppressHydrationWarning
+      >
         {children}
       </div>
     </ThemeContext.Provider>
