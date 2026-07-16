@@ -173,7 +173,7 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
         <div className="hidden md:flex items-center gap-3">
           <a href={`tel:${siteConfig.contact.phone}`}>
             <Button variant="gold" size="sm" className="font-bold">
-              <Phone className="w-3.5 h-3.5 mr-1" /> Call Us
+              <Phone className="w-3.5 h-3.5 mr-1" /> Contact Us
             </Button>
           </a>
 

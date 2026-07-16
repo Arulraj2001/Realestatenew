@@ -31,7 +31,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   heroDescription = 'Explore residential plots, gated-community villas and independent houses across our projects in Namakkal and Paramathi Velur.',
   primaryCtaLabel = 'Explore Projects',
   primaryCtaLink = '/projects',
-  secondaryCtaLabel = 'Schedule a Site Visit',
+  secondaryCtaLabel = 'Contact Us',
   mediaType = 'image',
   desktopVideo,
   mobileVideo,

@@ -1,9 +1,18 @@
-import React from 'react';
+'use client';
+
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { Phone, Mail, Clock, ArrowUpRight } from 'lucide-react';
+import { Phone, Mail, Clock, ArrowUpRight, Send, CheckCircle2 } from 'lucide-react';
 import { siteConfig } from '@/config/site';
+import { submitContactEnquiryAction } from '@/app/actions/enquiries';
+import { useToast } from '@/components/ui/toast';
 
 export const Footer: React.FC = () => {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({ name: '', phone: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
   const primeLocations = [
     { name: 'Namakkal Layouts', slug: 'namakkal', status: 'current' },
     { name: 'Paramathi Velur Layouts', slug: 'paramathi-velur', status: 'current' },
@@ -11,12 +20,38 @@ export const Footer: React.FC = () => {
     { name: 'Erode Hub (Coming Soon)', slug: 'erode', status: 'upcoming' },
   ];
 
+  const handleFooterSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name.trim() || !formData.phone.trim()) {
+      toast({ type: 'error', title: 'Missing Info', message: 'Please provide both your Name and Mobile Number.' });
+      return;
+    }
+
+    setIsSubmitting(true);
+    const res = await submitContactEnquiryAction({
+      name: formData.name.trim(),
+      phone: formData.phone.trim(),
+      consent: true,
+      source_page: typeof window !== 'undefined' ? window.location.pathname + ' (Footer Form)' : '/footer',
+    });
+
+    setIsSubmitting(false);
+
+    if (res.success) {
+      setIsSubmitted(true);
+      setFormData({ name: '', phone: '' });
+      toast({ type: 'success', title: 'Enquiry Sent', message: 'Our team will call you back shortly.' });
+    } else {
+      toast({ type: 'error', title: 'Submission Error', message: res.error || 'Failed to submit enquiry.' });
+    }
+  };
+
   return (
     <footer className="bg-[#091b13] text-slate-300 border-t border-emerald-950 pt-16 pb-24 md:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-emerald-900/40">
-          {/* Brand Col */}
-          <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-emerald-900/40">
+          {/* Col 1: Brand */}
+          <div className="space-y-4 lg:col-span-1">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center font-serif font-bold text-slate-950 text-xl shadow-lg">
                 Y
@@ -35,7 +70,7 @@ export const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Quick Links */}
+          {/* Col 2: Quick Navigation */}
           <div>
             <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
               Quick Navigation
@@ -62,7 +97,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Target Hubs */}
+          {/* Col 3: Prime Locations */}
           <div>
             <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
               Prime Locations
@@ -82,7 +117,7 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Contact Details */}
+          {/* Col 4: Get in Touch */}
           <div>
             <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
               Get in Touch
@@ -90,7 +125,7 @@ export const Footer: React.FC = () => {
             <div className="space-y-3 text-xs text-slate-400">
               <p className="flex items-start gap-2">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <span>{siteConfig.contact.email}</span>
+                <span className="break-all">{siteConfig.contact.email}</span>
               </p>
               <p className="flex items-start gap-2">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
@@ -101,6 +136,58 @@ export const Footer: React.FC = () => {
                 <span>Mon - Sun: 9:00 AM - 7:00 PM</span>
               </p>
             </div>
+          </div>
+
+          {/* Col 5: Next to Get in Touch — Quick Contact Form */}
+          <div>
+            <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
+              Contact Us
+            </h4>
+
+            {isSubmitted ? (
+              <div className="p-3 bg-emerald-950/60 border border-emerald-700/60 rounded-xl text-center space-y-1">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 mx-auto" />
+                <p className="text-xs font-bold text-white">Message Received!</p>
+                <p className="text-[10px] text-slate-300">We will call you back shortly.</p>
+                <button
+                  onClick={() => setIsSubmitted(false)}
+                  className="text-[10px] text-amber-400 hover:underline pt-1 block mx-auto font-semibold"
+                >
+                  Send Another
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleFooterSubmit} className="space-y-2">
+                <div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Full Name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#05130d] border border-emerald-900/80 rounded-lg text-xs text-white placeholder:text-slate-500 focus:border-amber-500 outline-none transition-colors"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="Mobile No"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#05130d] border border-emerald-900/80 rounded-lg text-xs text-white placeholder:text-slate-500 focus:border-amber-500 outline-none transition-colors"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 disabled:opacity-50 cursor-pointer"
+                >
+                  <Send className="w-3 h-3" />
+                  <span>{isSubmitting ? 'Sending...' : 'Submit'}</span>
+                </button>
+              </form>
+            )}
           </div>
         </div>
 
