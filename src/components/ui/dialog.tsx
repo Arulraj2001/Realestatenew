@@ -23,56 +23,84 @@ export const Dialog: React.FC<DialogProps> = ({
   className,
 }) => {
   const [mounted, setMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false);
 
   useEffect(() => {
     requestAnimationFrame(() => setMounted(true));
   }, []);
 
+  // Open: mount then trigger visible
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
+    if (!mounted) return;
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      window.addEventListener('keydown', handleKeyDown);
+      setShouldRender(true);
+      requestAnimationFrame(() => requestAnimationFrame(() => setIsVisible(true)));
+    } else {
+      setIsVisible(false);
+      const t = setTimeout(() => setShouldRender(false), 300);
+      return () => clearTimeout(t);
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-      window.removeEventListener('keydown', handleKeyDown);
-    };
+  }, [isOpen, mounted]);
+
+  // Body scroll lock
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  // Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
-  if (!isOpen || !mounted) return null;
+  if (!mounted || !shouldRender) return null;
 
-  const dialogContent = (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity"
+        className="absolute inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity duration-300"
+        style={{ opacity: isVisible ? 1 : 0 }}
         onClick={onClose}
+        aria-hidden="true"
       />
+
+      {/* Modal Panel */}
       <div
         className={cn(
-          'relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-10 animate-in fade-in zoom-in-95 duration-200',
+          'relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl overflow-hidden z-10 transition-all',
           className
         )}
+        style={{
+          opacity: isVisible ? 1 : 0,
+          transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(16px) scale(0.96)',
+          transitionDuration: '300ms',
+          transitionTimingFunction: 'cubic-bezier(0.34, 1.4, 0.64, 1)',
+        }}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800">
-          <div>
-            {title && <h3 className="text-lg font-bold text-white">{title}</h3>}
-            {description && <p className="text-xs text-slate-400 mt-0.5">{description}</p>}
+        {/* Header */}
+        <div className="flex items-start justify-between px-6 py-4 border-b border-slate-800">
+          <div className="flex-1 pr-4">
+            {title && <h3 className="text-base font-bold text-white leading-snug">{title}</h3>}
+            {description && <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{description}</p>}
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer"
+            className="p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors cursor-pointer flex-shrink-0"
             aria-label="Close dialog"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-6">{children}</div>
-      </div>
-    </div>
-  );
 
-  return createPortal(dialogContent, document.body);
+        {/* Body */}
+        <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+      </div>
+    </div>,
+    document.body
+  );
 };
