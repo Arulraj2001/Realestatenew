@@ -60,6 +60,7 @@ export default async function HomePage() {
           mobileImage={contentJson.mobile_image}
           posterImage={contentJson.poster_image}
           overlayOpacity={contentJson.overlay_opacity !== undefined ? Number(contentJson.overlay_opacity) : 70}
+          heroBlur={contentJson.hero_blur !== undefined ? Number(contentJson.hero_blur) : 0}
           textAlignment={contentJson.text_alignment || 'center'}
         />
 

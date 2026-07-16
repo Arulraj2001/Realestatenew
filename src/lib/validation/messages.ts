@@ -22,8 +22,8 @@ export const contactMessageSchema = z.object({
 });
 
 export const siteVisitSchema = contactMessageSchema.extend({
-  preferred_visit_date: z.string().min(1, 'Please select a preferred visit date'),
-  preferred_visit_time: z.string().min(1, 'Please select a preferred visit time slot'),
+  preferred_visit_date: z.string().optional().or(z.literal('')),
+  preferred_visit_time: z.string().optional().or(z.literal('')),
 });
 
 export type ContactMessageInput = z.infer<typeof contactMessageSchema>;

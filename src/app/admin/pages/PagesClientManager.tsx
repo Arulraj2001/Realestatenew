@@ -30,6 +30,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     mobile_video: '',
     poster_image: '',
     overlay_opacity: 70,
+    hero_blur: 0,
     hero_h1: '',
     hero_description: '',
     primary_cta_label: '',
@@ -84,6 +85,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       mobile_video: String(c.mobile_video || ''),
       poster_image: String(c.poster_image || ''),
       overlay_opacity: c.overlay_opacity !== undefined ? Number(c.overlay_opacity) : 70,
+      hero_blur: c.hero_blur !== undefined ? Number(c.hero_blur) : 0,
       hero_h1: String(c.hero_h1 || c.hero_title || 'Your Choice Properties – Trusted Plots, Villas and Houses in Namakkal and Paramathi Velur'),
       hero_description: String(c.hero_description || c.hero_subtitle || 'Explore residential plots, gated-community villas and independent houses across our projects in Namakkal and Paramathi Velur.'),
       primary_cta_label: String(c.primary_cta_label || 'Explore Projects'),
@@ -131,6 +133,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         mobile_video: formData.mobile_video,
         poster_image: formData.poster_image,
         overlay_opacity: Math.max(0, Math.min(100, Number(formData.overlay_opacity))),
+        hero_blur: Math.max(0, Math.min(100, Number(formData.hero_blur))),
         hero_h1: formData.hero_h1,
         hero_description: formData.hero_description,
         primary_cta_label: formData.primary_cta_label,
@@ -272,15 +275,35 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                 </div>
               </div>
 
-              <div>
-                <Label>Overlay Opacity (0 - 100)</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={100}
+              <div className="space-y-1">
+                <div className="flex justify-between items-center text-xs">
+                  <Label>Overlay Opacity ({formData.overlay_opacity}%)</Label>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
                   value={formData.overlay_opacity}
                   onChange={(e) => setFormData({ ...formData, overlay_opacity: Number(e.target.value) })}
+                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
                 />
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between items-center text-xs">
+                  <Label>Media Background Blur (0 - 100%)</Label>
+                  <span className="text-amber-400 font-mono font-bold text-xs">{formData.hero_blur}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value={formData.hero_blur}
+                  onChange={(e) => setFormData({ ...formData, hero_blur: Number(e.target.value) })}
+                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                />
+                <span className="text-[10px] text-slate-500 block">Drag left to clear (0%), drag right to blur background image or video (up to 100%)</span>
               </div>
 
               <div>

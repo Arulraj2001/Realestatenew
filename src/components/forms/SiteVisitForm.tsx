@@ -154,42 +154,12 @@ export const SiteVisitForm: React.FC<SiteVisitFormProps> = ({
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <div>
-          <Label htmlFor="sv-date" required>
-            Preferred Visit Date
-          </Label>
-          <Input
-            id="sv-date"
-            type="date"
-            required
-            value={formData.preferred_visit_date}
-            onChange={(e) => setFormData({ ...formData, preferred_visit_date: e.target.value })}
-          />
-        </div>
-        <div>
-          <Label htmlFor="sv-time" required>
-            Time Slot
-          </Label>
-          <select
-            id="sv-time"
-            value={formData.preferred_visit_time}
-            onChange={(e) => setFormData({ ...formData, preferred_visit_time: e.target.value })}
-            className="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-sm focus:border-amber-500 outline-none"
-          >
-            <option value="Morning">Morning (9 AM - 12 PM)</option>
-            <option value="Afternoon">Afternoon (12 PM - 4 PM)</option>
-            <option value="Evening">Evening (4 PM - 7 PM)</option>
-          </select>
-        </div>
-      </div>
-
       <div>
         <Label htmlFor="sv-notes">Additional Notes (Optional)</Label>
         <Textarea
           id="sv-notes"
-          rows={2}
-          placeholder="Pickup location or family size..."
+          rows={3}
+          placeholder="Specific requirements, preferred location or notes..."
           value={formData.message}
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}
         />
@@ -213,7 +183,7 @@ export const SiteVisitForm: React.FC<SiteVisitFormProps> = ({
         className="w-full font-bold mt-2"
       >
         <Calendar className="w-4 h-4" />
-        <span>Confirm Site Visit Appointment</span>
+        <span>Schedule Site Visit</span>
       </Button>
     </form>
   );

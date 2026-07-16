@@ -8,9 +8,9 @@ import { ContactForm } from '@/components/forms/ContactForm';
 import { FAQSection } from '@/components/public/FAQSection';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Office Location & Phone Inquiries',
+  title: 'Schedule a Site Visit | Free Chauffeured Pickup & Consultation',
   description:
-    'Get in touch with Your Choice Properties. Call +91 98765 43210 or visit our main office in Namakkal, Tamil Nadu.',
+    'Schedule a free chauffeured site visit with Your Choice Properties. Explore DTCP approved residential villa plots & family homes in Namakkal & Paramathi Velur.',
   alternates: {
     canonical: `${siteConfig.domain}/contact-us`,
   },
@@ -60,7 +60,7 @@ export default async function ContactUsPage() {
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'Contact Us',
+        name: 'Schedule a Site Visit',
         item: `${siteConfig.domain}/contact-us`,
       },
     ],
@@ -86,15 +86,15 @@ export default async function ContactUsPage() {
                 Home
               </Link>
               <ChevronRight className="w-3.5 h-3.5" />
-              <span className="text-amber-400">Contact Us</span>
+              <span className="text-amber-400">Schedule a Site Visit</span>
             </div>
 
             <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Contact Our Sales Team
+              Schedule a Site Visit
             </h1>
 
             <p className="text-slate-300 text-sm sm:text-base max-w-2xl">
-              We are here to assist you with layout site visits, pricing breakdowns, and title verification.
+              Book a complimentary chauffeured layout site visit. Our local team will pick you up and guide you through available villa plots & house choices.
             </p>
           </div>
         </section>

@@ -21,6 +21,7 @@ export interface HeroSectionProps {
   mobileImage?: string;
   posterImage?: string;
   overlayOpacity?: number;
+  heroBlur?: number;
   textAlignment?: 'left' | 'center' | 'right';
   heroEnabled?: boolean;
 }
@@ -38,6 +39,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   mobileImage,
   posterImage = 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80',
   overlayOpacity = 70,
+  heroBlur = 0,
   textAlignment = 'center',
   heroEnabled = true,
 }) => {
@@ -45,8 +47,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   if (heroEnabled === false) return null;
 
-  // Safe clamping of opacity 0-100
+  // Safe clamping of opacity 0-100 & blur (0-100% maps to 0-25px blur)
   const safeOpacity = Math.max(0, Math.min(100, overlayOpacity)) / 100;
+  const blurPx = (Math.max(0, Math.min(100, heroBlur)) / 100) * 20;
+  const blurStyle: React.CSSProperties = blurPx > 0 ? { filter: `blur(${blurPx.toFixed(1)}px)`, transform: 'scale(1.05)' } : {};
 
   const alignClasses =
     textAlignment === 'left'
@@ -58,7 +62,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section className="relative min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-between overflow-hidden bg-slate-950 text-slate-100 pb-28 sm:pb-36">
       {/* Media Background Layer */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+      <div className="absolute inset-0 z-0 overflow-hidden" style={blurStyle}>
         {mediaType === 'video' && desktopVideo ? (
           <video
             autoPlay

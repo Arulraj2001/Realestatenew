@@ -165,7 +165,7 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
           </Link>
 
           <Link href="/contact-us" className="text-xs font-semibold uppercase tracking-wider text-slate-200 hover:text-amber-400 transition-colors">
-            Contact Us
+            Schedule a Site Visit
           </Link>
         </nav>
 
@@ -312,7 +312,7 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
               onClick={() => setIsMobileMenuOpen(false)}
               className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-slate-950 border border-slate-800/80 hover:bg-slate-800 text-slate-100 text-xs font-bold uppercase tracking-wider transition-colors"
             >
-              <PhoneCall className="w-4 h-4 text-amber-400 shrink-0" /> Contact Us
+              <PhoneCall className="w-4 h-4 text-amber-400 shrink-0" /> Schedule a Site Visit
             </Link>
           </div>
 

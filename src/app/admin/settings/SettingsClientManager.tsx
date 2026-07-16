@@ -29,7 +29,7 @@ export interface SiteSettingRecord {
 // Sub-types for each setting panel
 // ─────────────────────────────────────────────
 interface StatItem { label: string; value: string }
-interface TestimonialItem { name: string; location: string; rating: number; comment: string }
+interface TestimonialItem { name: string; location: string; rating?: number; comment?: string; video_url?: string; thumbnail_url?: string }
 interface FAQItem { id: string; title: string; content: string }
 
 // ─────────────────────────────────────────────
@@ -382,12 +382,28 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
                   </select>
                 </div>
                 <div>
-                  <Label required>Testimonial Text</Label>
+                  <Label>Video URL (YouTube or MP4 Video Link)</Label>
+                  <Input
+                    value={t.video_url || ''}
+                    onChange={(e) => updateTestimonial(idx, 'video_url', e.target.value)}
+                    placeholder="https://www.youtube.com/watch?v=... or MP4 link"
+                  />
+                </div>
+                <div>
+                  <Label>Custom Thumbnail URL (Optional - defaults to video thumbnail)</Label>
+                  <Input
+                    value={t.thumbnail_url || ''}
+                    onChange={(e) => updateTestimonial(idx, 'thumbnail_url', e.target.value)}
+                    placeholder="https://images.unsplash.com/... or image path"
+                  />
+                </div>
+                <div>
+                  <Label>Testimonial Text / Caption</Label>
                   <Textarea
-                    rows={3}
-                    value={t.comment}
+                    rows={2}
+                    value={t.comment || ''}
                     onChange={(e) => updateTestimonial(idx, 'comment', e.target.value)}
-                    placeholder="Share the customer's experience..."
+                    placeholder="Brief highlight or quote..."
                   />
                 </div>
               </div>
