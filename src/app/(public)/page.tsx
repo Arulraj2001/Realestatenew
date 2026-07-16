@@ -6,6 +6,7 @@ import {
   getPublishedGalleryItems,
   getContentPage,
 } from '@/lib/data';
+import { getTestimonials } from '@/lib/data/settings';
 import { generateHomePageMetadata, getHomePageJsonLd } from '@/lib/seo/metadata';
 
 import { HeroSection } from '@/components/public/HeroSection';
@@ -14,6 +15,7 @@ import { CompanyIntroSection } from '@/components/public/CompanyIntroSection';
 import { FeaturedProjectsSection } from '@/components/public/FeaturedProjectsSection';
 import { WhyChooseUsSection, WhyChooseUsItem } from '@/components/public/WhyChooseUsSection';
 import { GalleryPreviewSection } from '@/components/public/GalleryPreviewSection';
+import { TestimonialsSection } from '@/components/public/TestimonialsSection';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,11 +24,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   // Fetch dynamic content and records from data access layer
-  const [locations, projects, galleryItems, homeContent] = await Promise.all([
+  const [locations, projects, galleryItems, homeContent, testimonials] = await Promise.all([
     getPublishedLocations({ featuredOnly: true }),
     getPublishedProjects({ featuredOnly: true }),
     getPublishedGalleryItems({ featuredOnly: true }),
     getContentPage('home'),
+    getTestimonials(),
   ]);
 
   const jsonLd = getHomePageJsonLd();
@@ -83,7 +86,10 @@ export default async function HomePage() {
           ctaLabel={contentJson.gallery_cta}
         />
 
-        {/* 7. Final Site-Visit CTA Section */}
+        {/* 7. Testimonials Scrolling Ticker */}
+        <TestimonialsSection testimonials={testimonials ?? undefined} />
+
+        {/* 8. Final Site-Visit CTA Section */}
         <SiteVisitCTASection
           heading={contentJson.final_cta_heading}
           description={contentJson.final_cta_description}

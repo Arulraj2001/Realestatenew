@@ -191,23 +191,45 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {availablePages.map((item) => {
-          const isConfigured = pages.some((p) => p.page_key === item.key);
+          const existing = pages.find((p) => p.page_key === item.key);
+          const isConfigured = Boolean(existing);
+          const updatedAt = existing?.updated_at ? new Date(existing.updated_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : null;
+          const previewPath = item.key === 'home' ? '/' : item.key === 'privacy' ? '/privacy-policy' : item.key === 'terms' ? '/terms-and-conditions' : `/${item.key}`;
+
           return (
             <div
               key={item.key}
-              className="p-5 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between shadow-xl"
+              className="p-5 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl space-y-3"
             >
-              <div>
-                <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Key: {item.key}</span>
-                <h3 className="font-bold text-white text-sm">{item.title}</h3>
-                <span className="text-[11px] text-slate-400">{isConfigured ? 'Status: Custom Configured' : 'Status: Default Wording'}</span>
+              <div className="flex items-start justify-between gap-2">
+                <div className="space-y-0.5">
+                  <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Key: {item.key}</span>
+                  <h3 className="font-bold text-white text-sm">{item.title}</h3>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-semibold ${isConfigured ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-400'}`}>
+                      {isConfigured ? '✓ Custom Configured' : '◌ Default Wording'}
+                    </span>
+                    {updatedAt && <span className="text-[10px] text-slate-500">Updated {updatedAt}</span>}
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => handleEditPage(item.key)}
-                className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold rounded-xl flex items-center gap-1 transition-colors cursor-pointer"
-              >
-                <Edit3 className="w-3.5 h-3.5" /> Edit Content
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleEditPage(item.key)}
+                  className="flex-1 py-2 px-3 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 text-xs font-bold rounded-xl flex items-center justify-center gap-1 transition-all duration-200 cursor-pointer"
+                >
+                  <Edit3 className="w-3.5 h-3.5" /> Edit Content
+                </button>
+                <a
+                  href={previewPath}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-400 text-xs font-bold rounded-xl flex items-center gap-1 transition-colors cursor-pointer"
+                  title="Preview live page"
+                >
+                  ↗ Preview
+                </a>
+              </div>
             </div>
           );
         })}

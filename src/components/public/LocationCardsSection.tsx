@@ -25,9 +25,15 @@ export const LocationCardsSection: React.FC<LocationCardsSectionProps> = ({ loca
   if (featuredLocations.length === 0) return null;
 
   return (
-    <section className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 mb-6 pb-2">
-      {/* 2 Medium Sized Location Cards Overlapping Hero Lower Area */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <section className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 mb-6 pb-2">
+      {/* Location Cards — always single row, auto-fill up to 3 columns */}
+      <div className={`grid gap-6 ${
+        featuredLocations.length === 1
+          ? 'grid-cols-1 max-w-sm mx-auto'
+          : featuredLocations.length === 2
+          ? 'grid-cols-1 sm:grid-cols-2'
+          : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+      }`}>
         {featuredLocations.map((loc) => {
           const imageSrc =
             loc.hero_image_path ||
