@@ -61,6 +61,7 @@ export const propertyConfigCrudSchema = z.object({
   full_description: z.string().optional().or(z.literal('')),
   feature_list: z.union([z.array(z.string()), z.string()]).optional(),
   hero_image_path: z.string().optional().or(z.literal('')),
+  gallery_images: z.union([z.array(z.string()), z.string()]).optional(),
   display_order: z.number().int().default(0),
   published: z.boolean().default(true),
   featured: z.boolean().default(false),
@@ -76,6 +77,7 @@ export const landmarkCrudSchema = z.object({
   project_id: z.string().uuid('Project is required'),
   name: z.string().min(2, 'Landmark name is required'),
   distance_label: z.string().min(1, 'Distance label required (e.g. 5 Mins)'),
+  image_url: z.string().optional().or(z.literal('')),
   display_order: z.number().int().default(0),
 });
 

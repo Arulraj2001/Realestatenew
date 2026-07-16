@@ -114,7 +114,7 @@ export const AutoContactPopup: React.FC = () => {
             className="mt-0.5 p-1.5 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-all cursor-pointer flex-shrink-0"
             aria-label="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 pointer-events-none" />
           </button>
         </div>
 

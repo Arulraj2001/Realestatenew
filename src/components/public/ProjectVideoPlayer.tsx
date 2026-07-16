@@ -2,8 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Play, ExternalLink, Sparkles, X, Video } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Play, ExternalLink } from 'lucide-react';
 import { Dialog } from '@/components/ui/dialog';
 
 export interface ProjectVideoPlayerProps {
@@ -15,7 +14,7 @@ export interface ProjectVideoPlayerProps {
 }
 
 export const ProjectVideoPlayer: React.FC<ProjectVideoPlayerProps> = ({
-  title = 'Project Walkthrough Video',
+  title = 'Walkthrough',
   videoUrl,
   storagePathUrl,
   posterImage,
@@ -49,101 +48,47 @@ export const ProjectVideoPlayer: React.FC<ProjectVideoPlayerProps> = ({
     'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
 
   return (
-    <div className="space-y-4">
-      {/* Video Poster Player Frame */}
-      <div
-        onClick={() => setIsPlayingModalOpen(true)}
-        className="group relative aspect-[16/9] max-h-[500px] w-full rounded-3xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl cursor-pointer"
-      >
-        <Image
-          src={poster}
-          alt={title}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-85 group-hover:opacity-75 transition-opacity" />
+    <div className="py-2 space-y-4">
+      {/* Compact Video Card Frame Centered */}
+      <div className="max-w-md mx-auto space-y-3">
+        <div
+          onClick={() => setIsPlayingModalOpen(true)}
+          className="group relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl cursor-pointer"
+        >
+          <Image
+            src={poster}
+            alt={title}
+            fill
+            sizes="(max-width: 768px) 100vw, 400px"
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 z-0"
+          />
+          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors z-10" />
 
-        {/* Top Tag */}
-        <div className="absolute top-4 left-4 z-10">
-          <span className="px-3.5 py-1 bg-amber-500/90 text-slate-950 text-xs font-extrabold rounded-full shadow-lg flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5" /> Video Tour
-          </span>
-        </div>
-
-        {/* Central Glowing Play Button */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10">
-          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center shadow-2xl shadow-amber-500/40 group-hover:scale-110 group-hover:bg-amber-400 transition-all duration-300">
-            <Play className="w-8 h-8 sm:w-10 sm:h-10 ml-1 fill-slate-950" />
+          {/* Central Play Button Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center z-20">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-slate-950/90 border border-amber-400 text-amber-400 flex items-center justify-center shadow-2xl group-hover:scale-110 group-hover:bg-amber-400 group-hover:text-slate-950 transition-all duration-300">
+              <Play className="w-6 h-6 sm:w-7 sm:h-7 ml-0.5 fill-current" />
+            </div>
           </div>
-          <span className="text-white font-extrabold text-sm sm:text-base drop-shadow-lg tracking-wide group-hover:text-amber-300 transition-colors">
-            Click to Play Video
-          </span>
         </div>
 
-        {/* Bottom Title Bar */}
-        <div className="absolute bottom-4 left-6 right-6 z-10 flex items-center justify-between">
-          <h3 className="font-serif font-bold text-white text-lg sm:text-xl drop-shadow-md truncate max-w-lg">
+        {/* Video Subtitle Label below card */}
+        <div className="text-center">
+          <h4 className="font-sans font-bold text-slate-900 dark:text-white text-base tracking-wide">
             {title}
-          </h3>
-          <span className="text-xs font-semibold text-slate-300 hidden sm:inline-block bg-slate-900/80 px-3 py-1 rounded-full border border-slate-700 backdrop-blur-md">
-            Full HD Walkthrough
-          </span>
+          </h4>
         </div>
       </div>
 
-      {/* External Social Platform Action Buttons */}
-      {rawUrl && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-4 bg-slate-900 border border-slate-800 rounded-2xl">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
-            <span>External Source Available:</span>
-            {isYouTube && (
-              <span className="text-red-400 font-bold flex items-center gap-1">
-                <Video className="w-4 h-4 text-red-500" /> YouTube Video
-              </span>
-            )}
-            {isInstagram && (
-              <span className="text-pink-400 font-bold flex items-center gap-1">
-                <Video className="w-4 h-4 text-pink-500" /> Instagram Reel
-              </span>
-            )}
-          </div>
-
-          <a href={rawUrl} target="_blank" rel="noopener noreferrer">
-            <Button
-              variant="outline"
-              size="sm"
-              className="font-bold border-amber-500/40 text-amber-300 hover:bg-amber-500/10 hover:text-amber-200"
-            >
-              {isYouTube ? (
-                <>
-                  <Video className="w-4 h-4 text-red-500 mr-1.5" /> Watch on YouTube
-                </>
-              ) : isInstagram ? (
-                <>
-                  <Video className="w-4 h-4 text-pink-500 mr-1.5" /> Watch on Instagram
-                </>
-              ) : (
-                <>
-                  Watch Original Source
-                </>
-              )}
-              <ExternalLink className="w-3.5 h-3.5 ml-1.5 opacity-80" />
-            </Button>
-          </a>
-        </div>
-      )}
-
-      {/* Inline Video Player Dialog Modal */}
+      {/* Video Modal Frame */}
       <Dialog
         isOpen={isPlayingModalOpen}
         onClose={() => setIsPlayingModalOpen(false)}
         title={title}
       >
-        <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-black border border-slate-800 shadow-2xl">
-          {embedUrl ? (
-            isYouTube || isInstagram || embedUrl.includes('embed') ? (
+        <div className="space-y-4">
+          <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
+            {embedUrl ? (
               <iframe
                 src={embedUrl}
                 title={title}
@@ -152,17 +97,22 @@ export const ProjectVideoPlayer: React.FC<ProjectVideoPlayerProps> = ({
                 allowFullScreen
               />
             ) : (
-              <video controls autoPlay className="w-full h-full object-contain">
-                <source src={embedUrl} type="video/mp4" />
-                Your browser does not support HTML5 video playback.
-              </video>
-            )
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full p-6 text-center space-y-3">
-              <p className="text-slate-300 text-sm">No video URL has been attached yet.</p>
-              <Button size="sm" variant="gold" onClick={() => setIsPlayingModalOpen(false)}>
-                <X className="w-4 h-4 mr-1" /> Close Player
-              </Button>
+              <div className="flex flex-col items-center justify-center h-full text-slate-400 text-sm">
+                No video URL configured.
+              </div>
+            )}
+          </div>
+
+          {rawUrl && (
+            <div className="flex justify-between items-center text-xs text-slate-400 pt-2 border-t border-slate-800">
+              <a
+                href={rawUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-amber-400 hover:underline"
+              >
+                Open directly in YouTube / App <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </div>
           )}
         </div>

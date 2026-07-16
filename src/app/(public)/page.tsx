@@ -12,6 +12,7 @@ import { generateHomePageMetadata, getHomePageJsonLd } from '@/lib/seo/metadata'
 import { HeroSection } from '@/components/public/HeroSection';
 import { LocationCardsSection } from '@/components/public/LocationCardsSection';
 import { CompanyIntroSection } from '@/components/public/CompanyIntroSection';
+import { StatsSection } from '@/components/public/StatsSection';
 import { FeaturedProjectsSection } from '@/components/public/FeaturedProjectsSection';
 import { WhyChooseUsSection, WhyChooseUsItem } from '@/components/public/WhyChooseUsSection';
 import { GalleryPreviewSection } from '@/components/public/GalleryPreviewSection';
@@ -71,6 +72,12 @@ export default async function HomePage() {
         <CompanyIntroSection
           introHeading={contentJson.intro_h2}
           introContent={contentJson.intro_content}
+        />
+
+        {/* Key Statistics Highlights */}
+        <StatsSection
+          stats={contentJson.stats_list}
+          isVisible={contentJson.stats_visible !== false}
         />
 
         {/* 4. Featured Projects (Rasi Garden, Kongu Nagar, Kongu Garden) */}

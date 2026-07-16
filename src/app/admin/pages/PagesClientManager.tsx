@@ -56,6 +56,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     // Services Page Extended Admin Controls
     services_h1: '',
     services_intro: '',
+    services_list: [] as Array<{ id: string; title: string; content: string; image_url?: string }>,
   });
 
   const availablePages = [
@@ -111,6 +112,40 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       // Services
       services_h1: String(c.services_h1 || 'Our Real Estate Services in Namakkal and Paramathi Velur'),
       services_intro: String(c.services_intro || 'Our team helps you choose the right plot or villa and supports you from your first enquiry through site visit, documentation and registration.'),
+      services_list: (Array.isArray(c.services_list) && c.services_list.length > 0)
+        ? c.services_list
+        : [
+            {
+              id: 'srv-1',
+              title: 'Residential Plot Sales',
+              content: 'We offer DTCP-approved residential plots in Namakkal and Paramathi Velur for buyers who want to build a home or invest in land. Our team explains the location, available plot sizes, documents and current price before you decide.',
+              image_url: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
+            },
+            {
+              id: 'srv-2',
+              title: 'Villa and House Sales — 2BHK, 3BHK and 4BHK',
+              content: 'We help families explore 2BHK, 3BHK and 4BHK villas and independent houses across Rasi Garden, Kongu Nagar and Kongu Garden. Available choices depend on the project and current construction status.',
+              image_url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
+            },
+            {
+              id: 'srv-3',
+              title: 'Site Visits and Consultation',
+              content: 'Our local team arranges guided site visits so you can compare the location, roads, layout, villa design and nearby facilities before making a decision.',
+              image_url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80',
+            },
+            {
+              id: 'srv-4',
+              title: 'Documentation and Registration Support',
+              content: 'We guide buyers through available title documents, patta-related information, booking paperwork and registration. Buyers should independently verify all legal documents before purchase.',
+              image_url: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=800&q=80',
+            },
+            {
+              id: 'srv-5',
+              title: 'Home-Loan Assistance',
+              content: 'We guide eligible buyers in understanding available loan and financing options. Final approval, interest rates and terms are decided by the bank or financial institution.',
+              image_url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
+            },
+          ],
     });
   };
 
@@ -141,6 +176,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         secondary_cta_label: formData.secondary_cta_label,
         intro_h2: formData.intro_h2,
         intro_content: formData.intro_content,
+        stats_visible: formData.stats_visible,
         gallery_heading: formData.gallery_heading,
         gallery_description: formData.gallery_description,
         final_cta_heading: formData.final_cta_heading,
@@ -163,6 +199,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         ...existingObj,
         services_h1: formData.services_h1,
         services_intro: formData.services_intro,
+        services_list: formData.services_list,
       };
     } else {
       updatedContent = {
@@ -413,7 +450,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
               </div>
             </div>
           ) : selectedKey === 'services' ? (
-            <div className="space-y-4 pt-2 border-t border-slate-800">
+            <div className="space-y-6 pt-2 border-t border-slate-800">
               <h3 className="text-xs font-bold uppercase text-amber-400 tracking-wider">Services Page Controls</h3>
 
               <div>
@@ -423,7 +460,87 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
               <div>
                 <Label>Services Overview Intro</Label>
-                <Textarea rows={4} value={formData.services_intro} onChange={(e) => setFormData({ ...formData, services_intro: e.target.value })} />
+                <Textarea rows={3} value={formData.services_intro} onChange={(e) => setFormData({ ...formData, services_intro: e.target.value })} />
+              </div>
+
+              <div className="space-y-4 pt-4 border-t border-slate-800">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-xs font-bold uppercase text-emerald-400 tracking-wider">Service Cards & Images ({formData.services_list?.length || 0})</h4>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newSrv = {
+                        id: `srv-${Date.now()}`,
+                        title: 'New Real Estate Service',
+                        content: 'Description of the new service.',
+                        image_url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=800&q=80',
+                      };
+                      setFormData({
+                        ...formData,
+                        services_list: [...(formData.services_list || []), newSrv],
+                      });
+                    }}
+                    className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-lg transition-colors"
+                  >
+                    + Add Service Card
+                  </button>
+                </div>
+
+                {formData.services_list?.map((srv: { id: string; title: string; content: string; image_url?: string }, index: number) => (
+                  <div key={srv.id || index} className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3 relative">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Service #{index + 1}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = formData.services_list.filter((_: unknown, idx: number) => idx !== index);
+                          setFormData({ ...formData, services_list: updated });
+                        }}
+                        className="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-md"
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div>
+                      <Label>Card Title</Label>
+                      <Input
+                        value={srv.title}
+                        onChange={(e) => {
+                          const updated = [...formData.services_list];
+                          updated[index] = { ...updated[index], title: e.target.value };
+                          setFormData({ ...formData, services_list: updated });
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <Label>Card Description</Label>
+                      <Textarea
+                        rows={3}
+                        value={srv.content}
+                        onChange={(e) => {
+                          const updated = [...formData.services_list];
+                          updated[index] = { ...updated[index], content: e.target.value };
+                          setFormData({ ...formData, services_list: updated });
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <MediaUploader
+                        label="Card Cover Image"
+                        value={srv.image_url || ''}
+                        folder="services"
+                        onChange={(url) => {
+                          const updated = [...formData.services_list];
+                          updated[index] = { ...updated[index], image_url: url };
+                          setFormData({ ...formData, services_list: updated });
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ) : (

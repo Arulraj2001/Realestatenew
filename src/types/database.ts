@@ -100,6 +100,7 @@ export interface PropertyConfiguration {
   full_description: string | null;
   feature_list: Json;
   hero_image_path: string | null;
+  gallery_images?: Json | string[];
   published: boolean;
   featured: boolean;
   display_order: number;
@@ -133,6 +134,7 @@ export interface Landmark {
   name: string;
   distance_label: string;
   travel_time_label: string | null;
+  image_url?: string | null;
   display_order: number;
   created_at: string;
   updated_at: string;

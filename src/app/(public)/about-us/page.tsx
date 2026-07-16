@@ -5,6 +5,14 @@ import {
   Info,
   Award,
   Quote,
+  ShieldCheck,
+  CheckCircle2,
+  Clock,
+  Sparkles,
+  Building2,
+  MapPin,
+  Calendar,
+  Layers,
 } from 'lucide-react';
 import { getContentPage } from '@/lib/data';
 import { siteConfig } from '@/config/site';
@@ -27,6 +35,14 @@ export interface WhyChoiceItem {
 export interface StatItem {
   label: string;
   value: string;
+}
+
+export interface TimelineMilestone {
+  year: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  badge?: string;
 }
 
 export default async function AboutUsPage() {
@@ -69,6 +85,49 @@ export default async function AboutUsPage() {
     { label: 'Villas Sold', value: '15+' },
   ];
 
+  const timelineMilestones: TimelineMilestone[] = [
+    {
+      year: '2011',
+      title: 'Foundational Real Estate Mastery',
+      subtitle: 'Land Acquisition & Legal Due Diligence',
+      description:
+        'Key leadership entered real estate development in Tamil Nadu, establishing rigorous 100% title clearance standards and sub-registrar document verification procedures.',
+      badge: 'Foundation',
+    },
+    {
+      year: '2018',
+      title: 'Township Infrastructure Expansion',
+      subtitle: 'Gated Layout & Blacktop Road Engineering',
+      description:
+        'Spearheaded major residential layout planning across Namakkal and Salem highway corridors, installing 40ft blacktop avenues, underground drainage, and street lighting.',
+      badge: 'Growth Era',
+    },
+    {
+      year: '2023',
+      title: 'DTCP & RERA Sanctioned Projects',
+      subtitle: 'Flagship Namakkal & Paramathi Velur Hubs',
+      description:
+        'Launched premier layout townships with statutory DTCP and RERA approvals, introducing custom 2BHK, 3BHK, and 4BHK villa construction capabilities for homebuyers.',
+      badge: 'Approval Milestone',
+    },
+    {
+      year: '2024',
+      title: 'Establishment of Your Choice Properties',
+      subtitle: 'Dedicated Customer-Centric Brand',
+      description:
+        'Formally established Your Choice Properties as a dedicated real-estate brand to deliver plot layouts (Rasi Garden, Kongu Nagar, Kongu Garden) with end-to-end customer support.',
+      badge: 'Brand Establishment',
+    },
+    {
+      year: 'Present & Future',
+      title: 'Turnkey Luxury Villa & Township Ecosystems',
+      subtitle: 'Continued Legacy & Regional Leadership',
+      description:
+        'Expanding sustainable gated layouts and turn-key custom villa communities across Tamil Nadu with complementary site-visit transport and bank loan assistance.',
+      badge: 'Current Vision',
+    },
+  ];
+
   const whyItems: WhyChoiceItem[] = contentJson.why_choice_items || defaultWhyItems;
   const statsList: StatItem[] = contentJson.stats_list || defaultStats;
   const isStatsVisible = contentJson.stats_visible !== false;
@@ -85,53 +144,59 @@ export default async function AboutUsPage() {
 
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen py-16 px-4 sm:px-6 lg:px-8 space-y-20">
-      {/* Header Section with Single H1 */}
-      <div className="max-w-7xl mx-auto border-b border-slate-800 pb-8">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">
-          <Info className="w-3.5 h-3.5" /> Company Profile
-        </div>
-        <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl">
-          {contentJson.about_h1 || 'Your Trusted Real Estate Partner in Namakkal and Paramathi Velur'}
-        </h1>
-        <div className="text-slate-300 text-sm sm:text-base max-w-3xl mt-4 leading-relaxed space-y-3">
-          <p>
-            Your Choice Properties was started with a simple promise: honest property guidance for families in Namakkal and Paramathi Velur.
-          </p>
-          <p>
-            We understand that buying a plot or home is an important life decision. That is why our projects—Rasi Garden, Kongu Nagar and Kongu Garden—are developed with a focus on clear communication, useful locations, planned layouts and genuine value.
-          </p>
-          <p>
-            Our team helps customers understand the property, arrange site visits and complete the buying process with proper support.
-          </p>
+      {/* Modern Glassmorphism Company Profile Hero Header */}
+      <div className="max-w-7xl mx-auto relative rounded-3xl overflow-hidden border border-emerald-900/60 bg-gradient-to-br from-[#0f2e21] via-slate-900 to-slate-950 p-8 sm:p-12 shadow-2xl">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 space-y-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-xs font-bold uppercase tracking-wider shadow-lg backdrop-blur-md">
+            <Sparkles className="w-4 h-4" /> Company Profile &amp; Integrity
+          </div>
+
+          <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl">
+            {contentJson.about_h1 || 'Your Trusted Real Estate Partner in Namakkal and Paramathi Velur'}
+          </h1>
+
+          <div className="text-slate-200 text-sm sm:text-base max-w-3xl leading-relaxed space-y-4 pt-2">
+            <p>
+              Your Choice Properties was established with a clear commitment: to bring transparency, legal clarity, and structural excellence to residential land and villa development across Namakkal and Paramathi Velur.
+            </p>
+            <p>
+              Every layout in our portfolio—including Rasi Garden, Kongu Nagar, and Kongu Garden—is planned with DTCP/RERA approvals, asphalt road infrastructure, potable water lines, and clear title documentation before being offered to home buyers.
+            </p>
+          </div>
+
+          {/* Quick Trust Highlights */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6 border-t border-emerald-900/40">
+            <div className="p-4 bg-slate-950/60 border border-emerald-800/40 rounded-2xl flex items-center gap-3 backdrop-blur-md">
+              <ShieldCheck className="w-8 h-8 text-emerald-400 shrink-0" />
+              <div>
+                <span className="font-bold text-white text-xs block">100% Title Cleared</span>
+                <span className="text-[11px] text-slate-400 block">Verified Deed Search</span>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-950/60 border border-emerald-800/40 rounded-2xl flex items-center gap-3 backdrop-blur-md">
+              <Building2 className="w-8 h-8 text-amber-400 shrink-0" />
+              <div>
+                <span className="font-bold text-white text-xs block">DTCP &amp; RERA Sanctioned</span>
+                <span className="text-[11px] text-slate-400 block">Approved Layouts</span>
+              </div>
+            </div>
+
+            <div className="p-4 bg-slate-950/60 border border-emerald-800/40 rounded-2xl flex items-center gap-3 backdrop-blur-md">
+              <MapPin className="w-8 h-8 text-blue-400 shrink-0" />
+              <div>
+                <span className="font-bold text-white text-xs block">Prime Highway Corridors</span>
+                <span className="text-[11px] text-slate-400 block">Namakkal &amp; Velur</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Why We Are the Right Choice Section */}
-      <section className="max-w-7xl mx-auto space-y-8">
-        <div className="border-b border-slate-800 pb-4">
-          <span className="text-xs font-bold uppercase tracking-widest text-amber-400 font-mono">Core Values</span>
-          <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white mt-1">
-            {contentJson.why_choice_heading || 'Why We Are the Right Choice'}
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {whyItems.map((item, idx) => (
-            <div
-              key={idx}
-              className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-2 shadow-xl hover:border-amber-500/40 transition-all duration-300"
-            >
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold text-sm">
-                0{idx + 1}
-              </div>
-              <h3 className="font-serif font-bold text-white text-lg">{item.title}</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">{item.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Founder Section */}
+      {/* Leadership & Vision Founder Section */}
       <section className="max-w-7xl mx-auto py-12 px-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl relative overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           {/* Founder Image / Emblem Badge */}
@@ -180,6 +245,74 @@ export default async function AboutUsPage() {
               </span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Visual Company Journey & History Timeline Section */}
+      <section className="max-w-7xl mx-auto space-y-12">
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider">
+            <Clock className="w-3.5 h-3.5" /> Milestones &amp; History
+          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            Our Journey &amp; Growth Timeline
+          </h2>
+          <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Over a decade of hands-on real estate leadership, continuous layout delivery, and satisfied families across Tamil Nadu.
+          </p>
+        </div>
+
+        <div className="relative border-l-2 border-emerald-800/60 ml-4 sm:ml-32 space-y-12 pl-6 sm:pl-10">
+          {timelineMilestones.map((item, idx) => (
+            <div key={idx} className="relative group">
+              {/* Connected Year Node Marker */}
+              <div className="absolute -left-[31px] sm:-left-[47px] top-1 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-slate-950 border-2 border-amber-400 group-hover:border-emerald-400 group-hover:scale-110 flex items-center justify-center transition-all duration-300 shadow-lg">
+                <div className="w-2 h-2 rounded-full bg-amber-400 group-hover:bg-emerald-400 transition-colors" />
+              </div>
+
+              {/* Desktop Floating Year Tag */}
+              <div className="hidden sm:block absolute -left-[140px] top-1 text-right w-24">
+                <span className="font-serif font-extrabold text-amber-400 text-lg block">{item.year}</span>
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{item.badge}</span>
+              </div>
+
+              {/* Timeline Card */}
+              <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-xl space-y-2 hover:border-amber-500/40 transition-all duration-300">
+                <div className="sm:hidden flex items-center justify-between border-b border-slate-800 pb-2 mb-2">
+                  <span className="font-serif font-extrabold text-amber-400 text-base">{item.year}</span>
+                  <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">{item.badge}</span>
+                </div>
+                <h3 className="font-serif font-bold text-white text-lg sm:text-xl">{item.title}</h3>
+                <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider">{item.subtitle}</h4>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed pt-1">{item.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Why We Are the Right Choice Section (Core Values) */}
+      <section className="max-w-7xl mx-auto space-y-8">
+        <div className="border-b border-slate-800 pb-4">
+          <span className="text-xs font-bold uppercase tracking-widest text-amber-400 font-mono">Core Values</span>
+          <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white mt-1">
+            {contentJson.why_choice_heading || 'Why We Are the Right Choice'}
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {whyItems.map((item, idx) => (
+            <div
+              key={idx}
+              className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-2 shadow-xl hover:border-amber-500/40 transition-all duration-300"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold text-sm">
+                0{idx + 1}
+              </div>
+              <h3 className="font-serif font-bold text-white text-lg">{item.title}</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">{item.description}</p>
+            </div>
+          ))}
         </div>
       </section>
 

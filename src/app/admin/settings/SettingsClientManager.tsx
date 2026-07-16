@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { saveSiteSettingAction } from '@/app/actions/crud';
 import { useToast } from '@/components/ui/toast';
+import { MediaUploader } from '@/components/admin/MediaUploader';
 
 export interface SiteSettingRecord {
   key: string;
@@ -390,11 +391,11 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
                   />
                 </div>
                 <div>
-                  <Label>Custom Thumbnail URL (Optional - defaults to video thumbnail)</Label>
-                  <Input
+                  <MediaUploader
+                    label="Testimonial Video Cover / Thumbnail Image"
                     value={t.thumbnail_url || ''}
-                    onChange={(e) => updateTestimonial(idx, 'thumbnail_url', e.target.value)}
-                    placeholder="https://images.unsplash.com/... or image path"
+                    folder="testimonials"
+                    onChange={(url) => updateTestimonial(idx, 'thumbnail_url', url)}
                   />
                 </div>
                 <div>

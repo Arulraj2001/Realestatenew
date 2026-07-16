@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog } from '@/components/ui/dialog';
+import { MediaUploader } from '@/components/admin/MediaUploader';
 import { saveLandmarkAction, deleteLandmarkAction } from '@/app/actions/crud';
 import { useToast } from '@/components/ui/toast';
 
@@ -23,18 +24,19 @@ export const LandmarksClientManager: React.FC<{
     project_id: projects[0]?.id || '',
     name: '',
     distance_label: '5 Mins',
+    image_url: '',
     display_order: 0,
   });
 
   const handleOpenCreate = () => {
     setEditingLandmark(null);
-    setFormData({ project_id: projects[0]?.id || '', name: '', distance_label: '5 Mins', display_order: landmarks.length + 1 });
+    setFormData({ project_id: projects[0]?.id || '', name: '', distance_label: '5 Mins', image_url: '', display_order: landmarks.length + 1 });
     setIsDialogOpen(true);
   };
 
   const handleOpenEdit = (l: Landmark) => {
     setEditingLandmark(l);
-    setFormData({ project_id: l.project_id, name: l.name, distance_label: l.distance_label, display_order: l.display_order });
+    setFormData({ project_id: l.project_id, name: l.name, distance_label: l.distance_label, image_url: l.image_url || '', display_order: l.display_order });
     setIsDialogOpen(true);
   };
 
@@ -68,28 +70,33 @@ export const LandmarksClientManager: React.FC<{
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div>
           <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
-            <Navigation className="w-6 h-6 text-amber-400" /> Key Nearby Landmarks
+            <Navigation className="w-6 h-6 text-amber-400 pointer-events-none" /> Key Nearby Landmarks
           </h1>
-          <p className="text-xs text-slate-400">Manage proximity landmarks for project detail pages (Schools, Bus Stands, Hospitals)</p>
+          <p className="text-xs text-slate-400">Manage proximity landmarks with real site photos for project detail pages (Schools, Bus Stands, Hospitals)</p>
         </div>
         <Button variant="gold" size="sm" onClick={handleOpenCreate}>
-          <Plus className="w-4 h-4" /> Add Landmark
+          <Plus className="w-4 h-4 pointer-events-none" /> Add Landmark
         </Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {landmarks.map((l) => (
           <div key={l.id} className="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between">
-            <div>
-              <h3 className="font-bold text-white text-sm">{l.name}</h3>
-              <span className="text-xs text-amber-400 font-semibold">{l.distance_label}</span>
+            <div className="flex items-center gap-3">
+              {l.image_url && (
+                <img src={l.image_url} alt={l.name} className="w-10 h-10 rounded-lg object-cover border border-slate-800" />
+              )}
+              <div>
+                <h3 className="font-bold text-white text-sm">{l.name}</h3>
+                <span className="text-xs text-amber-400 font-semibold">{l.distance_label}</span>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => handleOpenEdit(l)} className="p-1.5 text-slate-400 hover:text-amber-400 cursor-pointer">
-                <Edit3 className="w-4 h-4" />
+                <Edit3 className="w-4 h-4 pointer-events-none" />
               </button>
               <button onClick={() => handleDelete(l)} className="p-1.5 text-slate-400 hover:text-red-400 cursor-pointer">
-                <Trash2 className="w-4 h-4" />
+                <Trash2 className="w-4 h-4 pointer-events-none" />
               </button>
             </div>
           </div>
@@ -112,11 +119,19 @@ export const LandmarksClientManager: React.FC<{
           </div>
           <div>
             <Label required>Landmark Name</Label>
-            <Input required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Namakkal Bus Stand" />
+            <Input required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Namakkal Bus Stand / Green Park School" />
           </div>
           <div>
             <Label required>Distance Label</Label>
-            <Input required value={formData.distance_label} onChange={(e) => setFormData({ ...formData, distance_label: e.target.value })} placeholder="5 Mins" />
+            <Input required value={formData.distance_label} onChange={(e) => setFormData({ ...formData, distance_label: e.target.value })} placeholder="5 Mins / 1.5 KM" />
+          </div>
+          <div>
+            <MediaUploader
+              label="Landmark Photo / Image"
+              value={formData.image_url}
+              folder="landmarks"
+              onChange={(url) => setFormData({ ...formData, image_url: url })}
+            />
           </div>
           <div className="flex justify-end pt-2">
             <Button type="submit" variant="gold" size="md">Save Landmark</Button>

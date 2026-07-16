@@ -73,7 +73,7 @@ export const Drawer: React.FC<DrawerProps> = ({
             className="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-slate-800 transition-colors ml-auto cursor-pointer"
             aria-label="Close drawer"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 pointer-events-none" />
           </button>
         </div>
 

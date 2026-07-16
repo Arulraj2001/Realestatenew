@@ -1,8 +1,9 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { Camera, Sparkles, MapPin, Building2 } from 'lucide-react';
+import { Camera, Sparkles, MapPin, Building2, Phone, MessageSquare } from 'lucide-react';
 import { getPublishedGalleryItems, getPublishedProjects, getPublishedLocations } from '@/lib/data';
 import { siteConfig } from '@/config/site';
+import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
 import { GalleryLightbox } from '@/components/public/GalleryLightbox';
 import { Badge } from '@/components/ui/badge';
 
@@ -65,6 +66,26 @@ export default async function GalleryPage() {
             View site photos, roads, plot layouts and 2BHK, 3BHK and 4BHK villa designs from Kongu Garden.
           </p>
           <GalleryLightbox items={konguGardenItems.length > 0 ? konguGardenItems : galleryItems} />
+
+          {/* Section End Action Buttons */}
+          <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href={buildWhatsAppUrl({ customMessage: 'Hello, I am interested in inquiring about plot & villa availability in Kongu Garden, Paramathi Velur.' })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2.5 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4 fill-current" />
+              <span>WhatsApp Enquiry — Kongu Garden</span>
+            </a>
+            <a
+              href={`tel:${siteConfig.contact.phone}`}
+              className="py-2.5 px-5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-100 text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <Phone className="w-4 h-4 text-emerald-400" />
+              <span>Call Us ({siteConfig.contact.phone})</span>
+            </a>
+          </div>
         </section>
 
         {/* Project Section 2: Rasi Garden, Namakkal */}
@@ -84,6 +105,26 @@ export default async function GalleryPage() {
             Explore layout views, road infrastructure, residential plots and villa designs from Rasi Garden in Namakkal.
           </p>
           <GalleryLightbox items={rasiGardenItems.length > 0 ? rasiGardenItems : galleryItems} />
+
+          {/* Section End Action Buttons */}
+          <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href={buildWhatsAppUrl({ customMessage: 'Hello, I am interested in inquiring about plot & villa details in Rasi Garden, Namakkal.' })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2.5 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4 fill-current" />
+              <span>WhatsApp Enquiry — Rasi Garden</span>
+            </a>
+            <a
+              href={`tel:${siteConfig.contact.phone}`}
+              className="py-2.5 px-5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-100 text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <Phone className="w-4 h-4 text-emerald-400" />
+              <span>Call Us ({siteConfig.contact.phone})</span>
+            </a>
+          </div>
         </section>
 
         {/* Project Section 3: Kongu Nagar, Namakkal */}
@@ -103,6 +144,26 @@ export default async function GalleryPage() {
             See plot layouts, site photos and residential-development updates from Kongu Nagar.
           </p>
           <GalleryLightbox items={konguNagarItems.length > 0 ? konguNagarItems : galleryItems} />
+
+          {/* Section End Action Buttons */}
+          <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href={buildWhatsAppUrl({ customMessage: 'Hello, I am interested in inquiring about residential plot availability in Kongu Nagar, Namakkal.' })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2.5 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4 fill-current" />
+              <span>WhatsApp Enquiry — Kongu Nagar</span>
+            </a>
+            <a
+              href={`tel:${siteConfig.contact.phone}`}
+              className="py-2.5 px-5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-100 text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <Phone className="w-4 h-4 text-emerald-400" />
+              <span>Call Us ({siteConfig.contact.phone})</span>
+            </a>
+          </div>
         </section>
 
         {/* Other Township Photos (if available) */}
@@ -112,6 +173,26 @@ export default async function GalleryPage() {
               Township Infrastructure & Site Progress
             </h2>
             <GalleryLightbox items={otherItems} />
+
+            {/* Section End Action Buttons */}
+            <div className="pt-6 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href={buildWhatsAppUrl({ customMessage: 'Hello, I would like to inquire about your property developments and upcoming layouts.' })}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="py-2.5 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+              >
+                <MessageSquare className="w-4 h-4 fill-current" />
+                <span>WhatsApp Sales Enquiry</span>
+              </a>
+              <a
+                href={`tel:${siteConfig.contact.phone}`}
+                className="py-2.5 px-5 bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-100 text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
+              >
+                <Phone className="w-4 h-4 text-emerald-400" />
+                <span>Call Us ({siteConfig.contact.phone})</span>
+              </a>
+            </div>
           </section>
         )}
       </div>
