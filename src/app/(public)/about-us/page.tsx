@@ -13,6 +13,10 @@ import {
   MapPin,
   Calendar,
   Layers,
+  Landmark,
+  FileCheck,
+  TrendingUp,
+  Users,
 } from 'lucide-react';
 import { getContentPage } from '@/lib/data';
 import { siteConfig } from '@/config/site';
@@ -53,27 +57,27 @@ export default async function AboutUsPage() {
   const defaultWhyItems: WhyChoiceItem[] = [
     {
       title: 'Prime Location',
-      description: 'Projects in growing areas with useful road access and future development potential.',
+      description: 'Projects in fast-growing areas with excellent connectivity and appreciation potential.',
     },
     {
       title: 'DTCP Approved',
-      description: 'Residential plots and projects presented with the required approvals and available documents.',
+      description: 'Legally approved plots and villas for secure property ownership.',
     },
     {
       title: 'Loan Assistance',
-      description: 'Guidance for eligible buyers who want to understand available home-loan options.',
+      description: 'End-to-end support for hassle-free home loan processing.',
     },
     {
       title: 'Clear Documentation',
-      description: 'We explain the available property documents and registration process clearly.',
+      description: 'Transparent legal documentation with no hidden complications.',
     },
     {
-      title: 'Growth Potential',
-      description: 'Projects selected for residential use and long-term property value.',
+      title: 'High Growth Potential',
+      description: 'Carefully selected locations ideal for long-term investment.',
     },
     {
       title: 'Trusted Support',
-      description: 'Personal support from site visit through booking and registration.',
+      description: 'Personalized guidance from site visit to registration.',
     },
   ];
 
@@ -291,28 +295,85 @@ export default async function AboutUsPage() {
         </div>
       </section>
 
-      {/* Why We Are the Right Choice Section (Core Values) */}
+      {/* Why We’re the Right Choice Section — Left & Right Visual Split */}
       <section className="max-w-7xl mx-auto space-y-8">
         <div className="border-b border-slate-800 pb-4">
-          <span className="text-xs font-bold uppercase tracking-widest text-amber-400 font-mono">Core Values</span>
-          <h2 className="font-serif text-2xl sm:text-4xl font-bold text-white mt-1">
-            {contentJson.why_choice_heading || 'Why We Are the Right Choice'}
+          <span className="text-xs font-bold uppercase tracking-widest text-amber-400 font-mono">Core Advantages</span>
+          <h2 className="font-serif text-3xl sm:text-5xl font-extrabold text-white mt-1">
+            {contentJson.why_choice_heading || 'Why We’re the Right Choice'}
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {whyItems.map((item, idx) => (
-            <div
-              key={idx}
-              className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-2 shadow-xl hover:border-amber-500/40 transition-all duration-300"
-            >
-              <div className="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold text-sm">
-                0{idx + 1}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Left Visual Highlight Card */}
+          <div className="lg:col-span-4 relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 p-8 shadow-2xl flex flex-col justify-between space-y-6 group hover:border-amber-500/50 transition-all duration-300">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+            
+            <div className="relative z-10 space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center font-bold">
+                <Sparkles className="w-6 h-6" />
               </div>
-              <h3 className="font-serif font-bold text-white text-lg">{item.title}</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">{item.description}</p>
+              <h3 className="font-serif font-bold text-2xl text-white leading-snug">
+                Your Preferred Real Estate Developer
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                We combine DTCP regulatory compliance, transparent sub-registrar documentation, and strategic layout locations to protect your capital and build genuine long-term value.
+              </p>
             </div>
-          ))}
+
+            <div className="relative z-10 space-y-3 pt-6 border-t border-slate-800/80">
+              <div className="flex items-center gap-2.5 text-xs text-slate-200">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>100% Verified Legal Documents</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-xs text-slate-200">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Zero Hidden Fees or Charges</span>
+              </div>
+              <div className="flex items-center gap-2.5 text-xs text-slate-200">
+                <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>Guided Private Site Visit Transport</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Visual 2-Column Feature Cards Grid */}
+          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-5">
+            {whyItems.map((item, idx) => {
+              const iconList = [
+                <MapPin className="w-5 h-5 text-amber-400" key="1" />,
+                <ShieldCheck className="w-5 h-5 text-emerald-400" key="2" />,
+                <Landmark className="w-5 h-5 text-blue-400" key="3" />,
+                <FileCheck className="w-5 h-5 text-amber-400" key="4" />,
+                <TrendingUp className="w-5 h-5 text-emerald-400" key="5" />,
+                <Users className="w-5 h-5 text-blue-400" key="6" />,
+              ];
+
+              return (
+                <div
+                  key={idx}
+                  className="p-6 bg-slate-900 border border-slate-800 rounded-3xl space-y-3 shadow-xl hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between group"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="w-10 h-10 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
+                        {iconList[idx % iconList.length]}
+                      </div>
+                      <span className="font-mono text-xs font-bold text-slate-500">0{idx + 1}</span>
+                    </div>
+
+                    <h3 className="font-serif font-bold text-white text-lg group-hover:text-amber-400 transition-colors">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
