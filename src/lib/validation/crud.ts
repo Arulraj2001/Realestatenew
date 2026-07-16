@@ -14,6 +14,8 @@ export const locationCrudSchema = z.object({
   display_order: z.number().int().default(0),
   published: z.boolean().default(true),
   featured: z.boolean().default(false),
+  location_status: z.enum(['current', 'upcoming']).default('current'),
+  show_in_navigation: z.boolean().default(true),
 });
 
 export const projectCrudSchema = z.object({
@@ -57,6 +59,7 @@ export const propertyConfigCrudSchema = z.object({
   availability_status: z.enum(['Available', 'Sold Out', 'Fast Filling']).default('Available'),
   short_description: z.string().optional().or(z.literal('')),
   full_description: z.string().optional().or(z.literal('')),
+  feature_list: z.union([z.array(z.string()), z.string()]).optional(),
   hero_image_path: z.string().optional().or(z.literal('')),
   display_order: z.number().int().default(0),
   published: z.boolean().default(true),

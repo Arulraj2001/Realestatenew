@@ -1,9 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
-import { MapPin, Phone, Mail, Clock, ArrowUpRight } from 'lucide-react';
+import { Phone, Mail, Clock, ArrowUpRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 
 export const Footer: React.FC = () => {
+  const primeLocations = [
+    { name: 'Namakkal Layouts', slug: 'namakkal', status: 'current' },
+    { name: 'Paramathi Velur Layouts', slug: 'paramathi-velur', status: 'current' },
+    { name: 'Salem Hub (Coming Soon)', slug: 'salem', status: 'upcoming' },
+    { name: 'Erode Hub (Coming Soon)', slug: 'erode', status: 'upcoming' },
+  ];
+
   return (
     <footer className="bg-[#091b13] text-slate-300 border-t border-emerald-950 pt-16 pb-24 md:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,13 +41,20 @@ export const Footer: React.FC = () => {
               Quick Navigation
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              {['Home', 'Locations', 'Projects', 'Services', 'About Us', 'Contact'].map((item) => (
-                <li key={item}>
+              {[
+                { name: 'Home', path: '/' },
+                { name: 'Locations', path: '/locations' },
+                { name: 'Projects', path: '/projects' },
+                { name: 'Services', path: '/services' },
+                { name: 'About Us', path: '/about' },
+                { name: 'Contact', path: '/contact' },
+              ].map((item) => (
+                <li key={item.name}>
                   <Link
-                    href={item === 'Home' ? '/' : `/${item.toLowerCase().replace(/\s+/g, '')}`}
+                    href={item.path}
                     className="hover:text-amber-400 transition-colors flex items-center gap-1 group"
                   >
-                    <span>{item}</span>
+                    <span>{item.name}</span>
                     <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </Link>
                 </li>
@@ -54,47 +68,49 @@ export const Footer: React.FC = () => {
               Prime Locations
             </h4>
             <ul className="space-y-2.5 text-xs text-slate-400">
-              <li><Link href="/locations/namakkal" className="hover:text-amber-400 transition-colors">Namakkal Layouts</Link></li>
-              <li><Link href="/locations/paramathi-velur" className="hover:text-amber-400 transition-colors">Paramathi Velur Layouts</Link></li>
-              <li><span className="text-slate-500">Salem (Coming Soon)</span></li>
-              <li><span className="text-slate-500">Erode (Coming Soon)</span></li>
+              {primeLocations.map((loc) => (
+                <li key={loc.slug}>
+                  {loc.status === 'current' ? (
+                    <Link href={`/locations/${loc.slug}`} className="hover:text-amber-400 transition-colors">
+                      {loc.name}
+                    </Link>
+                  ) : (
+                    <span className="text-slate-500">{loc.name}</span>
+                  )}
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact Details */}
           <div>
             <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
-              Head Office
+              Get in Touch
             </h4>
             <div className="space-y-3 text-xs text-slate-400">
-              <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <span>{siteConfig.contact.address}</span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-white transition-colors">
-                  {siteConfig.contact.phone}
-                </a>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                <a href={`mailto:${siteConfig.contact.email}`} className="hover:text-white transition-colors">
-                  {siteConfig.contact.email}
-                </a>
-              </div>
-              <div className="flex items-center gap-2.5 text-slate-400">
-                <Clock className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Mon - Sun: 9:00 AM - 8:00 PM</span>
-              </div>
+              <p className="flex items-start gap-2">
+                <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <span>{siteConfig.contact.email}</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                <span>{siteConfig.contact.phone}</span>
+              </p>
+              <p className="flex items-start gap-2">
+                <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                <span>Mon - Sun: 9:00 AM - 7:00 PM</span>
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Bottom copyright */}
+        {/* Legal Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
-          <p className="text-[11px]">Designed with high-performance Next.js App Router</p>
+          <div className="flex gap-4">
+            <Link href="/privacy-policy" className="hover:text-slate-300">Privacy Policy</Link>
+            <Link href="/terms-and-conditions" className="hover:text-slate-300">Terms & Conditions</Link>
+          </div>
         </div>
       </div>
     </footer>

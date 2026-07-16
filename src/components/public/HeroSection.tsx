@@ -1,117 +1,150 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, MapPin, Calendar, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { Sparkles, Calendar, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { SiteVisitForm } from '@/components/forms/SiteVisitForm';
 
 export interface HeroSectionProps {
-  heroTitle?: string | null;
-  heroSubtitle?: string | null;
-  heroVideoUrl?: string | null;
-  heroPosterUrl?: string | null;
+  heroTitle?: string;
+  heroDescription?: string;
+  primaryCtaLabel?: string;
+  primaryCtaLink?: string;
+  secondaryCtaLabel?: string;
+  mediaType?: 'video' | 'image';
+  desktopVideo?: string;
+  mobileVideo?: string;
+  desktopImage?: string;
+  mobileImage?: string;
+  posterImage?: string;
+  overlayOpacity?: number;
+  textAlignment?: 'left' | 'center' | 'right';
+  heroEnabled?: boolean;
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = ({
-  heroTitle,
-  heroSubtitle,
-  heroVideoUrl,
-  heroPosterUrl,
+  heroTitle = 'Your Choice Properties – Trusted Plots, Villas and Houses in Namakkal and Paramathi Velur',
+  heroDescription = 'Explore residential plots, gated-community villas and independent houses across our projects in Namakkal and Paramathi Velur.',
+  primaryCtaLabel = 'Explore Projects',
+  primaryCtaLink = '/projects',
+  secondaryCtaLabel = 'Schedule a Site Visit',
+  mediaType = 'image',
+  desktopVideo,
+  mobileVideo,
+  desktopImage = 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80',
+  mobileImage,
+  posterImage = 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80',
+  overlayOpacity = 70,
+  textAlignment = 'center',
+  heroEnabled = true,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
 
-  const defaultTitle =
-    heroTitle || 'Premium DTCP Approved Villa Plots & Luxury Homes in Namakkal';
-  const defaultSubtitle =
-    heroSubtitle ||
-    'Discover 100% clear-title residential communities, paved avenues, and custom villa designs in prime Tamil Nadu hubs.';
+  if (heroEnabled === false) return null;
 
-  const defaultPoster =
-    heroPosterUrl ||
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80';
+  // Safe clamping of opacity 0-100
+  const safeOpacity = Math.max(0, Math.min(100, overlayOpacity)) / 100;
+
+  const alignClasses =
+    textAlignment === 'left'
+      ? 'text-left items-start'
+      : textAlignment === 'right'
+      ? 'text-right items-end'
+      : 'text-center items-center';
 
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-slate-950 text-white">
-      {/* Background Media */}
-      {heroVideoUrl ? (
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster={defaultPoster}
-          className="absolute inset-0 w-full h-full object-cover scale-105"
-        >
-          <source src={heroVideoUrl} type="video/mp4" />
-        </video>
-      ) : (
-        <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 scale-105"
-          style={{ backgroundImage: `url('${defaultPoster}')` }}
-        />
-      )}
-
-      {/* Cinematic Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/75 to-slate-950/40" />
-
-      {/* Hero Content Box */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-8">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-semibold tracking-wider uppercase backdrop-blur-md">
-          <ShieldCheck className="w-4 h-4 text-amber-400" />
-          <span>100% DTCP & RERA Approved Layouts</span>
-        </div>
-
-        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
-          {defaultTitle}
-        </h1>
-
-        <p className="text-slate-300 text-base sm:text-lg md:text-xl max-w-3xl mx-auto font-light leading-relaxed">
-          {defaultSubtitle}
-        </p>
-
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="#featured-projects">
-            <Button variant="gold" size="lg" className="w-full sm:w-auto">
-              <span>Explore Properties</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </a>
-
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => setIsModalOpen(true)}
-            className="w-full sm:w-auto border-slate-600 bg-slate-900/60 backdrop-blur-md hover:bg-slate-800 text-white"
+    <section className="relative min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-between overflow-hidden bg-slate-950 text-slate-100 pb-28 sm:pb-36">
+      {/* Media Background Layer */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {mediaType === 'video' && desktopVideo ? (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster={posterImage || desktopImage}
+            className="w-full h-full object-cover"
           >
-            <Calendar className="w-4 h-4 text-amber-400" />
-            <span>Schedule Free Site Visit</span>
-          </Button>
-        </div>
+            <source src={desktopVideo} type="video/mp4" />
+            {mobileVideo && <source src={mobileVideo} type="video/mp4" />}
+          </video>
+        ) : (
+          <picture className="w-full h-full">
+            {mobileImage && <source media="(max-width: 640px)" srcSet={mobileImage} />}
+            <Image
+              src={desktopImage || posterImage}
+              alt="Your Choice Properties Banner"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          </picture>
+        )}
 
-        <div className="pt-6 flex flex-wrap justify-center items-center gap-3 text-xs text-slate-400">
-          <span className="flex items-center gap-1">
-            <MapPin className="w-3.5 h-3.5 text-amber-400" /> Key Hubs:
-          </span>
-          <span className="px-3 py-1 bg-slate-900/80 rounded-full border border-slate-800 text-slate-200">
-            Namakkal
-          </span>
-          <span className="px-3 py-1 bg-slate-900/80 rounded-full border border-slate-800 text-slate-200">
-            Paramathi Velur
-          </span>
-          <span className="px-3 py-1 bg-slate-900/80 rounded-full border border-slate-800 text-slate-400 opacity-60">
-            Salem (Upcoming)
-          </span>
+        {/* Dynamic Admin Controlled Dark Overlay Opacity */}
+        <div
+          className="absolute inset-0 bg-slate-950"
+          style={{ opacity: safeOpacity }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40" />
+      </div>
+
+      {/* Hero Content Section */}
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-12 flex-1 flex flex-col justify-center">
+        <div className={`flex flex-col ${alignClasses} space-y-5`}>
+          {/* Badge Tag */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-xl">
+            <Sparkles className="w-3.5 h-3.5" /> DTCP & RERA Approved Layouts
+          </div>
+
+          {/* H1 Heading */}
+          <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl drop-shadow-md">
+            {heroTitle}
+          </h1>
+
+          {/* Description */}
+          <p className="text-slate-200 text-sm sm:text-lg max-w-3xl leading-relaxed font-normal drop-shadow-sm">
+            {heroDescription}
+          </p>
+
+          {/* Compact Designed CTA Buttons with Mouse Hover Animations */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
+            <Link href={primaryCtaLink} className="group">
+              <Button
+                variant="gold"
+                size="sm"
+                className="font-bold px-5 py-2.5 text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-500/20 hover:scale-105 hover:shadow-amber-500/35 transition-all duration-300 flex items-center gap-2"
+              >
+                <span>{primaryCtaLabel}</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+              </Button>
+            </Link>
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsVisitModalOpen(true)}
+              className="group border-slate-400 hover:border-amber-400 text-slate-100 hover:text-amber-300 bg-slate-900/70 hover:bg-slate-900 backdrop-blur-md font-bold px-5 py-2.5 text-xs sm:text-sm rounded-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 shadow-lg"
+            >
+              <Calendar className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300" />
+              <span>{secondaryCtaLabel}</span>
+            </Button>
+          </div>
         </div>
       </div>
 
+      {/* Site Visit Booking Modal */}
       <Dialog
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Schedule Free Site Visit"
-        description="Pick-up & drop facility available across Namakkal and surrounding regions."
+        isOpen={isVisitModalOpen}
+        onClose={() => setIsVisitModalOpen(false)}
+        title="Schedule a Free Chauffeured Site Visit"
+        description="Select your preferred project and visit timing. Our team will arrange pickup."
       >
-        <SiteVisitForm onSuccess={() => setIsModalOpen(false)} />
+        <SiteVisitForm onSuccess={() => setIsVisitModalOpen(false)} />
       </Dialog>
     </section>
   );

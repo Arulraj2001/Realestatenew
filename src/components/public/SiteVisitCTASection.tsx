@@ -1,80 +1,72 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar, PhoneCall, MessageSquare, ShieldCheck } from 'lucide-react';
-import { buildWhatsAppUrl, buildCallUrl } from '@/lib/utils/whatsapp';
-import { trackConversionEvent } from '@/lib/utils/analytics';
+import { Calendar, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { SiteVisitForm } from '@/components/forms/SiteVisitForm';
-import { siteConfig } from '@/config/site';
+import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
 
-export const SiteVisitCTASection: React.FC = () => {
+export interface SiteVisitCTASectionProps {
+  heading?: string;
+  description?: string;
+}
+
+export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
+  heading = 'Visit the Project Before You Decide',
+  description = 'Tell us which location or property you are interested in, and our team will arrange a guided site visit.',
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-[#0f2e21] via-slate-900 to-slate-950 border-t border-emerald-900/60 text-slate-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-900/90 border border-amber-500/30 rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden text-center space-y-6">
-          <div className="absolute -top-24 -right-24 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl" />
+    <section className="py-20 bg-gradient-to-br from-[#0f2e21] via-slate-950 to-slate-950 text-slate-100 border-t border-emerald-900/40 relative overflow-hidden">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider">
+          <Calendar className="w-4 h-4" /> Chauffeured Pickup Available
+        </div>
 
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-wider">
-            <ShieldCheck className="w-4 h-4 text-amber-400" />
-            <span>Complimentary Transport Facility Available</span>
-          </div>
+        <h2 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+          {heading}
+        </h2>
 
-          <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-3xl mx-auto">
-            Ready to Find Your Ideal Plot or Villa in Namakkal?
-          </h2>
+        <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+          {description}
+        </p>
 
-          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Experience our layouts first-hand. Schedule a free site visit today with our property advisors. Pick-up and drop options provided.
-          </p>
+        <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
+          <Button
+            variant="gold"
+            size="lg"
+            onClick={() => setIsModalOpen(true)}
+            className="font-bold px-8 py-4 text-base shadow-xl"
+          >
+            <Calendar className="w-5 h-5 mr-2" /> Schedule a Site Visit
+          </Button>
 
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a
+            href={buildWhatsAppUrl({
+              customMessage: 'Hi Your Choice Properties team, I would like to schedule a site visit to inspect your layouts.',
+            })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             <Button
-              variant="gold"
+              variant="outline"
               size="lg"
-              onClick={() => setIsModalOpen(true)}
-              className="w-full sm:w-auto font-bold shadow-xl"
+              className="border-emerald-600/60 hover:bg-emerald-950 text-white bg-slate-900/60 font-bold px-8 py-4 text-base"
             >
-              <Calendar className="w-5 h-5 text-slate-950" />
-              <span>Book Free Site Visit Now</span>
+              <MessageSquare className="w-5 h-5 text-emerald-400 mr-2" /> Chat on WhatsApp
             </Button>
-
-            <a
-              href={buildWhatsAppUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackConversionEvent('whatsapp_clicked', { source: 'site_visit_cta_banner' })}
-              className="w-full sm:w-auto"
-            >
-              <Button variant="outline" size="lg" className="w-full sm:w-auto border-emerald-600 text-emerald-400 hover:bg-emerald-950">
-                <MessageSquare className="w-5 h-5 fill-current" />
-                <span>Chat on WhatsApp</span>
-              </Button>
-            </a>
-          </div>
-
-          <p className="text-xs text-slate-400 pt-2">
-            Or call us directly at{' '}
-            <a
-              href={buildCallUrl()}
-              onClick={() => trackConversionEvent('call_clicked', { source: 'site_visit_cta_banner' })}
-              className="text-amber-400 font-bold hover:underline"
-            >
-              <PhoneCall className="w-3.5 h-3.5 inline mr-1" />
-              {siteConfig.contact.phone}
-            </a>
-          </p>
+          </a>
         </div>
       </div>
 
+      {/* Dialog Modal for Booking Site Visit */}
       <Dialog
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Schedule Site Visit"
-        description="Fill out the details below and our coordinator will confirm your pickup timing."
+        title="Schedule a Guided Site Visit"
+        description="Fill in your preferred date and contact details. Our team will coordinate."
       >
         <SiteVisitForm onSuccess={() => setIsModalOpen(false)} />
       </Dialog>

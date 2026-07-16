@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock, MessageSquare, ChevronRight } from 'lucide-react';
 import { siteConfig } from '@/config/site';
+import { getFAQs } from '@/lib/data';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { FAQSection } from '@/components/public/FAQSection';
 
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactUsPage() {
+  const faqs = await getFAQs();
   const localBusinessJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -170,7 +172,7 @@ export default async function ContactUsPage() {
           </div>
         </section>
 
-        <FAQSection />
+        <FAQSection faqs={faqs ?? undefined} />
       </div>
     </>
   );

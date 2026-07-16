@@ -1,3 +1,5 @@
-import AboutUsPage from '../about-us/page';
-export { metadata } from '../about-us/page';
-export default AboutUsPage;
+import { redirect } from 'next/navigation';
+
+export default function AboutRedirectPage() {
+  redirect('/about-us');
+}

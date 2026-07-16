@@ -17,7 +17,7 @@ export const Badge: React.FC<BadgeProps> = ({
     gold: 'bg-amber-500/10 border-amber-500/30 text-amber-400',
     emerald: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400',
     amber: 'bg-amber-600/10 border-amber-600/30 text-amber-500',
-    slate: 'bg-slate-800 border-slate-700 text-slate-300',
+    slate: 'bg-slate-800/90 border-slate-700 text-slate-100',
     red: 'bg-red-500/10 border-red-500/30 text-red-400',
   };
 
@@ -29,7 +29,7 @@ export const Badge: React.FC<BadgeProps> = ({
   return (
     <span
       className={cn(
-        'inline-flex items-center font-semibold tracking-wider uppercase border rounded-full',
+        'inline-flex items-center font-bold tracking-wider uppercase border rounded-full shadow-sm',
         variants[variant],
         sizes[size],
         className

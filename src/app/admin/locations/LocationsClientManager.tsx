@@ -31,6 +31,8 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
     display_order: 0,
     published: true,
     featured: false,
+    location_status: 'current' as 'current' | 'upcoming',
+    show_in_navigation: true,
   });
 
   const handleOpenCreate = () => {
@@ -46,6 +48,8 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       display_order: locations.length + 1,
       published: true,
       featured: false,
+      location_status: 'current',
+      show_in_navigation: true,
     });
     setIsDialogOpen(true);
   };
@@ -63,6 +67,8 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       display_order: loc.display_order,
       published: loc.published,
       featured: loc.featured,
+      location_status: loc.location_status || 'current',
+      show_in_navigation: loc.show_in_navigation ?? true,
     });
     setIsDialogOpen(true);
   };
@@ -121,16 +127,15 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
         <div>
           <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
-            <MapPin className="w-6 h-6 text-amber-400" /> Location Management
+            <MapPin className="w-6 h-6 text-amber-400" /> Township Locations & Hubs
           </h1>
-          <p className="text-xs text-slate-400">Manage region hubs in Tamil Nadu (Namakkal, Paramathi Velur, etc.)</p>
+          <p className="text-xs text-slate-400">Manage current and upcoming layout locations, nav dropdowns, and address details</p>
         </div>
         <Button variant="gold" size="sm" onClick={handleOpenCreate}>
           <Plus className="w-4 h-4" /> Add Location
         </Button>
       </div>
 
-      {/* Search Input */}
       <div className="relative max-w-sm">
         <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
         <Input
@@ -141,38 +146,52 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
         />
       </div>
 
-      {/* Table List */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
             <thead className="bg-slate-950 border-b border-slate-800 uppercase text-[10px] font-bold text-slate-400">
               <tr>
-                <th className="p-4">Name & Slug</th>
-                <th className="p-4">Address</th>
-                <th className="p-4">Order</th>
-                <th className="p-4">Status</th>
+                <th className="p-4">Location Name</th>
+                <th className="p-4">URL Slug</th>
+                <th className="p-4">Status & Nav</th>
+                <th className="p-4">Visibility</th>
                 <th className="p-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
               {filteredLocations.map((loc) => (
                 <tr key={loc.id} className="hover:bg-slate-800/40 transition-colors">
-                  <td className="p-4 font-bold text-white">
-                    {loc.name}
-                    <span className="block text-[11px] font-mono text-amber-400 font-normal">{loc.slug}</span>
+                  <td className="p-4 font-bold text-white flex items-center gap-2">
+                    <MapPin className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div>
+                      <span>{loc.name}</span>
+                      {loc.address && <span className="block text-[10px] text-slate-500 font-normal">{loc.address}</span>}
+                    </div>
                   </td>
-                  <td className="p-4 max-w-xs truncate">{loc.address || 'Namakkal District'}</td>
-                  <td className="p-4 font-mono">{loc.display_order}</td>
+                  <td className="p-4 font-mono text-amber-400">{loc.slug}</td>
+                  <td className="p-4 space-x-1">
+                    <Badge variant={loc.location_status === 'current' ? 'gold' : 'slate'}>
+                      {loc.location_status === 'current' ? 'Current' : 'Upcoming'}
+                    </Badge>
+                    {loc.show_in_navigation && <Badge variant="emerald">In Nav</Badge>}
+                  </td>
                   <td className="p-4">
-                    <button onClick={() => handleTogglePublish(loc)} className="cursor-pointer">
+                    <button
+                      onClick={() => handleTogglePublish(loc)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors cursor-pointer ${
+                        loc.published
+                          ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                          : 'bg-slate-800 text-slate-400 border border-slate-700'
+                      }`}
+                    >
                       {loc.published ? (
-                        <Badge variant="emerald">
-                          <Eye className="w-3 h-3 mr-1" /> Published
-                        </Badge>
+                        <>
+                          <Eye className="w-3 h-3" /> Published
+                        </>
                       ) : (
-                        <Badge variant="slate">
-                          <EyeOff className="w-3 h-3 mr-1" /> Draft
-                        </Badge>
+                        <>
+                          <EyeOff className="w-3 h-3" /> Draft
+                        </>
                       )}
                     </button>
                   </td>
@@ -197,7 +216,6 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
         </div>
       </div>
 
-      {/* Edit/Create Dialog */}
       <Dialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
@@ -222,6 +240,36 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
               onChange={(e) => setFormData({ ...formData, slug: generateSlug(e.target.value) })}
               placeholder="namakkal"
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Location Category</Label>
+              <select
+                value={formData.location_status}
+                onChange={(e) =>
+                  setFormData({ ...formData, location_status: e.target.value as 'current' | 'upcoming' })
+                }
+                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
+              >
+                <option value="current">Current Location</option>
+                <option value="upcoming">Upcoming Location</option>
+              </select>
+            </div>
+
+            <div>
+              <Label>Show in Navigation</Label>
+              <select
+                value={formData.show_in_navigation ? 'true' : 'false'}
+                onChange={(e) =>
+                  setFormData({ ...formData, show_in_navigation: e.target.value === 'true' })
+                }
+                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
+              >
+                <option value="true">Show in Header Nav & Footer</option>
+                <option value="false">Hide from Navigation</option>
+              </select>
+            </div>
           </div>
 
           <div>
@@ -255,10 +303,19 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
             <label className="text-xs text-slate-300 flex items-center gap-2">
               <input
                 type="checkbox"
+                checked={formData.featured}
+                onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+              />
+              <span>Featured Hub (Homepage)</span>
+            </label>
+
+            <label className="text-xs text-slate-300 flex items-center gap-2">
+              <input
+                type="checkbox"
                 checked={formData.published}
                 onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
               />
-              <span>Published on Live Site</span>
+              <span>Published Live</span>
             </label>
 
             <Button type="submit" variant="gold" size="md">

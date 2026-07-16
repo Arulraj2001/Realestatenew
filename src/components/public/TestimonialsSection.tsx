@@ -1,30 +1,43 @@
 import React from 'react';
 import { Star, Quote } from 'lucide-react';
 
-export const TestimonialsSection: React.FC = () => {
-  const testimonials = [
-    {
-      name: 'Dr. K. Senthil Nathan',
-      location: 'Rasi Garden, Namakkal',
-      rating: 5,
-      comment:
-        'Purchased a 1,500 Sq.Ft villa plot at Rasi Garden. Clear title documents, instant registration, and top-tier blacktop roads. Highly recommend Your Choice Properties for hassle-free buying.',
-    },
-    {
-      name: 'Mr. P. Subramaniam',
-      location: 'Kongu Nagar, Namakkal',
-      rating: 5,
-      comment:
-        'Constructed a 3BHK independent villa through their construction team. Excellent floor plan customization, transparent pricing, and finished 15 days ahead of schedule!',
-    },
-    {
-      name: 'Mrs. Jayanthi Viswanathan',
-      location: 'Kongu Garden, Paramathi Velur',
-      rating: 5,
-      comment:
-        'The free pickup and drop facility for site visits was extremely helpful for our family. Bank housing loan process was completed within 7 working days thanks to their staff.',
-    },
-  ];
+export interface TestimonialItem {
+  name: string;
+  location: string;
+  rating: number;
+  comment: string;
+}
+
+export interface TestimonialsSectionProps {
+  testimonials?: TestimonialItem[];
+}
+
+const DEFAULT_TESTIMONIALS: TestimonialItem[] = [
+  {
+    name: 'Dr. K. Senthil Nathan',
+    location: 'Rasi Garden, Namakkal',
+    rating: 5,
+    comment:
+      'Purchased a 1,500 Sq.Ft villa plot at Rasi Garden. Clear title documents, instant registration, and top-tier blacktop roads. Highly recommend Your Choice Properties for hassle-free buying.',
+  },
+  {
+    name: 'Mr. P. Subramaniam',
+    location: 'Kongu Nagar, Namakkal',
+    rating: 5,
+    comment:
+      'Constructed a 3BHK independent villa through their construction team. Excellent floor plan customization, transparent pricing, and finished 15 days ahead of schedule!',
+  },
+  {
+    name: 'Mrs. Jayanthi Viswanathan',
+    location: 'Kongu Garden, Paramathi Velur',
+    rating: 5,
+    comment:
+      'The free pickup and drop facility for site visits was extremely helpful for our family. Bank housing loan process was completed within 7 working days thanks to their staff.',
+  },
+];
+
+export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials }) => {
+  const list = testimonials && testimonials.length > 0 ? testimonials : DEFAULT_TESTIMONIALS;
 
   return (
     <section className="py-20 bg-slate-900 border-t border-slate-800 text-slate-100">
@@ -42,7 +55,7 @@ export const TestimonialsSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((t, idx) => (
+          {list.map((t, idx) => (
             <div
               key={idx}
               className="p-8 bg-slate-950 border border-slate-800 rounded-2xl relative flex flex-col justify-between hover:border-amber-500/30 transition-colors"
@@ -51,7 +64,7 @@ export const TestimonialsSection: React.FC = () => {
 
               <div className="space-y-4">
                 <div className="flex gap-1">
-                  {Array.from({ length: t.rating }).map((_, i) => (
+                  {Array.from({ length: Math.min(5, Math.max(1, t.rating)) }).map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
