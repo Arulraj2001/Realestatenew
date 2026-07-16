@@ -56,7 +56,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} antialiased h-full`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} antialiased h-full`}>
       <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-slate-950">
         <ThemeProvider>
           {children}

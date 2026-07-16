@@ -69,7 +69,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
             {value.endsWith('.mp4') ? (
               <video src={value} controls className="w-full h-full object-cover" />
             ) : (
-              <Image src={value} alt="Uploaded preview" fill className="object-contain" />
+              <Image unoptimized src={value} alt="Uploaded preview" fill className="object-contain" />
             )}
           </div>
           <div className="flex items-center justify-between gap-2">
