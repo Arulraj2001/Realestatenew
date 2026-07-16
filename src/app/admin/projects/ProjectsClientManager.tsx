@@ -37,10 +37,18 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
     full_description: '',
     project_status: 'Ongoing' as Project['project_status'],
     approval_type: 'DTCP Approved',
+    approval_number: '',
+    total_area: '',
+    total_plots: '',
+    total_villas: '',
+    starting_price: '',
+    latitude: '',
+    longitude: '',
     address: '',
     map_url: '',
     hero_image_path: '',
     hero_video_path: '',
+    display_order: 0,
     published: true,
     featured: true,
   });
@@ -55,10 +63,18 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
       full_description: '',
       project_status: 'Ongoing',
       approval_type: 'DTCP Approved',
+      approval_number: '',
+      total_area: '',
+      total_plots: '',
+      total_villas: '',
+      starting_price: '',
+      latitude: '',
+      longitude: '',
       address: '',
       map_url: '',
       hero_image_path: '',
       hero_video_path: '',
+      display_order: 0,
       published: true,
       featured: true,
     });
@@ -75,10 +91,18 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
       full_description: proj.full_description || '',
       project_status: proj.project_status || 'Ongoing',
       approval_type: proj.approval_type || 'DTCP Approved',
+      approval_number: proj.approval_number || '',
+      total_area: proj.total_area || '',
+      total_plots: proj.total_plots ? String(proj.total_plots) : '',
+      total_villas: proj.total_villas ? String(proj.total_villas) : '',
+      starting_price: proj.starting_price ? String(proj.starting_price) : '',
+      latitude: proj.latitude ? String(proj.latitude) : '',
+      longitude: proj.longitude ? String(proj.longitude) : '',
       address: proj.address || '',
       map_url: proj.map_url || '',
       hero_image_path: proj.hero_image_path || '',
       hero_video_path: proj.hero_video_path || '',
+      display_order: proj.display_order,
       published: proj.published,
       featured: proj.featured || true,
     });
@@ -87,7 +111,16 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await saveProjectAction(formData, editingProject?.id);
+    const sanitizedData = {
+      ...formData,
+      total_plots: formData.total_plots ? Number(formData.total_plots) : null,
+      total_villas: formData.total_villas ? Number(formData.total_villas) : null,
+      starting_price: formData.starting_price ? Number(formData.starting_price) : null,
+      latitude: formData.latitude ? Number(formData.latitude) : null,
+      longitude: formData.longitude ? Number(formData.longitude) : null,
+      display_order: Number(formData.display_order),
+    };
+    const res = await saveProjectAction(sanitizedData, editingProject?.id);
 
     if (res.success) {
       toast({
@@ -311,6 +344,55 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
             </div>
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Approval Number</Label>
+              <Input
+                value={formData.approval_number}
+                onChange={(e) => setFormData({ ...formData, approval_number: e.target.value })}
+                placeholder="DTCP No: 142/2024"
+              />
+            </div>
+            <div>
+              <Label>Total Area (e.g. 12.5 Acres)</Label>
+              <Input
+                value={formData.total_area}
+                onChange={(e) => setFormData({ ...formData, total_area: e.target.value })}
+                placeholder="12.5 Acres"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <Label>Total Plots</Label>
+              <Input type="number" value={formData.total_plots} onChange={(e) => setFormData({ ...formData, total_plots: e.target.value })} placeholder="45" />
+            </div>
+            <div>
+              <Label>Total Villas</Label>
+              <Input type="number" value={formData.total_villas} onChange={(e) => setFormData({ ...formData, total_villas: e.target.value })} placeholder="12" />
+            </div>
+            <div>
+              <Label>Starting Price (₹)</Label>
+              <Input type="number" value={formData.starting_price} onChange={(e) => setFormData({ ...formData, starting_price: e.target.value })} placeholder="1800000" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <Label>Latitude</Label>
+              <Input type="number" step="any" value={formData.latitude} onChange={(e) => setFormData({ ...formData, latitude: e.target.value })} placeholder="11.2189" />
+            </div>
+            <div>
+              <Label>Longitude</Label>
+              <Input type="number" step="any" value={formData.longitude} onChange={(e) => setFormData({ ...formData, longitude: e.target.value })} placeholder="78.1674" />
+            </div>
+            <div>
+              <Label>Display Order</Label>
+              <Input type="number" value={formData.display_order} onChange={(e) => setFormData({ ...formData, display_order: Number(e.target.value) })} placeholder="1" />
+            </div>
+          </div>
+
           <div>
             <Label>Project Walkthrough Video Link (YouTube / Instagram Reel URL)</Label>
             <Input
@@ -369,14 +451,24 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
           </div>
 
           <div className="flex items-center justify-between pt-2">
-            <label className="text-xs text-slate-300 flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={formData.published}
-                onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-              />
-              <span>Published on Live Site</span>
-            </label>
+            <div className="flex items-center gap-4">
+              <label className="text-xs text-slate-300 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                />
+                <span>Featured (Shown on Homepage)</span>
+              </label>
+              <label className="text-xs text-slate-300 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={formData.published}
+                  onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                />
+                <span>Published on Live Site</span>
+              </label>
+            </div>
 
             <Button type="submit" variant="gold" size="md">
               Save Project Record

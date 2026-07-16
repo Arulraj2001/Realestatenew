@@ -54,14 +54,42 @@ const DEFAULT_VIDEO_TESTIMONIALS: TestimonialItem[] = [
   },
 ];
 
-// Helper to extract YouTube Embed URL
+// Helper to detect if a URL points to a raw video file
+function isVideoFileUrl(url?: string): boolean {
+  if (!url) return false;
+  const trimmed = url.trim().toLowerCase();
+  return (
+    trimmed.endsWith('.mp4') ||
+    trimmed.endsWith('.webm') ||
+    trimmed.endsWith('.mov') ||
+    trimmed.endsWith('.ogg') ||
+    trimmed.includes('/public-media/') ||
+    trimmed.includes('/supabase.co/storage/')
+  );
+}
+
+// Helper to extract YouTube or Instagram Embed URL
 function getEmbedUrl(url?: string): string | null {
   if (!url) return null;
-  const youtubeMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/);
+  const trimmed = url.trim();
+
+  // YouTube match (handles watch?v=, embed/, shorts/, youtu.be/)
+  const youtubeMatch = trimmed.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
   if (youtubeMatch && youtubeMatch[1]) {
-    return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1`;
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}?autoplay=1&rel=0`;
   }
-  return url;
+
+  // Instagram match (handles reel, p, tv)
+  const isInstagram = trimmed.includes('instagram.com');
+  if (isInstagram) {
+    const cleanUrl = trimmed.replace(/\/$/, '');
+    if (!cleanUrl.includes('/embed')) {
+      return `${cleanUrl}/embed`;
+    }
+    return cleanUrl;
+  }
+
+  return trimmed;
 }
 
 // Helper to extract YouTube Thumbnail URL fallback
@@ -70,7 +98,7 @@ function getThumbnailUrl(item: TestimonialItem): string {
     return item.thumbnail_url;
   }
   if (item.video_url) {
-    const match = item.video_url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([a-zA-Z0-9_-]{11})/);
+    const match = item.video_url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
     if (match && match[1]) {
       return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
     }
@@ -281,17 +309,25 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
       <Dialog
         isOpen={Boolean(activeVideoUrl)}
         onClose={() => setActiveVideoUrl(null)}
-        className="max-w-4xl bg-slate-950 p-0 overflow-hidden border-slate-800"
+        className="max-w-4xl bg-slate-950 p-0 overflow-hidden border-slate-800 hero-dark-overlay"
+        bodyClassName="p-0 max-h-none overflow-hidden"
       >
         <div className="relative aspect-video w-full bg-black">
           <button
             onClick={() => setActiveVideoUrl(null)}
-            className="absolute top-3 right-3 z-30 p-2 bg-slate-900/90 text-white rounded-full hover:bg-amber-500 hover:text-slate-950 transition-colors cursor-pointer"
+            className="absolute top-3 right-3 z-30 p-2 bg-black/60 text-white rounded-full hover:bg-amber-500 hover:text-slate-950 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5 pointer-events-none" />
           </button>
 
-          {activeEmbedUrl && (
+          {activeVideoUrl && isVideoFileUrl(activeVideoUrl) ? (
+            <video
+              src={activeVideoUrl}
+              controls
+              autoPlay
+              className="w-full h-full object-contain"
+            />
+          ) : activeEmbedUrl ? (
             <iframe
               src={activeEmbedUrl}
               title="Customer Video Story"
@@ -299,7 +335,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
-          )}
+          ) : null}
         </div>
       </Dialog>
     </section>

@@ -52,7 +52,7 @@ export const GalleryPreviewSection: React.FC<GalleryPreviewSectionProps> = ({
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
+              <div className="image-overlay-content absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
                 <span className="text-xs font-bold text-amber-400 uppercase font-mono">{item.category || 'Site Update'}</span>
                 <h3 className="font-serif text-base font-bold text-white mt-1">{item.title || 'Township Development'}</h3>
                 {item.caption && <p className="text-xs text-slate-300 line-clamp-1">{item.caption}</p>}

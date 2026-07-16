@@ -1,5 +1,6 @@
 -- =====================================================================
--- SEED: supabase/seeds/about-page-v2.sql
+-- SEED: supabase/seeds/about-page-v3.sql
+-- Description: Seed About Us page content including why choose us left highlight card
 -- =====================================================================
 
 INSERT INTO public.content_pages (id, page_key, title, slug, content, published)
@@ -12,6 +13,13 @@ VALUES (
     "about_h1": "Your Trusted Real Estate Partner in Namakkal and Paramathi Velur",
     "about_intro": "Your Choice Properties was started with a simple promise: honest property guidance for families in Namakkal and Paramathi Velur.\n\nWe understand that buying a plot or home is an important life decision. That is why our projects—Rasi Garden, Kongu Nagar and Kongu Garden—are developed with a focus on clear communication, useful locations, planned layouts and genuine value.\n\nOur team helps customers understand the property, arrange site visits and complete the buying process with proper support.",
     "why_choice_heading": "Why We Are the Right Choice",
+    "why_left_title": "Your Preferred Real Estate Developer",
+    "why_left_desc": "We combine DTCP regulatory compliance, transparent sub-registrar documentation, and strategic layout locations to protect your capital and build genuine long-term value.",
+    "why_left_checklist": [
+      "100% Verified Legal Documents",
+      "Zero Hidden Fees or Charges",
+      "Guided Private Site Visit Transport"
+    ],
     "why_choose_us_items": [
       {
         "title": "Prime Location",

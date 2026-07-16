@@ -43,9 +43,18 @@ VALUES (
         "description": "We guide eligible buyers in understanding available home-loan options."
       }
     ],
+    "text_alignment": "center",
+    "secondary_cta_label": "Schedule a Site Visit",
     "gallery_heading": "See Our Projects",
     "gallery_description": "View real site photos, villa designs, roads, layouts and construction updates from our projects.",
     "gallery_cta": "View Gallery",
+    "stats_visible": true,
+    "stats_list": [
+      { "label": "Years of Trust", "value": "12+", "icon": "Award" },
+      { "label": "Happy Homeowners", "value": "1,200+", "icon": "Users" },
+      { "label": "DTCP Layouts Completed", "value": "25+", "icon": "Building2" },
+      { "label": "Sq.Ft Developed", "value": "1.5M+", "icon": "Maximize" }
+    ],
     "final_cta_heading": "Visit the Project Before You Decide",
     "final_cta_description": "Tell us which location or property you are interested in, and our team will arrange a guided site visit."
   }'::jsonb,

@@ -79,7 +79,7 @@ export default async function ContactUsPage() {
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
         {/* Banner Header */}
-        <section className="py-20 bg-slate-900 border-b border-slate-800">
+        <section className="py-6 sm:py-8 bg-slate-900 border-b border-slate-800 hero-dark-overlay">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
               <Link href="/" className="hover:text-amber-400 transition-colors">
@@ -116,7 +116,7 @@ export default async function ContactUsPage() {
                   <MapPin className="w-6 h-6 text-amber-400 shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-white text-sm">Office Address</h3>
-                    <p className="text-xs text-slate-300 mt-1">{siteConfig.contact.address}</p>
+                    <p className="text-sm sm:text-base text-slate-200 mt-1">{siteConfig.contact.address}</p>
                   </div>
                 </div>
 
@@ -124,7 +124,7 @@ export default async function ContactUsPage() {
                   <Phone className="w-6 h-6 text-emerald-400 shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-white text-sm">Phone Hotline</h3>
-                    <a href={`tel:${siteConfig.contact.phone}`} className="text-xs text-amber-400 hover:underline mt-1 block">
+                    <a href={`tel:${siteConfig.contact.phone}`} className="text-sm sm:text-base font-bold text-amber-400 hover:underline mt-1 block">
                       {siteConfig.contact.phone}
                     </a>
                   </div>
@@ -138,7 +138,7 @@ export default async function ContactUsPage() {
                       href={`https://wa.me/${siteConfig.contact.whatsapp.replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-emerald-400 hover:underline mt-1 block"
+                      className="text-sm sm:text-base font-bold text-emerald-400 hover:underline mt-1 block"
                     >
                       Chat on WhatsApp ({siteConfig.contact.whatsapp})
                     </a>
@@ -149,7 +149,7 @@ export default async function ContactUsPage() {
                   <Mail className="w-6 h-6 text-amber-400 shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-white text-sm">Email Inbox</h3>
-                    <a href={`mailto:${siteConfig.contact.email}`} className="text-xs text-slate-300 hover:underline mt-1 block">
+                    <a href={`mailto:${siteConfig.contact.email}`} className="text-sm sm:text-base text-slate-200 hover:underline mt-1 block">
                       {siteConfig.contact.email}
                     </a>
                   </div>
@@ -159,7 +159,7 @@ export default async function ContactUsPage() {
                   <Clock className="w-6 h-6 text-amber-400 shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-white text-sm">Working Hours</h3>
-                    <p className="text-xs text-slate-300 mt-1">Monday - Sunday: 9:00 AM - 8:00 PM</p>
+                    <p className="text-sm sm:text-base text-slate-200 mt-1">Monday - Sunday: 9:00 AM - 8:00 PM</p>
                   </div>
                 </div>
               </div>

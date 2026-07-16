@@ -21,6 +21,7 @@ import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  X,
 } from 'lucide-react';
 import {
   Project,
@@ -283,8 +284,8 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                           sizes="(max-width: 1024px) 100vw, 50vw"
                           className="object-cover transition-transform duration-500 group-hover:scale-105 z-0"
                         />
-                        <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors flex items-center justify-center z-10">
-                          <span className="px-3.5 py-2 bg-slate-950/90 text-amber-400 rounded-full border border-amber-500/40 text-xs font-bold flex items-center gap-1.5 shadow-2xl opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all">
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/45 transition-all duration-300 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 pointer-events-none">
+                          <span className="photo-expand-pill px-4 py-2 bg-slate-950/90 text-amber-400 rounded-full border border-amber-500/40 text-xs font-serif font-bold flex items-center gap-2 shadow-2xl scale-95 group-hover:scale-100 transition-all duration-300">
                             <ZoomIn className="w-4 h-4 pointer-events-none" /> Click to Expand &amp; Slide Photos ({allVillaImages.length})
                           </span>
                         </div>
@@ -308,15 +309,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                           )}
                         </div>
 
-                        <div className="absolute bottom-3 left-3 right-3 z-20 flex justify-between items-end">
-                          <div className="bg-slate-950/90 backdrop-blur-sm border border-amber-500/30 rounded-xl px-3 py-1.5">
-                            <p className="text-[9px] uppercase font-bold text-slate-400">Starting Price</p>
-                            <div className="text-xl font-extrabold text-amber-400 font-serif">
-                              {villa.starting_price
-                                ? `₹ ${villa.starting_price.toLocaleString('en-IN')}`
-                                : 'Pricing On Request'}
-                            </div>
-                          </div>
+                        <div className="absolute bottom-3 right-3 z-20">
                           <span className="text-[10px] bg-slate-900/90 text-slate-200 border border-slate-700 font-mono font-bold px-2.5 py-1 rounded-lg shadow-md">
                             {activeIndex + 1} / {allVillaImages.length}
                           </span>
@@ -355,12 +348,20 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                               {project.name} · {project.location?.name || 'Namakkal'}
                             </p>
                           </div>
-                          {villa.built_up_area && (
-                            <div className="text-right">
-                              <span className="text-[10px] text-slate-500 uppercase font-bold block">Built-Up</span>
-                              <span className="text-sm font-extrabold text-white font-mono">{villa.built_up_area}</span>
+                          <div className="text-right flex flex-col items-end gap-1 shrink-0">
+                            {villa.built_up_area && (
+                              <div>
+                                <span className="text-[9px] text-slate-500 uppercase font-bold block leading-none">Built-Up</span>
+                                <span className="text-xs font-extrabold text-white font-mono">{villa.built_up_area}</span>
+                              </div>
+                            )}
+                            <div>
+                              <span className="text-[9px] text-slate-500 uppercase font-bold block leading-none">Starting Price</span>
+                              <span className="text-sm font-serif font-extrabold text-amber-500 dark:text-amber-400">
+                                {villa.starting_price ? `₹ ${villa.starting_price.toLocaleString('en-IN')}` : 'On Request'}
+                              </span>
                             </div>
-                          )}
+                          </div>
                         </div>
 
                         {/* Spec Badges Grid */}
@@ -463,7 +464,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
             <Badge variant="emerald" className="text-xs">{plots.length} Plot Sizes</Badge>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-8">
             {plots.map((plot) => {
               const plotFeatures = parseFeatures(plot.feature_list);
               const extraPlotImages = parseGalleryImages(plot.gallery_images);
@@ -486,117 +487,175 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
               return (
                 <div
                   key={plot.id}
-                  className="bg-slate-900 border border-slate-800/90 rounded-2xl overflow-hidden shadow-xl flex flex-col justify-between space-y-3"
+                  className="bg-slate-900 border border-slate-800/90 rounded-3xl overflow-hidden shadow-2xl space-y-0"
                 >
-                  <div className="p-3.5 bg-slate-950 space-y-2.5">
-                    <div
-                      onClick={() =>
-                        setSliderState({
-                          images: allPlotImages,
-                          index: activePlotIdx,
-                          title: `${plot.name} Site Photo Showcase`,
-                        })
-                      }
-                      className="group relative aspect-[16/10] bg-slate-950 rounded-xl overflow-hidden cursor-pointer shadow-md border border-slate-800"
-                    >
-                      <Image
-                        src={activePlotImg}
-                        alt={plot.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105 z-0"
-                      />
-                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors flex items-center justify-center z-10">
-                        <span className="px-3.5 py-2 bg-slate-950/90 text-amber-400 rounded-full border border-amber-500/40 text-xs font-bold flex items-center gap-1.5 shadow-2xl opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all">
-                          <ZoomIn className="w-4 h-4 pointer-events-none" /> Click to Expand &amp; Slide Photos ({allPlotImages.length})
-                        </span>
-                      </div>
-                      <div className="absolute top-3 left-3 z-20">
-                        <Badge variant="emerald">DTCP Approved Site</Badge>
-                      </div>
-                      <div className="absolute bottom-3 left-3 right-3 flex justify-between items-end z-20">
-                        <h3 className="font-bold text-white text-base font-serif drop-shadow-md">{plot.name}</h3>
-                        <span className="text-sm font-extrabold text-amber-400 font-serif drop-shadow-md">
-                          {plot.starting_price ? `₹ ${plot.starting_price.toLocaleString('en-IN')}` : 'On Request'}
-                        </span>
-                      </div>
-                    </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-12">
+                    {/* Plot Main Image Showcase (Left 6 cols) */}
+                    <div className="lg:col-span-6 p-4 bg-slate-950 border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col justify-between space-y-3">
+                      <div
+                        onClick={() =>
+                          setSliderState({
+                            images: allPlotImages,
+                            index: activePlotIdx,
+                            title: `${plot.name} Photo Showcase`,
+                          })
+                        }
+                        className="group relative aspect-[16/10] sm:aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 cursor-pointer shadow-lg"
+                      >
+                        <Image
+                          src={activePlotImg}
+                          alt={plot.name}
+                          fill
+                          sizes="(max-width: 1024px) 100vw, 50vw"
+                          className="object-cover transition-transform duration-500 group-hover:scale-105 z-0"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/45 transition-all duration-300 flex items-center justify-center z-10 opacity-0 group-hover:opacity-100 pointer-events-none">
+                          <span className="photo-expand-pill px-4 py-2 bg-slate-950/90 text-amber-400 rounded-full border border-amber-500/40 text-xs font-serif font-bold flex items-center gap-2 shadow-2xl scale-95 group-hover:scale-100 transition-all duration-300">
+                            <ZoomIn className="w-4 h-4 pointer-events-none" /> Click to Expand &amp; Slide Photos ({allPlotImages.length})
+                          </span>
+                        </div>
 
-                    {allPlotImages.length > 1 && (
-                      <div className="flex gap-2 overflow-x-auto pt-0.5">
-                        {allPlotImages.map((pImg, pIdx) => (
+                        <div className="absolute top-3 left-3 flex flex-wrap gap-2 z-20">
+                          <Badge variant="emerald">
+                            Plot Site
+                          </Badge>
+                          {plot.availability_status && (
+                            <Badge
+                              variant={
+                                plot.availability_status === 'Sold Out'
+                                  ? 'red'
+                                  : plot.availability_status === 'Fast Filling'
+                                  ? 'amber'
+                                  : 'emerald'
+                              }
+                            >
+                              {plot.availability_status}
+                            </Badge>
+                          )}
+                        </div>
+
+                        <div className="absolute bottom-3 right-3 z-20">
+                          <span className="text-[10px] bg-slate-900/90 text-slate-200 border border-slate-700 font-mono font-bold px-2.5 py-1 rounded-lg shadow-md">
+                            {activePlotIdx + 1} / {allPlotImages.length}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Multi-Image Thumbnails Slider Trigger Bar */}
+                      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                        {allPlotImages.map((imgUrl, imgIdx) => (
                           <button
-                            key={pIdx}
+                            key={imgIdx}
                             onClick={() =>
-                              setActiveImageMap((prev) => ({ ...prev, [plot.id]: pImg }))
+                              setActiveImageMap((prev) => ({ ...prev, [plot.id]: imgUrl }))
                             }
-                            className={`relative w-14 h-10 rounded-lg overflow-hidden border-2 shrink-0 cursor-pointer ${
-                              activePlotImg === pImg
-                                ? 'border-amber-400 scale-105 shadow-sm'
+                            className={`relative w-16 h-12 rounded-xl overflow-hidden border-2 shrink-0 transition-all cursor-pointer ${
+                              activePlotImg === imgUrl
+                                ? 'border-amber-400 scale-105 shadow-md'
                                 : 'border-slate-800 opacity-60 hover:opacity-100'
                             }`}
                           >
-                            <Image src={pImg} alt="Plot thumbnail" fill className="object-cover" />
+                            <Image src={imgUrl} alt="Plot thumbnail" fill className="object-cover" />
                           </button>
                         ))}
                       </div>
-                    )}
-                  </div>
-
-                  <div className="px-5 pb-5 space-y-4 flex-1 flex flex-col justify-between">
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className="p-2 bg-slate-950 border border-slate-800 rounded-lg">
-                          <span className="text-[9px] text-slate-500 block uppercase font-bold">Plot Footprint</span>
-                          <span className="font-bold text-white">{plot.plot_area || plot.name}</span>
-                        </div>
-                        <div className="p-2 bg-slate-950 border border-slate-800 rounded-lg">
-                          <span className="text-[9px] text-slate-500 block uppercase font-bold">Access Road</span>
-                          <span className="font-bold text-amber-400">40ft &amp; 30ft Blacktop</span>
-                        </div>
-                      </div>
-
-                      {plotFeatures.length > 0 && (
-                        <div className="space-y-1.5">
-                          <span className="text-[10px] font-bold text-amber-400 uppercase tracking-wider block">
-                            Key Highlights
-                          </span>
-                          <div className="space-y-1 text-xs text-slate-300">
-                            {plotFeatures.slice(0, 4).map((f, idx) => (
-                              <div key={idx} className="flex items-center gap-2">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 pointer-events-none" />
-                                <span className="truncate">{f}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
 
-                    <div className="flex items-center gap-2 pt-3 border-t border-slate-800">
-                      <Button
-                        variant="gold"
-                        size="sm"
-                        className="flex-1 font-bold text-xs"
-                        onClick={() => setSelectedPropertyContext({ id: plot.id, name: plot.name })}
-                      >
-                        <Phone className="w-3.5 h-3.5 mr-1 pointer-events-none" /> Contact Us
-                      </Button>
-                      <a
-                        href={buildWhatsAppUrl({
-                          customMessage: `Hi Your Choice Properties team, I am interested in ${plot.name} at ${project.name}.`,
-                        })}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
+                    {/* Plot Specs Content (Right 6 cols) */}
+                    <div className="lg:col-span-6 p-6 space-y-5 flex flex-col justify-between">
+                      <div className="space-y-4">
+                        <div className="flex items-start justify-between gap-2 border-b border-slate-800 pb-3">
+                          <div>
+                            <h3 className="font-serif text-xl font-bold text-white leading-tight">
+                              {plot.name}
+                            </h3>
+                            <p className="text-xs text-slate-400 mt-0.5">
+                              {project.name} · {project.location?.name || 'Namakkal'}
+                            </p>
+                          </div>
+                          <div className="text-right flex flex-col items-end gap-1 shrink-0">
+                            {plot.plot_area && (
+                              <div>
+                                <span className="text-[9px] text-slate-500 uppercase font-bold block leading-none">Plot Footprint</span>
+                                <span className="text-xs font-extrabold text-white font-mono">{plot.plot_area}</span>
+                              </div>
+                            )}
+                            <div>
+                              <span className="text-[9px] text-slate-500 uppercase font-bold block leading-none">Starting Price</span>
+                              <span className="text-sm font-serif font-extrabold text-emerald-400">
+                                {plot.starting_price ? `₹ ${plot.starting_price.toLocaleString('en-IN')}` : 'On Request'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Spec Badges Grid */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                          <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-center">
+                            <Grid className="w-4 h-4 text-emerald-400 mx-auto mb-1 pointer-events-none" />
+                            <span className="text-xs font-bold text-white block">Gated Site</span>
+                          </div>
+                          {plot.plot_area && (
+                            <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-center">
+                              <Maximize className="w-4 h-4 text-emerald-400 mx-auto mb-1 pointer-events-none" />
+                              <span className="text-xs font-bold text-white block truncate">{plot.plot_area}</span>
+                            </div>
+                          )}
+                          <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-center">
+                            <Trees className="w-4 h-4 text-emerald-400 mx-auto mb-1 pointer-events-none" />
+                            <span className="text-xs font-bold text-white block">Streetlights</span>
+                          </div>
+                          <div className="p-2.5 bg-slate-950 border border-slate-800 rounded-xl text-center">
+                            <MapPin className="w-4 h-4 text-emerald-400 mx-auto mb-1 pointer-events-none" />
+                            <span className="text-xs font-bold text-white block truncate">{project.location?.name || 'Namakkal'}</span>
+                          </div>
+                        </div>
+
+                        {/* Feature Checklist */}
+                        {plotFeatures.length > 0 && (
+                          <div className="space-y-2">
+                            <h4 className="text-xs font-bold uppercase tracking-wider text-emerald-450">
+                              Included Plot Highlights
+                            </h4>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+                              {plotFeatures.map((feat, fIdx) => (
+                                <div key={fIdx} className="flex items-center gap-2">
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 pointer-events-none" />
+                                  <span>{feat}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* CTA Buttons */}
+                      <div className="flex flex-col sm:flex-row items-center gap-3 pt-3 border-t border-slate-800">
                         <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-950 font-bold text-xs"
+                          variant="gold"
+                          size="md"
+                          className="w-full sm:flex-1 font-bold text-xs"
+                          onClick={() => setSelectedPropertyContext({ id: plot.id, name: plot.name })}
                         >
-                          <MessageSquare className="w-3.5 h-3.5 pointer-events-none" /> WhatsApp
+                          <Phone className="w-4 h-4 mr-1.5 pointer-events-none" /> Contact Us for {plot.name}
                         </Button>
-                      </a>
+                        <a
+                          href={buildWhatsAppUrl({
+                            customMessage: `Hi Your Choice Properties team, I am interested in ${plot.name} at ${project.name}.`,
+                          })}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-full sm:w-auto"
+                        >
+                          <Button
+                            variant="outline"
+                            size="md"
+                            className="w-full border-emerald-500/40 text-emerald-400 hover:bg-emerald-950 font-bold text-xs"
+                          >
+                            <MessageSquare className="w-4 h-4 mr-1.5 pointer-events-none" /> WhatsApp
+                          </Button>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -607,19 +666,19 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
       )}
 
       {/* ── 3. COLLAPSIBLE ACCORDION DROPDOWNS BELOW VILLAS & PLOTS ──── */}
-      <div className="space-y-4 pt-6 border-t border-slate-800">
+      <div className="space-y-2.5 pt-6 border-t border-slate-800">
         <div className="flex items-center justify-between px-1 text-xs mb-1">
-          <span className="text-slate-400 font-bold font-mono uppercase tracking-wider">
+          <span className="text-slate-400 font-bold uppercase tracking-wider text-[11px]">
             Project Media, Infrastructure &amp; Connectivity Dropdowns
           </span>
-          <div className="flex gap-3">
+          <div className="flex gap-3 text-xs">
             <button
               onClick={expandAll}
-              className="text-amber-400 hover:text-amber-300 font-bold hover:underline cursor-pointer"
+              className="text-amber-500 dark:text-amber-400 hover:underline font-bold cursor-pointer"
             >
               Expand All ▾
             </button>
-            <span className="text-slate-700">|</span>
+            <span className="text-slate-600">|</span>
             <button
               onClick={collapseAll}
               className="text-slate-400 hover:text-slate-200 font-bold hover:underline cursor-pointer"
@@ -631,33 +690,33 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
         {/* ── PROJECT VIDEO ACCORDION ──────────────────────────────── */}
         {projectVideoUrl && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-lg transition-all">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
             <button
               onClick={() => toggleSection('video')}
-              className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center justify-between py-3 px-4 sm:px-5 text-left transition-colors cursor-pointer ${
                 openSections.video
-                  ? 'bg-amber-500/10 border-b border-amber-500/30 text-white'
-                  : 'bg-slate-900 hover:bg-slate-800/80 text-slate-200'
+                  ? 'bg-amber-500/10 border-b border-amber-500/30'
+                  : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                  <Video className="w-5 h-5 pointer-events-none" />
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/25 flex items-center justify-center shrink-0">
+                  <Video className="w-4 h-4 pointer-events-none" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-white">Project Walkthrough Video</h3>
-                  <p className="text-xs text-slate-400">Watch layout views &amp; road infrastructure tour</p>
+                  <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
+                    Project Walkthrough Video
+                  </h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Watch layout views &amp; road infrastructure tour</p>
                 </div>
               </div>
-              <ChevronDown
-                className={`w-5 h-5 text-amber-400 transition-transform duration-300 pointer-events-none ${
-                  openSections.video ? 'rotate-180' : ''
-                }`}
-              />
+              <div className={`w-7 h-7 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center transition-transform duration-300 pointer-events-none ${openSections.video ? 'rotate-180 bg-amber-500 text-slate-950' : ''}`}>
+                <ChevronDown className="w-4 h-4" />
+              </div>
             </button>
 
             {openSections.video && (
-              <div className="p-6 bg-slate-950 space-y-4">
+              <div className="p-4 sm:p-5 bg-slate-950 space-y-4">
                 <ProjectVideoPlayer videoUrl={projectVideoUrl} title={`${project.name} Video Tour`} />
               </div>
             )}
@@ -666,49 +725,47 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
         {/* ── AMENITIES ACCORDION ──────────────────────────────────── */}
         {amenities.length > 0 && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-lg transition-all">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
             <button
               onClick={() => toggleSection('amenities')}
-              className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center justify-between py-3 px-4 sm:px-5 text-left transition-colors cursor-pointer ${
                 openSections.amenities
-                  ? 'bg-amber-500/10 border-b border-amber-500/30 text-white'
-                  : 'bg-slate-900 hover:bg-slate-800/80 text-slate-200'
+                  ? 'bg-amber-500/10 border-b border-amber-500/30'
+                  : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                  <Trees className="w-5 h-5 pointer-events-none" />
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/25 flex items-center justify-center shrink-0">
+                  <Trees className="w-4 h-4 pointer-events-none" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-white">
+                  <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
                     Township Infrastructure &amp; Amenities ({amenities.length})
                   </h3>
-                  <p className="text-xs text-slate-400">Roads, lighting, water line, security wall &amp; parks</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Roads, lighting, water line, security wall &amp; parks</p>
                 </div>
               </div>
-              <ChevronDown
-                className={`w-5 h-5 text-amber-400 transition-transform duration-300 pointer-events-none ${
-                  openSections.amenities ? 'rotate-180' : ''
-                }`}
-              />
+              <div className={`w-7 h-7 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center transition-transform duration-300 pointer-events-none ${openSections.amenities ? 'rotate-180 bg-amber-500 text-slate-950' : ''}`}>
+                <ChevronDown className="w-4 h-4" />
+              </div>
             </button>
 
             {openSections.amenities && (
-              <div className="p-6 bg-slate-950 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="p-4 sm:p-5 bg-slate-950 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
                   {amenities.map((item) => {
                     const am = item.amenity || item;
                     return (
                       <div
                         key={item.amenity_id || (am as Amenity).id}
-                        className="p-4 bg-slate-900 border border-slate-800 rounded-xl flex items-start gap-3"
+                        className="p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-start gap-2.5"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                          <CheckCircle2 className="w-4 h-4 pointer-events-none" />
+                        <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                          <CheckCircle2 className="w-3.5 h-3.5 pointer-events-none" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-white text-sm">{(am as Amenity).name}</h4>
-                          <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
+                          <h4 className="font-bold text-white text-xs">{(am as Amenity).name}</h4>
+                          <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
                             {item.custom_description || (am as Amenity).description || 'Included in layout'}
                           </p>
                         </div>
@@ -723,31 +780,29 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
         {/* ── PHOTO GALLERY ACCORDION ──────────────────────────────── */}
         {(galleryItems.length > 0 || floorPlans.length > 0) && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-lg transition-all">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
             <button
               onClick={() => toggleSection('gallery')}
-              className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center justify-between py-3 px-4 sm:px-5 text-left transition-colors cursor-pointer ${
                 openSections.gallery
-                  ? 'bg-amber-500/10 border-b border-amber-500/30 text-white'
-                  : 'bg-slate-900 hover:bg-slate-800/80 text-slate-200'
+                  ? 'bg-amber-500/10 border-b border-amber-500/30'
+                  : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                  <ImageIcon className="w-5 h-5 pointer-events-none" />
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/25 flex items-center justify-center shrink-0">
+                  <ImageIcon className="w-4 h-4 pointer-events-none" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-white">
+                  <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
                     Township Photo Gallery ({galleryItems.length + floorPlans.length})
                   </h3>
-                  <p className="text-xs text-slate-400">Entrance arches, asphalt roads, floor plans &amp; villa photos</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Entrance arches, asphalt roads, floor plans &amp; villa photos</p>
                 </div>
               </div>
-              <ChevronDown
-                className={`w-5 h-5 text-amber-400 transition-transform duration-300 pointer-events-none ${
-                  openSections.gallery ? 'rotate-180' : ''
-                }`}
-              />
+              <div className={`w-7 h-7 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center transition-transform duration-300 pointer-events-none ${openSections.gallery ? 'rotate-180 bg-amber-500 text-slate-950' : ''}`}>
+                <ChevronDown className="w-4 h-4" />
+              </div>
             </button>
 
             {openSections.gallery && (
@@ -760,36 +815,34 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
         {/* ── NEARBY LANDMARKS ACCORDION DROPDOWN ─────────────────── */}
         {landmarks.length > 0 && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-lg transition-all">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
             <button
               onClick={() => toggleSection('landmarks')}
-              className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center justify-between py-3 px-4 sm:px-5 text-left transition-colors cursor-pointer ${
                 openSections.landmarks
-                  ? 'bg-amber-500/10 border-b border-amber-500/30 text-white'
-                  : 'bg-slate-900 hover:bg-slate-800/80 text-slate-200'
+                  ? 'bg-amber-500/10 border-b border-amber-500/30'
+                  : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                  <MapPin className="w-5 h-5 pointer-events-none" />
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/25 flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 pointer-events-none" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-white">
+                  <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">
                     Nearby Landmarks &amp; Connectivity Matrix ({landmarks.length})
                   </h3>
-                  <p className="text-xs text-slate-400">Photos &amp; driving distances to schools, bus stands &amp; hospitals</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Photos &amp; driving distances to schools, bus stands &amp; hospitals</p>
                 </div>
               </div>
-              <ChevronDown
-                className={`w-5 h-5 text-amber-400 transition-transform duration-300 pointer-events-none ${
-                  openSections.landmarks ? 'rotate-180' : ''
-                }`}
-              />
+              <div className={`w-7 h-7 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center transition-transform duration-300 pointer-events-none ${openSections.landmarks ? 'rotate-180 bg-amber-500 text-slate-950' : ''}`}>
+                <ChevronDown className="w-4 h-4" />
+              </div>
             </button>
 
             {openSections.landmarks && (
-              <div className="p-6 bg-slate-950 space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-4 sm:p-5 bg-slate-950 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
                   {landmarks.map((lm) => {
                     const photo = getLandmarkImage(lm);
 
@@ -817,11 +870,11 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
                         {/* Title & Specs */}
                         <div className="px-4 pb-4 space-y-1">
-                          <h4 className="font-bold text-white text-sm leading-tight group-hover:text-amber-300 transition-colors">
+                          <h4 className="font-bold text-white text-xs leading-snug group-hover:text-amber-300 transition-colors">
                             {lm.name}
                           </h4>
                           {lm.travel_time_label && (
-                            <p className="text-xs text-slate-400 flex items-center gap-1">
+                            <p className="text-[11px] text-slate-400 flex items-center gap-1">
                               <span>⏱</span> {lm.travel_time_label}
                             </p>
                           )}
@@ -837,29 +890,27 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
         {/* ── KNOW THE LOCATION ACCORDION DROPDOWN ─────────────────── */}
         {(project.map_url || project.address) && (
-          <div className="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden shadow-lg transition-all">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
             <button
               onClick={() => toggleSection('location')}
-              className={`w-full flex items-center justify-between p-5 text-left transition-colors cursor-pointer ${
+              className={`w-full flex items-center justify-between py-3 px-4 sm:px-5 text-left transition-colors cursor-pointer ${
                 openSections.location
-                  ? 'bg-amber-500/10 border-b border-amber-500/30 text-white'
-                  : 'bg-slate-900 hover:bg-slate-800/80 text-slate-200'
+                  ? 'bg-amber-500/10 border-b border-amber-500/30'
+                  : 'hover:bg-slate-50 dark:hover:bg-slate-800/60'
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                  <Map className="w-5 h-5 pointer-events-none" />
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/25 flex items-center justify-center shrink-0">
+                  <Map className="w-4 h-4 pointer-events-none" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-white">Know the Location &amp; Interactive Map</h3>
-                  <p className="text-xs text-slate-400">Interactive Google Maps view &amp; site GPS address</p>
+                  <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 dark:text-white leading-tight">Know the Location &amp; Interactive Map</h3>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Interactive Google Maps view &amp; site GPS address</p>
                 </div>
               </div>
-              <ChevronDown
-                className={`w-5 h-5 text-amber-400 transition-transform duration-300 pointer-events-none ${
-                  openSections.location ? 'rotate-180' : ''
-                }`}
-              />
+              <div className={`w-7 h-7 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center transition-transform duration-300 pointer-events-none ${openSections.location ? 'rotate-180 bg-amber-500 text-slate-950' : ''}`}>
+                <ChevronDown className="w-4 h-4" />
+              </div>
             </button>
 
             {openSections.location && (
@@ -909,74 +960,62 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
       <Dialog
         isOpen={Boolean(sliderState)}
         onClose={() => setSliderState(null)}
-        title={sliderState?.title || 'Photo Gallery'}
-        description={
-          sliderState
-            ? `Photo ${sliderState.index + 1} of ${sliderState.images.length} · Use arrows or buttons to slide`
-            : undefined
-        }
+        className="max-w-4xl w-full bg-black border-slate-900 p-0 overflow-hidden hero-dark-overlay rounded-3xl"
+        bodyClassName="p-0 max-h-none overflow-hidden"
       >
         {sliderState && (
-          <div className="space-y-4">
-            {/* Main Active Image Showcase with Prev / Next Arrow Controls */}
-            <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl flex items-center justify-center">
+          <div className="relative w-full aspect-video sm:aspect-[16/10] bg-black text-white overflow-hidden">
+            {/* Image Background */}
+            <div className="absolute inset-0 w-full h-full z-0">
               <Image
                 src={sliderState.images[sliderState.index]}
                 alt={sliderState.title}
                 fill
+                sizes="(max-width: 1200px) 100vw, 1200px"
                 priority
-                className="object-contain"
+                className="object-cover"
               />
-
-              {/* Slide Counter Overlay */}
-              <div className="absolute top-3 right-3 bg-slate-950/80 border border-slate-800 rounded-lg px-2.5 py-1 text-xs font-mono font-bold text-amber-400">
-                {sliderState.index + 1} / {sliderState.images.length}
-              </div>
-
-              {/* Prev / Next Controls (If multiple images exist) */}
-              {sliderState.images.length > 1 && (
-                <>
-                  <button
-                    onClick={prevSlide}
-                    className="absolute left-3 p-2.5 rounded-full bg-slate-950/80 border border-slate-700/80 text-white hover:bg-amber-500 hover:text-slate-950 transition-colors shadow-2xl cursor-pointer"
-                    aria-label="Previous image"
-                  >
-                    <ChevronLeft className="w-5 h-5 pointer-events-none" />
-                  </button>
-                  <button
-                    onClick={nextSlide}
-                    className="absolute right-3 p-2.5 rounded-full bg-slate-950/80 border border-slate-700/80 text-white hover:bg-amber-500 hover:text-slate-950 transition-colors shadow-2xl cursor-pointer"
-                    aria-label="Next image"
-                  >
-                    <ChevronRight className="w-5 h-5 pointer-events-none" />
-                  </button>
-                </>
-              )}
             </div>
 
-            {/* Slider Thumbnail Bar */}
-            {sliderState.images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto py-1 justify-center">
-                {sliderState.images.map((imgUrl, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSliderState({ ...sliderState, index: idx })}
-                    className={`relative w-16 h-12 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
-                      sliderState.index === idx
-                        ? 'border-amber-400 scale-105 shadow-lg'
-                        : 'border-slate-800 opacity-50 hover:opacity-100'
-                    }`}
-                  >
-                    <Image src={imgUrl} alt="Thumbnail preview" fill className="object-cover" />
-                  </button>
-                ))}
+            {/* Top Overlay: Category, Title & Close Button */}
+            <div className="absolute top-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-b from-black/90 via-black/40 to-transparent z-10 flex justify-between items-start gap-4">
+              <div>
+                <span className="inline-block px-2.5 py-0.5 bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px] uppercase font-bold rounded-full mb-1 shadow-sm">
+                  {sliderState.title.includes('Site') || sliderState.title.includes('Plot') ? 'Plot Layout Design' : 'Villa Design Design'}
+                </span>
+                <h3 className="text-sm sm:text-base font-serif font-bold text-white leading-snug drop-shadow-md">
+                  {sliderState.title}
+                </h3>
               </div>
-            )}
+              <button
+                onClick={() => setSliderState(null)}
+                className="p-2 text-slate-300 hover:text-white rounded-full bg-black/60 hover:bg-black/80 border border-white/10 transition-all cursor-pointer flex-shrink-0 shadow-lg"
+                aria-label="Close dialog"
+              >
+                <X className="w-5 h-5 pointer-events-none" />
+              </button>
+            </div>
 
-            <div className="flex justify-end pt-2 border-t border-slate-800">
-              <Button variant="gold" size="sm" onClick={() => setSliderState(null)} className="font-bold">
-                Close Photo Viewer
-              </Button>
+            {/* Bottom Overlay: Navigation & Pagination Controls */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 space-y-3">
+              {/* Navigation & Pagination Controls */}
+              <div className="flex items-center justify-between pt-2 border-t border-white/10 text-xs text-slate-300">
+                <button
+                  onClick={prevSlide}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 hover:bg-black/80 hover:text-white transition-all cursor-pointer font-bold shadow-md"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Previous
+                </button>
+                <span className="font-mono font-bold text-white drop-shadow">
+                  {sliderState.index + 1} <span className="text-slate-400">/</span> {sliderState.images.length}
+                </span>
+                <button
+                  onClick={nextSlide}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 hover:bg-black/80 hover:text-white transition-all cursor-pointer font-bold shadow-md"
+                >
+                  Next <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}

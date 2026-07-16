@@ -58,13 +58,13 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
   return (
     <header className="sticky top-0 z-40 bg-[#0f2e21]/95 backdrop-blur-md border-b border-emerald-900/60 shadow-md">
       {/* Top Notification Bar */}
-      <div className="bg-[#0b2218] text-xs py-1.5 px-4 text-emerald-300 border-b border-emerald-950 flex justify-between items-center max-w-7xl mx-auto">
-        <p className="truncate">
-          ✨ DTCP & RERA Approved Residential Plots & Luxury Villas in Namakkal & Paramathi Velur
+      <div className="header-top-bar bg-[#0b2218] text-xs py-1.5 px-4 border-b border-emerald-950 flex justify-between items-center max-w-7xl mx-auto" style={{ backgroundColor: '#0b2218' }}>
+        <p className="truncate font-medium" style={{ color: '#6ee7b7' }}>
+          ✨ DTCP &amp; RERA Approved Residential Plots &amp; Luxury Villas in Namakkal &amp; Paramathi Velur
         </p>
-        <div className="hidden md:flex items-center gap-4 text-slate-300">
-          <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-amber-400 transition-colors flex items-center gap-1">
-            <Phone className="w-3 h-3 text-amber-400" /> {siteConfig.contact.phone}
+        <div className="hidden md:flex items-center gap-4" style={{ color: '#cbd5e1' }}>
+          <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-amber-400 transition-colors flex items-center gap-1" style={{ color: '#f1f5f9' }}>
+            <Phone className="w-3 h-3 text-amber-400" style={{ color: '#fbbf24' }} /> {siteConfig.contact.phone}
           </a>
         </div>
       </div>
@@ -111,21 +111,21 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
 
             {/* Desktop Dropdown Flyout Panel */}
             {isLocationsDropdownOpen && (
-              <div className="absolute top-full left-0 w-64 bg-slate-900 border border-slate-800 rounded-2xl p-3 shadow-2xl space-y-2 backdrop-blur-xl animate-in fade-in slide-in-from-top-2">
+              <div className="header-nav-dropdown absolute top-full left-0 w-64 bg-slate-950 border border-slate-800 rounded-2xl p-3 shadow-2xl space-y-2 animate-in fade-in slide-in-from-top-2">
                 <Link
                   href="/locations"
-                  className="block px-3 py-2 text-xs font-bold text-amber-400 hover:bg-slate-800 rounded-xl transition-colors uppercase tracking-wider border-b border-slate-800"
+                  className="dropdown-all-link block px-3 py-2 text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors uppercase tracking-wider border-b border-slate-800"
                 >
                   View All Locations →
                 </Link>
 
                 <div className="space-y-1 pt-1">
-                  <span className="text-[10px] uppercase font-bold text-slate-400 px-3 tracking-widest">Current Locations</span>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 px-3 tracking-widest block mb-1">Current Locations</span>
                   {navLocations.current.map((loc) => (
                     <Link
                       key={loc.id}
                       href={`/locations/${loc.slug}`}
-                      className="block px-3 py-2 text-xs font-semibold text-slate-200 hover:text-amber-400 hover:bg-slate-800/80 rounded-xl transition-colors"
+                      className="item-link block px-3 py-2 text-xs font-semibold text-slate-100 hover:text-amber-400 transition-colors"
                     >
                       {loc.name}
                     </Link>
@@ -141,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
                       <Link
                         key={loc.id}
                         href={`/locations`}
-                        className="block px-3 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 rounded-xl transition-colors"
+                        className="item-link block px-3 py-2 text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors"
                       >
                         {loc.name}
                       </Link>

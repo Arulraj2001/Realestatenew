@@ -63,34 +63,37 @@ export const LocationCardsSection: React.FC<LocationCardsSectionProps> = ({ loca
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-90" />
 
-                <div className="absolute top-3 left-3 z-10">
-                  <span className="px-2.5 py-0.5 bg-amber-500/90 text-slate-950 text-[11px] font-extrabold rounded-full shadow-md flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" /> {loc.name}
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
+                  <span className="px-3.5 py-1 bg-amber-500 text-slate-950 text-xs sm:text-sm font-extrabold rounded-full shadow-lg flex items-center gap-1.5 border border-amber-300">
+                    <Sparkles className="w-3.5 h-3.5" /> {loc.name} Projects
                   </span>
                 </div>
 
-                <div className="absolute bottom-3 left-4 right-4 z-10">
-                  <div className="flex items-center gap-1 text-amber-400 text-xs font-semibold mb-0.5">
-                    <MapPin className="w-3.5 h-3.5" />
+                <div className="image-overlay-content absolute bottom-3 left-4 right-4 z-10 pointer-events-none">
+                  <div className="flex items-center gap-1.5 text-xs font-bold mb-1 text-white group-hover:text-amber-300 transition-colors">
+                    <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                     <span>{loc.name} Township Hub</span>
                   </div>
-                  <h3 className="font-serif text-2xl font-extrabold text-white group-hover:text-amber-300 transition-colors drop-shadow-md">
+                  <h3
+                    className="font-serif text-3xl font-extrabold text-white group-hover:text-amber-300 transition-colors drop-shadow-lg tracking-tight"
+                    style={{ textShadow: '0 2px 12px rgba(0,0,0,0.95)' }}
+                  >
                     {loc.name}
                   </h3>
                 </div>
               </div>
 
               {/* Card Content & Action Button */}
-              <div className="p-4 flex-1 flex flex-col justify-between space-y-3 bg-slate-900">
-                <p className="text-xs text-slate-300 leading-relaxed font-normal">
+              <div className="p-4 flex-1 flex flex-col justify-between space-y-3 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800">
+                <p className="text-xs text-slate-600 dark:text-slate-200 leading-relaxed font-semibold">
                   {cardDescription}
                 </p>
 
-                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-400 group-hover:text-amber-300">
-                  <span className="flex items-center gap-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-amber-500" /> View {loc.name} Projects
+                <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1.5 font-bold text-amber-600 dark:text-amber-400 hover:text-amber-500">
+                    <Building2 className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" /> View {loc.name} Projects →
                   </span>
-                  <div className="w-7 h-7 rounded-full bg-amber-500/10 group-hover:bg-amber-500 text-amber-400 group-hover:text-slate-950 border border-amber-500/30 flex items-center justify-center transition-all duration-300 group-hover:translate-x-1">
+                  <div className="w-7 h-7 rounded-full bg-amber-500/10 group-hover:bg-amber-500 text-amber-500 group-hover:text-slate-950 border border-amber-500/30 flex items-center justify-center transition-all duration-300 group-hover:translate-x-1">
                     <ArrowRight className="w-3.5 h-3.5" />
                   </div>
                 </div>

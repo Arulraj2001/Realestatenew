@@ -44,9 +44,9 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
           </div>
           <Link
             href="/projects"
-            className="mt-4 md:mt-0 text-xs font-bold uppercase tracking-wider text-amber-400 hover:text-amber-300 flex items-center gap-1 group"
+            className="plain-yellow-link mt-4 md:mt-0 text-xs font-bold uppercase tracking-wider text-amber-400 hover:text-amber-300 flex items-center gap-1 group"
           >
-            <span>View All Projects</span>
+            <span>View All Locations →</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
         </div>
@@ -73,9 +73,10 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
               const availableTypes = propertyTypesMap[proj.slug] || 'Plots & Independent Villas';
 
               return (
-                <div
+                <Link
                   key={proj.id}
-                  className="group rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/50 flex flex-col justify-between"
+                  href={`/projects/${proj.slug}`}
+                  className="group rounded-2xl overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-400/80 flex flex-col justify-between cursor-pointer"
                 >
                   <div>
                     {/* Media Header */}
@@ -103,38 +104,35 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
                     {/* Content Body */}
                     <div className="p-5 space-y-3">
                       <div>
-                        <div className="text-amber-400 font-bold text-xs uppercase tracking-wider flex items-center gap-1">
+                        <div className="text-amber-600 dark:text-amber-400 font-extrabold text-xs uppercase tracking-wider flex items-center gap-1">
                           <MapPin className="w-3.5 h-3.5" /> {proj.location?.name || 'Namakkal'}
                         </div>
-                        <h3 className="font-serif text-xl font-bold text-white group-hover:text-amber-300 transition-colors mt-0.5">
+                        <h3 className="font-serif text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors mt-0.5">
                           {proj.name}
                         </h3>
                       </div>
 
-                      <p className="text-xs text-slate-300 leading-relaxed line-clamp-2">
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium line-clamp-2">
                         {cardDescription}
                       </p>
 
-                      <div className="p-2.5 bg-slate-950/80 rounded-xl border border-slate-800 flex items-center justify-between text-xs">
+                      <div className="p-2.5 bg-slate-100 dark:bg-slate-950/80 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs">
                         <span className="text-[10px] text-slate-500 uppercase font-bold">Property Types:</span>
-                        <span className="font-bold text-slate-200 text-xs">{availableTypes}</span>
+                        <span className="font-bold text-slate-900 dark:text-slate-200 text-xs">{availableTypes}</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* View Project CTA Footer */}
-                  <div className="px-6 py-3.5 border-t border-slate-800/80 bg-slate-950/60 group-hover:bg-amber-500 group-hover:border-amber-400 transition-all duration-300">
-                    <Link
-                      href={`/projects/${proj.slug}`}
-                      className="w-full inline-flex items-center justify-between text-xs font-extrabold uppercase tracking-wider text-amber-400 group-hover:text-slate-950 transition-colors duration-300"
-                    >
-                      <span className="flex items-center gap-2">View Project Details</span>
-                      <div className="w-7 h-7 rounded-full bg-amber-500/10 group-hover:bg-slate-950 text-amber-400 group-hover:text-amber-300 border border-amber-500/30 group-hover:border-slate-900 flex items-center justify-center transition-all duration-300 group-hover:translate-x-1.5 shadow-md">
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </div>
-                    </Link>
+                  {/* View Project CTA Footer (Exactly Matching Image 1) */}
+                  <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/60 group-hover:bg-amber-500 group-hover:border-amber-400 transition-all duration-300 flex items-center justify-between">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 group-hover:text-slate-950 transition-colors duration-300">
+                      View Project Details
+                    </span>
+                    <div className="w-7 h-7 rounded-full bg-amber-500/10 group-hover:bg-slate-950 text-amber-500 group-hover:text-amber-400 border border-amber-500/25 group-hover:border-slate-900 flex items-center justify-center transition-all duration-300 group-hover:translate-x-1 shadow-sm">
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

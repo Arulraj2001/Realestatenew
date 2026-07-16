@@ -155,6 +155,26 @@ export async function getPublishedConfigurations(options?: {
 }): Promise<PropertyConfiguration[]> {
   try {
     const supabase = createPublicClient();
+
+    if (options?.locationId) {
+      // Filter by location via project join at DB level
+      const { data, error } = await supabase
+        .from('property_configurations')
+        .select('*, project:projects!inner(*, location:locations(*))')
+        .eq('published', true)
+        .eq('project.location_id', options.locationId)
+        .order('display_order', { ascending: true });
+
+      if (error || !data || data.length === 0) {
+        return FALLBACK_CONFIGS.filter((c) => {
+          const projIds = { 'proj-1': 'loc-1', 'proj-2': 'loc-2', 'proj-3': 'loc-1' };
+          return projIds[c.project_id as keyof typeof projIds] === options.locationId;
+        });
+      }
+
+      return data as PropertyConfiguration[];
+    }
+
     let query = supabase
       .from('property_configurations')
       .select('*, project:projects(*, location:locations(*))')
@@ -173,13 +193,7 @@ export async function getPublishedConfigurations(options?: {
       return FALLBACK_CONFIGS;
     }
 
-    let results = (data as unknown) as PropertyConfiguration[];
-
-    if (options?.locationId) {
-      results = results.filter((item) => item.project?.location_id === options.locationId);
-    }
-
-    return results;
+    return data as PropertyConfiguration[];
   } catch {
     return FALLBACK_CONFIGS;
   }

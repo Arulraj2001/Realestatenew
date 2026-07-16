@@ -98,36 +98,39 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
       />
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
-        {/* Location Hero Header */}
-        <section className="relative py-20 bg-slate-900 border-b border-slate-800 overflow-hidden">
-          <div className="absolute inset-0 z-0 opacity-20">
+        {/* Compact Location Hero Header */}
+        <section className="relative py-6 sm:py-8 bg-slate-950 border-b border-slate-900 overflow-hidden hero-dark-overlay">
+          <div className="absolute inset-0 z-0 opacity-25">
             <Image src={fallbackImage} alt={location.name} fill className="object-cover" />
-            <div className="absolute inset-0 bg-slate-950/80" />
+            <div className="absolute inset-0 bg-slate-950/85" />
           </div>
 
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-              <Link href="/" className="hover:text-amber-400 transition-colors">
-                Home
-              </Link>
-              <ChevronRight className="w-3.5 h-3.5" />
-              <Link href="/locations" className="hover:text-amber-400 transition-colors">
-                Locations
-              </Link>
-              <ChevronRight className="w-3.5 h-3.5" />
-              <span className="text-amber-400">{location.name}</span>
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-white/5">
+              {/* Breadcrumb */}
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
+                <Link href="/" className="hover:text-amber-400 transition-colors">
+                  Home
+                </Link>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                <Link href="/locations" className="hover:text-amber-400 transition-colors">
+                  Locations
+                </Link>
+                <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                <span className="text-amber-400 font-bold">{location.name}</span>
+              </div>
+
+              {/* Address Badge */}
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-amber-300 text-xs font-bold uppercase tracking-wider w-fit">
+                <MapPin className="w-3 h-3 text-amber-400" /> {location.address || 'Tamil Nadu'}
+              </div>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider">
-              <MapPin className="w-3.5 h-3.5" /> {location.address || 'Tamil Nadu'}
-            </div>
-
-            <h1 className="font-serif text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Properties & Townships in {location.name}
+            <h1 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
+              Properties &amp; Townships in {location.name}
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed">
+            <p className="text-slate-300 text-xs sm:text-sm max-w-3xl leading-relaxed">
               {location.full_description || location.short_description ||
                 `${location.name} offers rapid infrastructure growth, high resale appreciation, and strategic access to schools, hospitals, and national highways.`}
             </p>

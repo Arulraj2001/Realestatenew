@@ -103,7 +103,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     <div className="bg-slate-950 text-slate-100 min-h-screen">
 
       {/* ─── 1. CINEMATIC HERO ─────────────────────────────────────── */}
-      <section className="relative min-h-[70vh] flex items-end bg-slate-950 overflow-hidden border-b border-slate-800">
+      <section className="hero-dark-overlay relative py-5 sm:py-6 bg-slate-950 overflow-hidden border-b border-slate-800">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -120,45 +120,24 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-32">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-6">
-            <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600 pointer-events-none" />
-            <Link href="/projects" className="hover:text-amber-400 transition-colors">Projects</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-600 pointer-events-none" />
-            <span className="text-amber-400">{project.name}</span>
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-3" style={{ color: '#cbd5e1' }}>
+            <Link href="/" className="hover:text-amber-400 transition-colors" style={{ color: '#e2e8f0' }}>Home</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 pointer-events-none" style={{ color: '#94a3b8' }} />
+            <Link href="/projects" className="hover:text-amber-400 transition-colors" style={{ color: '#e2e8f0' }}>Projects</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 pointer-events-none" style={{ color: '#94a3b8' }} />
+            <span className="text-amber-400 font-bold" style={{ color: '#fbbf24' }}>{project.name}</span>
           </div>
 
-          <div className="max-w-3xl space-y-5">
-            {/* Badges */}
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="gold">{project.project_status || 'Ongoing'}</Badge>
-              {project.approval_type && (
-                <Badge variant="emerald">
-                  <ShieldCheck className="w-3.5 h-3.5 mr-1 pointer-events-none" /> {project.approval_type} Approved
-                </Badge>
-              )}
-              {project.location?.name && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-900/70 backdrop-blur-sm border border-slate-700 rounded-full text-slate-300 text-xs font-semibold">
-                  <MapPin className="w-3 h-3 text-amber-400 pointer-events-none" /> {project.location.name}
-                </span>
-              )}
-            </div>
-
+          <div className="max-w-3xl space-y-4">
             {/* Project Name */}
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-none drop-shadow-2xl">
+            <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-none drop-shadow-2xl" style={{ color: '#ffffff', textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
               {project.name}
             </h1>
 
-            {/* Short Description */}
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl">
-              {project.short_description ||
-                `${project.name} is a premier residential project offering DTCP approved villa plots and independent family homes in ${project.location?.name || 'Namakkal'}.`}
-            </p>
-
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-wrap gap-3 pt-1">
               <a href={`tel:${siteConfig.contact.phone}`}>
                 <Button variant="gold" size="lg" className="font-bold shadow-xl">
                   <Phone className="w-4 h-4 mr-2 pointer-events-none" /> Call Now for Site Visit
@@ -180,24 +159,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
       </section>
 
-      {/* ─── 2. QUICK FACTS STRIP ──────────────────────────────────── */}
-      <section className="bg-slate-900 border-b border-slate-800 py-5 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { label: 'Location', value: project.location?.name || 'Namakkal', color: 'text-amber-400' },
-              { label: 'Status', value: project.project_status || 'Ongoing', color: 'text-white' },
-              { label: 'Approvals', value: project.approval_type || 'DTCP Sanctioned', color: 'text-emerald-400' },
-              { label: 'Property Choices', value: `${allConfigurations.length} Available Types`, color: 'text-white' },
-            ].map((stat) => (
-              <div key={stat.label} className="flex flex-col items-center justify-center p-4 bg-slate-950/60 rounded-2xl border border-slate-800 text-center gap-1">
-                <span className="text-[10px] uppercase font-extrabold text-slate-500 tracking-widest">{stat.label}</span>
-                <span className={`font-serif font-bold text-sm sm:text-base ${stat.color}`}>{stat.value}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* ─── 3. MAIN ACCORDION DETAILS CONTAINER ─────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -36,26 +36,37 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     primary_cta_label: '',
     primary_cta_link: '',
     secondary_cta_label: '',
+    text_alignment: 'center',
     intro_h2: '',
     intro_content: '',
+    stats_visible: true,
+    stats_list: [] as Array<{ label: string; value: string; icon?: string }>,
+    why_choose_us_items: [] as Array<{ title: string; description: string }>,
     gallery_heading: '',
     gallery_description: '',
+    gallery_cta: '',
     final_cta_heading: '',
     final_cta_description: '',
 
     // About Page Extended Admin Controls
     about_h1: '',
+    about_bg_image: '',
     about_intro: '',
     founder_name: '',
     founder_role: '',
     founder_content: '',
     founder_image: '',
     founder_quote: '',
-    stats_visible: true,
+    timeline_milestones: [] as Array<{ year: string; title: string; subtitle: string; description: string; badge?: string }>,
+    why_left_title: '',
+    why_left_desc: '',
+    why_left_checklist: [] as string[],
 
     // Services Page Extended Admin Controls
     services_h1: '',
     services_intro: '',
+    cta_heading: '',
+    cta_description: '',
     services_list: [] as Array<{ id: string; title: string; content: string; image_url?: string }>,
   });
 
@@ -91,27 +102,42 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       hero_description: String(c.hero_description || c.hero_subtitle || 'Explore residential plots, gated-community villas and independent houses across our projects in Namakkal and Paramathi Velur.'),
       primary_cta_label: String(c.primary_cta_label || 'Explore Projects'),
       primary_cta_link: String(c.primary_cta_link || '/projects'),
-      secondary_cta_label: String(c.secondary_cta_label || 'Contact Us'),
+      secondary_cta_label: String(c.secondary_cta_label || 'Schedule a Site Visit'),
+      text_alignment: String(c.text_alignment || 'center'),
       intro_h2: String(c.intro_h2 || 'Find Residential Plots and Dream Villas in Namakkal and Paramathi Velur'),
       intro_content: String(c.intro_content || ''),
+      stats_visible: c.stats_visible !== false,
+      stats_list: (Array.isArray(c.stats_list) && c.stats_list.length > 0) ? c.stats_list : [],
+      why_choose_us_items: (Array.isArray(c.why_choose_us_items) && c.why_choose_us_items.length > 0) ? c.why_choose_us_items : [],
       gallery_heading: String(c.gallery_heading || 'See Our Projects'),
       gallery_description: String(c.gallery_description || 'View real site photos, villa designs, roads, layouts and construction updates from our projects.'),
+      gallery_cta: String(c.gallery_cta || 'View Gallery'),
       final_cta_heading: String(c.final_cta_heading || 'Visit the Project Before You Decide'),
       final_cta_description: String(c.final_cta_description || 'Tell us which location or property you are interested in, and our team will arrange a guided site visit.'),
 
       // About
       about_h1: String(c.about_h1 || 'Your Trusted Real Estate Partner in Namakkal and Paramathi Velur'),
+      about_bg_image: String(c.about_bg_image || ''),
       about_intro: String(c.about_intro || ''),
       founder_name: String(c.founder_name || 'Thennarasu Sambathkumar'),
       founder_role: String(c.founder_role || 'Managing Director'),
       founder_content: String(c.founder_content || ''),
       founder_image: String(c.founder_image || ''),
       founder_quote: String(c.founder_quote || 'We do not just sell plots and houses. We help people find a property that matches their choice, budget and future.'),
-      stats_visible: c.stats_visible !== false,
+      timeline_milestones: (Array.isArray(c.timeline_milestones) && c.timeline_milestones.length > 0) ? c.timeline_milestones : [],
+      why_left_title: String(c.why_left_title || 'Your Preferred Real Estate Developer'),
+      why_left_desc: String(c.why_left_desc || 'We combine DTCP regulatory compliance, transparent sub-registrar documentation, and strategic layout locations to protect your capital and build genuine long-term value.'),
+      why_left_checklist: Array.isArray(c.why_left_checklist) ? c.why_left_checklist : [
+        '100% Verified Legal Documents',
+        'Zero Hidden Fees or Charges',
+        'Guided Private Site Visit Transport'
+      ],
 
       // Services
       services_h1: String(c.services_h1 || 'Our Real Estate Services in Namakkal and Paramathi Velur'),
       services_intro: String(c.services_intro || 'Our team helps you choose the right plot or villa and supports you from your first enquiry through site visit, documentation and registration.'),
+      cta_heading: String(c.cta_heading || 'Need Help Choosing the Right Plot or Villa?'),
+      cta_description: String(c.cta_description || 'Talk to our team and explore suitable property options in Namakkal and Paramathi Velur.'),
       services_list: (Array.isArray(c.services_list) && c.services_list.length > 0)
         ? c.services_list
         : [
@@ -174,11 +200,15 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         primary_cta_label: formData.primary_cta_label,
         primary_cta_link: formData.primary_cta_link,
         secondary_cta_label: formData.secondary_cta_label,
+        text_alignment: formData.text_alignment,
         intro_h2: formData.intro_h2,
         intro_content: formData.intro_content,
         stats_visible: formData.stats_visible,
+        stats_list: formData.stats_list,
+        why_choose_us_items: formData.why_choose_us_items,
         gallery_heading: formData.gallery_heading,
         gallery_description: formData.gallery_description,
+        gallery_cta: formData.gallery_cta,
         final_cta_heading: formData.final_cta_heading,
         final_cta_description: formData.final_cta_description,
       };
@@ -186,6 +216,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       updatedContent = {
         ...existingObj,
         about_h1: formData.about_h1,
+        about_bg_image: formData.about_bg_image,
         about_intro: formData.about_intro,
         founder_name: formData.founder_name,
         founder_role: formData.founder_role,
@@ -193,12 +224,22 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         founder_image: formData.founder_image,
         founder_quote: formData.founder_quote,
         stats_visible: formData.stats_visible,
+        stats_list: formData.stats_list,
+        why_choose_us_items: formData.why_choose_us_items,
+        why_left_title: formData.why_left_title,
+        why_left_desc: formData.why_left_desc,
+        why_left_checklist: formData.why_left_checklist,
+        timeline_milestones: formData.timeline_milestones,
+        cta_heading: formData.cta_heading,
+        cta_description: formData.cta_description,
       };
     } else if (selectedKey === 'services') {
       updatedContent = {
         ...existingObj,
         services_h1: formData.services_h1,
         services_intro: formData.services_intro,
+        cta_heading: formData.cta_heading,
+        cta_description: formData.cta_description,
         services_list: formData.services_list,
       };
     } else {
@@ -388,6 +429,103 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                 <Label>Hero Subtitle / Description</Label>
                 <Textarea rows={3} value={formData.hero_description} onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })} />
               </div>
+
+              {/* #### MISSING FIELDS ADDED #### */}
+              <div className="pt-4 border-t border-slate-800 space-y-4">
+                <h3 className="text-xs font-bold uppercase text-amber-400 tracking-wider">Additional Hero & Section Controls</h3>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Secondary CTA Label</Label>
+                    <Input value={formData.secondary_cta_label} onChange={(e) => setFormData({ ...formData, secondary_cta_label: e.target.value })} placeholder="Schedule a Site Visit" />
+                  </div>
+                  <div>
+                    <Label>Text Alignment</Label>
+                    <select value={formData.text_alignment} onChange={(e) => setFormData({ ...formData, text_alignment: e.target.value as 'left' | 'center' | 'right' })} className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white">
+                      <option value="center">Center</option>
+                      <option value="left">Left</option>
+                      <option value="right">Right</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <MediaUploader label="Mobile Hero Image" value={formData.mobile_image} folder="content" onChange={(url) => setFormData({ ...formData, mobile_image: url })} />
+                </div>
+
+                <div>
+                  <Label>Mobile Video URL (.mp4)</Label>
+                  <Input value={formData.mobile_video} onChange={(e) => setFormData({ ...formData, mobile_video: e.target.value })} placeholder="https://your-storage/mobile-video.mp4" />
+                </div>
+
+                <div>
+                  <Label>Gallery CTA Label</Label>
+                  <Input value={formData.gallery_cta} onChange={(e) => setFormData({ ...formData, gallery_cta: e.target.value })} placeholder="View Gallery" />
+                </div>
+
+                <div>
+                  <Label>Primary CTA Link</Label>
+                  <Input value={formData.primary_cta_link} onChange={(e) => setFormData({ ...formData, primary_cta_link: e.target.value })} placeholder="/projects" />
+                </div>
+
+                {/* Stats List Editor */}
+                <div className="space-y-3 pt-4 border-t border-slate-800">
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-xs font-bold uppercase text-emerald-400 tracking-wider">Homepage Stats List ({formData.stats_list.length})</h4>
+                    <button type="button" onClick={() => setFormData({ ...formData, stats_list: [...formData.stats_list, { label: '', value: '', icon: 'Award' }] })} className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-lg transition-colors">
+                      + Add Stat
+                    </button>
+                  </div>
+                  {formData.stats_list.map((stat, idx) => (
+                    <div key={idx} className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Stat #{idx + 1}</span>
+                        <button type="button" onClick={() => setFormData({ ...formData, stats_list: formData.stats_list.filter((_, i) => i !== idx) })} className="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-md">
+                          Remove
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <Label>Value (e.g. 12+)</Label>
+                          <Input value={stat.value} onChange={(e) => { const updated = [...formData.stats_list]; updated[idx] = { ...updated[idx], value: e.target.value }; setFormData({ ...formData, stats_list: updated }); }} placeholder="12+" />
+                        </div>
+                        <div>
+                          <Label>Label</Label>
+                          <Input value={stat.label} onChange={(e) => { const updated = [...formData.stats_list]; updated[idx] = { ...updated[idx], label: e.target.value }; setFormData({ ...formData, stats_list: updated }); }} placeholder="Years of Trust" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Why Choose Us Items Editor */}
+                <div className="space-y-3 pt-4 border-t border-slate-800">
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-xs font-bold uppercase text-emerald-400 tracking-wider">Why Choose Us Items ({formData.why_choose_us_items.length})</h4>
+                    <button type="button" onClick={() => setFormData({ ...formData, why_choose_us_items: [...formData.why_choose_us_items, { title: '', description: '' }] })} className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-lg transition-colors">
+                      + Add Item
+                    </button>
+                  </div>
+                  {formData.why_choose_us_items.map((item, idx) => (
+                    <div key={idx} className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Item #{idx + 1}</span>
+                        <button type="button" onClick={() => setFormData({ ...formData, why_choose_us_items: formData.why_choose_us_items.filter((_, i) => i !== idx) })} className="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-md">
+                          Remove
+                        </button>
+                      </div>
+                      <div>
+                        <Label>Title</Label>
+                        <Input value={item.title} onChange={(e) => { const updated = [...formData.why_choose_us_items]; updated[idx] = { ...updated[idx], title: e.target.value }; setFormData({ ...formData, why_choose_us_items: updated }); }} placeholder="Clear Documentation" />
+                      </div>
+                      <div>
+                        <Label>Description</Label>
+                        <Textarea rows={2} value={item.description} onChange={(e) => { const updated = [...formData.why_choose_us_items]; updated[idx] = { ...updated[idx], description: e.target.value }; setFormData({ ...formData, why_choose_us_items: updated }); }} placeholder="We explain the available property documents clearly before booking." />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           ) : selectedKey === 'about' ? (
             <div className="space-y-4 pt-2 border-t border-slate-800">
@@ -396,6 +534,15 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
               <div>
                 <Label>Main Page H1</Label>
                 <Input value={formData.about_h1} onChange={(e) => setFormData({ ...formData, about_h1: e.target.value })} />
+              </div>
+
+              <div>
+                <MediaUploader
+                  label="Company Profile Section Background Image"
+                  value={formData.about_bg_image}
+                  folder="about"
+                  onChange={(url) => setFormData({ ...formData, about_bg_image: url })}
+                />
               </div>
 
               <div>
@@ -448,6 +595,134 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                   </select>
                 </div>
               </div>
+
+              {/* About Page Stats List */}
+              <div className="space-y-3 pt-4 border-t border-slate-800">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-xs font-bold uppercase text-emerald-400 tracking-wider">About Page Stats List ({formData.stats_list.length})</h4>
+                  <button type="button" onClick={() => setFormData({ ...formData, stats_list: [...formData.stats_list, { label: '', value: '', icon: 'Award' }] })} className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-lg transition-colors">
+                    + Add Stat
+                  </button>
+                </div>
+                {formData.stats_list.map((stat, idx) => (
+                  <div key={idx} className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Stat #{idx + 1}</span>
+                      <button type="button" onClick={() => setFormData({ ...formData, stats_list: formData.stats_list.filter((_, i) => i !== idx) })} className="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-md">Remove</button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label>Value (e.g. 13+)</Label>
+                        <Input value={stat.value} onChange={(e) => { const updated = [...formData.stats_list]; updated[idx] = { ...updated[idx], value: e.target.value }; setFormData({ ...formData, stats_list: updated }); }} placeholder="13+" />
+                      </div>
+                      <div>
+                        <Label>Label</Label>
+                        <Input value={stat.label} onChange={(e) => { const updated = [...formData.stats_list]; updated[idx] = { ...updated[idx], label: e.target.value }; setFormData({ ...formData, stats_list: updated }); }} placeholder="Years of Experience" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* About Page Why Choose Us Items */}
+              <div className="space-y-3 pt-4 border-t border-slate-800">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-xs font-bold uppercase text-emerald-400 tracking-wider">Why Choose Us Items ({formData.why_choose_us_items.length})</h4>
+                  <button type="button" onClick={() => setFormData({ ...formData, why_choose_us_items: [...formData.why_choose_us_items, { title: '', description: '' }] })} className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-lg transition-colors">
+                    + Add Item
+                  </button>
+                </div>
+                {formData.why_choose_us_items.map((item, idx) => (
+                  <div key={idx} className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Item #{idx + 1}</span>
+                      <button type="button" onClick={() => setFormData({ ...formData, why_choose_us_items: formData.why_choose_us_items.filter((_, i) => i !== idx) })} className="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-md">Remove</button>
+                    </div>
+                    <div>
+                      <Label>Title</Label>
+                      <Input value={item.title} onChange={(e) => { const updated = [...formData.why_choose_us_items]; updated[idx] = { ...updated[idx], title: e.target.value }; setFormData({ ...formData, why_choose_us_items: updated }); }} placeholder="Prime Location" />
+                    </div>
+                    <div>
+                      <Label>Description</Label>
+                      <Textarea rows={2} value={item.description} onChange={(e) => { const updated = [...formData.why_choose_us_items]; updated[idx] = { ...updated[idx], description: e.target.value }; setFormData({ ...formData, why_choose_us_items: updated }); }} placeholder="Projects in fast-growing areas..." />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Why We're the Right Choice Left Highlight Card Controls */}
+              <div className="space-y-3 pt-4 border-t border-slate-800">
+                <h4 className="text-xs font-bold uppercase text-emerald-400 tracking-wider">Why Choose Us Left Highlight Card</h4>
+                <div>
+                  <Label>Card Title</Label>
+                  <Input value={formData.why_left_title} onChange={(e) => setFormData({ ...formData, why_left_title: e.target.value })} placeholder="Your Preferred Real Estate Developer" />
+                </div>
+                <div>
+                  <Label>Card Description</Label>
+                  <Textarea rows={3} value={formData.why_left_desc} onChange={(e) => setFormData({ ...formData, why_left_desc: e.target.value })} placeholder="We combine DTCP regulatory compliance..." />
+                </div>
+                <div>
+                  <Label>Checklist Highlights (One item per line)</Label>
+                  <Textarea
+                    rows={3}
+                    value={Array.isArray(formData.why_left_checklist) ? formData.why_left_checklist.join('\n') : ''}
+                    onChange={(e) => setFormData({ ...formData, why_left_checklist: e.target.value.split('\n').filter(Boolean) })}
+                    placeholder="100% Verified Legal Documents&#10;Zero Hidden Fees or Charges&#10;Guided Private Site Visit Transport"
+                  />
+                </div>
+              </div>
+
+              {/* About Page Timeline Milestones */}
+              <div className="space-y-3 pt-4 border-t border-slate-800">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-xs font-bold uppercase text-emerald-400 tracking-wider">Company Timeline Milestones ({formData.timeline_milestones.length})</h4>
+                  <button type="button" onClick={() => setFormData({ ...formData, timeline_milestones: [...formData.timeline_milestones, { year: '', title: '', subtitle: '', description: '', badge: '' }] })} className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold rounded-lg transition-colors">
+                    + Add Milestone
+                  </button>
+                </div>
+                {formData.timeline_milestones.map((milestone, idx) => (
+                  <div key={idx} className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Milestone #{idx + 1}</span>
+                      <button type="button" onClick={() => setFormData({ ...formData, timeline_milestones: formData.timeline_milestones.filter((_, i) => i !== idx) })} className="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-md">Remove</button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Label>Year</Label>
+                        <Input value={milestone.year} onChange={(e) => { const updated = [...formData.timeline_milestones]; updated[idx] = { ...updated[idx], year: e.target.value }; setFormData({ ...formData, timeline_milestones: updated }); }} placeholder="2011" />
+                      </div>
+                      <div>
+                        <Label>Badge (optional)</Label>
+                        <Input value={milestone.badge || ''} onChange={(e) => { const updated = [...formData.timeline_milestones]; updated[idx] = { ...updated[idx], badge: e.target.value }; setFormData({ ...formData, timeline_milestones: updated }); }} placeholder="Foundation" />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Title</Label>
+                      <Input value={milestone.title} onChange={(e) => { const updated = [...formData.timeline_milestones]; updated[idx] = { ...updated[idx], title: e.target.value }; setFormData({ ...formData, timeline_milestones: updated }); }} placeholder="Foundational Real Estate Mastery" />
+                    </div>
+                    <div>
+                      <Label>Subtitle</Label>
+                      <Input value={milestone.subtitle} onChange={(e) => { const updated = [...formData.timeline_milestones]; updated[idx] = { ...updated[idx], subtitle: e.target.value }; setFormData({ ...formData, timeline_milestones: updated }); }} placeholder="Land Acquisition & Legal Due Diligence" />
+                    </div>
+                    <div>
+                      <Label>Description</Label>
+                      <Textarea rows={2} value={milestone.description} onChange={(e) => { const updated = [...formData.timeline_milestones]; updated[idx] = { ...updated[idx], description: e.target.value }; setFormData({ ...formData, timeline_milestones: updated }); }} placeholder="Key leadership entered real estate development..." />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* About Page Bottom CTA */}
+              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-slate-800">
+                <div>
+                  <Label>Bottom CTA Heading</Label>
+                  <Input value={formData.cta_heading} onChange={(e) => setFormData({ ...formData, cta_heading: e.target.value })} placeholder="Let Us Help You Find the Right Property" />
+                </div>
+                <div>
+                  <Label>Bottom CTA Description</Label>
+                  <Input value={formData.cta_description} onChange={(e) => setFormData({ ...formData, cta_description: e.target.value })} placeholder="Talk to our team or schedule a visit..." />
+                </div>
+              </div>
             </div>
           ) : selectedKey === 'services' ? (
             <div className="space-y-6 pt-2 border-t border-slate-800">
@@ -461,6 +736,17 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
               <div>
                 <Label>Services Overview Intro</Label>
                 <Textarea rows={3} value={formData.services_intro} onChange={(e) => setFormData({ ...formData, services_intro: e.target.value })} />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+                <div>
+                  <Label>Bottom CTA Heading</Label>
+                  <Input value={formData.cta_heading} onChange={(e) => setFormData({ ...formData, cta_heading: e.target.value })} placeholder="Need Help Choosing the Right Plot or Villa?" />
+                </div>
+                <div>
+                  <Label>Bottom CTA Description</Label>
+                  <Input value={formData.cta_description} onChange={(e) => setFormData({ ...formData, cta_description: e.target.value })} placeholder="Talk to our team and explore suitable property options." />
+                </div>
               </div>
 
               <div className="space-y-4 pt-4 border-t border-slate-800">

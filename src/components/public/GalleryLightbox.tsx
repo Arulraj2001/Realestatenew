@@ -43,7 +43,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({ items }) => {
               className="object-cover transition-transform duration-500 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-95 transition-opacity" />
-            <div className="absolute bottom-4 left-4 right-4">
+            <div className="image-overlay-content absolute bottom-4 left-4 right-4">
               <span className="inline-block px-2 py-0.5 bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px] uppercase font-bold rounded mb-1">
                 {item.category || 'Overview'}
               </span>
@@ -59,15 +59,18 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({ items }) => {
       <Dialog
         isOpen={selectedIndex !== null}
         onClose={() => setSelectedIndex(null)}
-        title={activeItem?.title || 'Media Lightbox'}
+        className="max-w-4xl w-full bg-black border-slate-900 p-0 overflow-hidden hero-dark-overlay rounded-3xl"
+        bodyClassName="p-0 max-h-none overflow-hidden"
       >
         {activeItem && (
-          <div className="relative space-y-4">
-            <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800">
+          <div className="relative w-full aspect-video sm:aspect-[16/10] bg-black text-white overflow-hidden">
+            {/* Image/Video Background (Covers entire dialog area) */}
+            <div className="absolute inset-0 w-full h-full z-0">
               {activeItem.media_type === 'video' ? (
                 <video
                   src={activeItem.storage_path_or_url}
                   controls
+                  autoPlay
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -75,33 +78,58 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({ items }) => {
                   src={activeItem.storage_path_or_url}
                   alt={activeItem.alt_text || 'Media preview'}
                   fill
-                  sizes="100vw"
-                  className="object-contain"
+                  sizes="(max-width: 1200px) 100vw, 1200px"
+                  priority
+                  className="object-cover"
                 />
               )}
             </div>
 
-            {activeItem.caption && (
-              <p className="text-xs text-slate-300 leading-relaxed">{activeItem.caption}</p>
-            )}
+            {/* Top Overlay: Category, Title & Close Button */}
+            <div className="absolute top-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-b from-black/90 via-black/40 to-transparent z-10 flex justify-between items-start gap-4">
+              <div>
+                <span className="inline-block px-2.5 py-0.5 bg-amber-500/20 border border-amber-500/30 text-amber-300 text-[10px] uppercase font-bold rounded-full mb-1 shadow-sm">
+                  {activeItem.category || 'Township Photo'}
+                </span>
+                <h3 className="text-sm sm:text-base font-serif font-bold text-white leading-snug drop-shadow-md">
+                  {activeItem.title || 'Township Showcase'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setSelectedIndex(null)}
+                className="p-2 text-slate-300 hover:text-white rounded-full bg-black/60 hover:bg-black/80 border border-white/10 transition-all cursor-pointer flex-shrink-0 shadow-lg"
+                aria-label="Close dialog"
+              >
+                <X className="w-5 h-5 pointer-events-none" />
+              </button>
+            </div>
 
-            {/* Pagination Controls */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs text-slate-400">
-              <button
-                onClick={handlePrev}
-                className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" /> Previous
-              </button>
-              <span>
-                {selectedIndex! + 1} of {items.length}
-              </span>
-              <button
-                onClick={handleNext}
-                className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer"
-              >
-                Next <ChevronRight className="w-4 h-4" />
-              </button>
+            {/* Bottom Overlay: Caption & Controls */}
+            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 bg-gradient-to-t from-black/95 via-black/40 to-transparent z-10 space-y-3">
+              {activeItem.caption && (
+                <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-medium drop-shadow max-w-3xl line-clamp-2">
+                  {activeItem.caption}
+                </p>
+              )}
+
+              {/* Navigation & Pagination Controls */}
+              <div className="flex items-center justify-between pt-2 border-t border-white/10 text-xs text-slate-300">
+                <button
+                  onClick={handlePrev}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 hover:bg-black/80 hover:text-white transition-all cursor-pointer font-bold shadow-md"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Previous
+                </button>
+                <span className="font-mono font-bold text-white drop-shadow">
+                  {selectedIndex! + 1} <span className="text-slate-400">/</span> {items.length}
+                </span>
+                <button
+                  onClick={handleNext}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 hover:bg-black/80 hover:text-white transition-all cursor-pointer font-bold shadow-md"
+                >
+                  Next <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
         )}

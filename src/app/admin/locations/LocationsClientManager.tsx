@@ -27,7 +27,10 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
     full_description: '',
     address: '',
     map_url: '',
+    latitude: '',
+    longitude: '',
     hero_image_path: '',
+    hero_video_path: '',
     display_order: 0,
     published: true,
     featured: false,
@@ -44,7 +47,10 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       full_description: '',
       address: '',
       map_url: '',
+      latitude: '',
+      longitude: '',
       hero_image_path: '',
+      hero_video_path: '',
       display_order: locations.length + 1,
       published: true,
       featured: false,
@@ -63,7 +69,10 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       full_description: loc.full_description || '',
       address: loc.address || '',
       map_url: loc.map_url || '',
+      latitude: loc.latitude ? String(loc.latitude) : '',
+      longitude: loc.longitude ? String(loc.longitude) : '',
       hero_image_path: loc.hero_image_path || '',
+      hero_video_path: loc.hero_video_path || '',
       display_order: loc.display_order,
       published: loc.published,
       featured: loc.featured,
@@ -83,7 +92,14 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await saveLocationAction(formData, editingLocation?.id);
+    // Convert string numeric fields before passing to server action
+    const sanitizedData = {
+      ...formData,
+      latitude: formData.latitude ? Number(formData.latitude) : null,
+      longitude: formData.longitude ? Number(formData.longitude) : null,
+      display_order: Number(formData.display_order),
+    };
+    const res = await saveLocationAction(sanitizedData, editingLocation?.id);
 
     if (res.success) {
       toast({ type: 'success', title: 'Location Record Saved' });
@@ -290,12 +306,75 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
             />
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Hero Video URL</Label>
+              <Input
+                value={formData.hero_video_path}
+                onChange={(e) => setFormData({ ...formData, hero_video_path: e.target.value })}
+                placeholder="https://youtube.com/watch?v=..."
+              />
+            </div>
+            <div>
+              <Label>Map URL / Embed URL</Label>
+              <Input
+                value={formData.map_url}
+                onChange={(e) => setFormData({ ...formData, map_url: e.target.value })}
+                placeholder="https://www.google.com/maps/embed?pb=..."
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Latitude</Label>
+              <Input
+                type="number"
+                step="any"
+                value={formData.latitude}
+                onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                placeholder="11.2189"
+              />
+            </div>
+            <div>
+              <Label>Longitude</Label>
+              <Input
+                type="number"
+                step="any"
+                value={formData.longitude}
+                onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                placeholder="78.1674"
+              />
+            </div>
+          </div>
+
           <div>
             <MediaUploader
-              label="Hero Cover Media"
+              label="Hero Cover Image / Photo"
               value={formData.hero_image_path}
               folder="locations"
               onChange={(url) => setFormData({ ...formData, hero_image_path: url })}
+            />
+          </div>
+
+          <div>
+            <Label>Detailed Description (Full)</Label>
+            <textarea
+              rows={4}
+              value={formData.full_description}
+              onChange={(e) => setFormData({ ...formData, full_description: e.target.value })}
+              placeholder="Complete description of this location..."
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
+            />
+          </div>
+
+          <div>
+            <Label>Display Order</Label>
+            <Input
+              type="number"
+              value={formData.display_order}
+              onChange={(e) => setFormData({ ...formData, display_order: Number(e.target.value) })}
+              placeholder="1"
             />
           </div>
 

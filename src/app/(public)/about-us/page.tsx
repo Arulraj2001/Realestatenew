@@ -21,6 +21,7 @@ import {
 import { getContentPage } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
+import { WhyChooseUsDeck } from '@/components/public/WhyChooseUsDeck';
 
 export const metadata: Metadata = {
   title: 'About Your Choice Properties | Real Estate Company in Namakkal',
@@ -132,9 +133,10 @@ export default async function AboutUsPage() {
     },
   ];
 
-  const whyItems: WhyChoiceItem[] = contentJson.why_choice_items || defaultWhyItems;
+  const whyItems: WhyChoiceItem[] = contentJson.why_choose_us_items || contentJson.why_choice_items || defaultWhyItems;
   const statsList: StatItem[] = contentJson.stats_list || defaultStats;
   const isStatsVisible = contentJson.stats_visible !== false;
+  const activeTimeline: TimelineMilestone[] = contentJson.timeline_milestones?.length > 0 ? contentJson.timeline_milestones : timelineMilestones;
 
   const defaultFounderParagraphs = [
     'Your Choice Properties is led by Thennarasu Sambathkumar, who has more than 13 years of experience in land development, villa construction and residential property sales in Tamil Nadu.',
@@ -148,8 +150,16 @@ export default async function AboutUsPage() {
 
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
-      {/* Modern Glassmorphism Company Profile Hero Header */}
-      <div className="max-w-7xl mx-auto relative rounded-2xl overflow-hidden border border-emerald-900/60 bg-gradient-to-br from-[#0f2e21] via-slate-900 to-slate-950 p-6 sm:p-8 shadow-2xl">
+      <div 
+        className="max-w-7xl mx-auto relative rounded-2xl overflow-hidden border border-emerald-900/60 p-6 sm:p-8 shadow-2xl hero-dark-overlay"
+        style={contentJson.about_bg_image ? {
+          backgroundImage: `linear-gradient(to bottom right, rgba(15, 46, 33, 0.92), rgba(15, 23, 42, 0.95)), url(${contentJson.about_bg_image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        } : {
+          background: 'linear-gradient(to bottom right, #0f2e21, #0f172a, #020617)'
+        }}
+      >
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -266,26 +276,25 @@ export default async function AboutUsPage() {
           </p>
         </div>
 
-        <div className="relative border-l-2 border-emerald-800/60 ml-4 sm:ml-28 space-y-8 pl-5 sm:pl-8">
-          {timelineMilestones.map((item, idx) => (
+        <div className="relative border-l-2 border-emerald-800/60 ml-4 sm:ml-8 space-y-6 pl-6 sm:pl-8">
+          {activeTimeline.map((item, idx) => (
             <div key={idx} className="relative group">
-              {/* Connected Year Node Marker */}
-              <div className="absolute -left-[27px] sm:-left-[39px] top-1 w-5 h-5 sm:w-7 sm:h-7 rounded-full bg-slate-950 border-2 border-amber-400 group-hover:border-emerald-400 group-hover:scale-110 flex items-center justify-center transition-all duration-300 shadow-md">
-                <div className="w-1.5 h-1.5 rounded-full bg-amber-400 group-hover:bg-emerald-400 transition-colors" />
-              </div>
-
-              {/* Desktop Floating Year Tag */}
-              <div className="hidden sm:block absolute -left-[125px] top-1 text-right w-24">
-                <span className="font-serif font-extrabold text-amber-400 text-base block">{item.year}</span>
-                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">{item.badge}</span>
-              </div>
+              {/* Connected Year Node Dot */}
+              <div className="absolute -left-[31px] sm:-left-[39px] top-4 w-4 h-4 rounded-full bg-amber-500 border-2 border-slate-950 group-hover:bg-emerald-400 group-hover:scale-125 transition-all duration-300 shadow-md z-10" />
 
               {/* Timeline Card */}
-              <div className="p-4 sm:p-5 bg-slate-900 border border-slate-800 rounded-2xl shadow-lg space-y-1.5 hover:border-amber-500/40 transition-all duration-300">
-                <div className="sm:hidden flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5">
-                  <span className="font-serif font-extrabold text-amber-400 text-xs">{item.year}</span>
-                  <span className="text-[9px] font-bold px-2 py-0.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full">{item.badge}</span>
+              <div className="p-4 sm:p-5 bg-slate-900 border border-slate-800 rounded-2xl shadow-lg space-y-2 hover:border-amber-500/40 transition-all duration-300">
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
+                  <span className="font-serif font-extrabold text-amber-500 dark:text-amber-400 text-lg sm:text-xl tracking-tight">
+                    {item.year}
+                  </span>
+                  {item.badge && (
+                    <span className="text-[10px] font-extrabold px-2.5 py-0.5 bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-full uppercase tracking-wider">
+                      {item.badge}
+                    </span>
+                  )}
                 </div>
+
                 <h3 className="font-serif font-bold text-white text-base sm:text-lg">{item.title}</h3>
                 <h4 className="text-[11px] font-bold text-emerald-400 uppercase tracking-wider">{item.subtitle}</h4>
                 <p className="text-xs text-slate-300 leading-relaxed pt-0.5">{item.description}</p>
@@ -314,66 +323,29 @@ export default async function AboutUsPage() {
                 <Sparkles className="w-5 h-5" />
               </div>
               <h3 className="font-serif font-bold text-xl text-white leading-snug">
-                Your Preferred Real Estate Developer
+                {contentJson.why_left_title || 'Your Preferred Real Estate Developer'}
               </h3>
               <p className="text-xs text-slate-300 leading-relaxed">
-                We combine DTCP regulatory compliance, transparent sub-registrar documentation, and strategic layout locations to protect your capital and build genuine long-term value.
+                {contentJson.why_left_desc || 'We combine DTCP regulatory compliance, transparent sub-registrar documentation, and strategic layout locations to protect your capital and build genuine long-term value.'}
               </p>
             </div>
 
             <div className="relative z-10 space-y-2.5 pt-4 border-t border-slate-800/80">
-              <div className="flex items-center gap-2 text-xs text-slate-200">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>100% Verified Legal Documents</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-slate-200">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Zero Hidden Fees or Charges</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-slate-200">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Guided Private Site Visit Transport</span>
-              </div>
+              {(contentJson.why_left_checklist || [
+                '100% Verified Legal Documents',
+                'Zero Hidden Fees or Charges',
+                'Guided Private Site Visit Transport'
+              ]).map((item: string, idx: number) => (
+                <div key={idx} className="flex items-center gap-2 text-xs text-slate-200">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>{item}</span>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Right Visual 2-Column Feature Cards Grid */}
-          <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-            {whyItems.map((item, idx) => {
-              const iconList = [
-                <MapPin className="w-4 h-4 text-amber-400" key="1" />,
-                <ShieldCheck className="w-4 h-4 text-emerald-400" key="2" />,
-                <Landmark className="w-4 h-4 text-blue-400" key="3" />,
-                <FileCheck className="w-4 h-4 text-amber-400" key="4" />,
-                <TrendingUp className="w-4 h-4 text-emerald-400" key="5" />,
-                <Users className="w-4 h-4 text-blue-400" key="6" />,
-              ];
-
-              return (
-                <div
-                  key={idx}
-                  className="p-4 sm:p-5 bg-slate-900 border border-slate-800 rounded-2xl space-y-2 shadow-lg hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between group"
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="w-8 h-8 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center shadow-inner group-hover:scale-105 transition-transform">
-                        {iconList[idx % iconList.length]}
-                      </div>
-                      <span className="font-mono text-[11px] font-bold text-slate-500">0{idx + 1}</span>
-                    </div>
-
-                    <h3 className="font-serif font-bold text-white text-base group-hover:text-amber-400 transition-colors">
-                      {item.title}
-                    </h3>
-
-                    <p className="text-xs text-slate-300 leading-relaxed">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+          {/* Right Visual 3D Stacked Card Deck */}
+          <WhyChooseUsDeck whyItems={whyItems} />
         </div>
       </section>
 

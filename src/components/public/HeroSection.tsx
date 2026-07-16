@@ -26,6 +26,13 @@ export interface HeroSectionProps {
   heroEnabled?: boolean;
 }
 
+const getYoutubeId = (url?: string | null) => {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
+};
+
 export const HeroSection: React.FC<HeroSectionProps> = ({
   heroTitle = 'Your Choice Properties – Trusted Plots, Villas and Houses in Namakkal and Paramathi Velur',
   heroDescription = 'Explore residential plots, gated-community villas and independent houses across our projects in Namakkal and Paramathi Velur.',
@@ -47,6 +54,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   if (heroEnabled === false) return null;
 
+  // Safeguard against empty string database configurations
+  const safeDesktopImage = desktopImage || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80';
+  const safePosterImage = posterImage || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
+
   // Safe clamping of opacity 0-100 & blur (0-100% maps to 0-25px blur)
   const safeOpacity = Math.max(0, Math.min(100, overlayOpacity)) / 100;
   const blurPx = (Math.max(0, Math.min(100, heroBlur)) / 100) * 20;
@@ -63,13 +74,38 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     <section className="relative min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-between overflow-hidden bg-slate-950 text-slate-100 pb-28 sm:pb-36">
       {/* Media Background Layer */}
       <div className="absolute inset-0 z-0 overflow-hidden" style={blurStyle}>
-        {mediaType === 'video' && desktopVideo ? (
+        {mediaType === 'video' && (getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo)) ? (
+          <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
+            {/* Desktop YouTube Embed */}
+            {getYoutubeId(desktopVideo) && (
+              <div className={`absolute inset-0 w-full h-full ${mobileVideo && getYoutubeId(mobileVideo) ? 'hidden md:block' : 'block'}`}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${getYoutubeId(desktopVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(desktopVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
+                  className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none border-0"
+                  style={{ minWidth: '100%', minHeight: '100%', aspectRatio: '16/9', objectFit: 'cover' }}
+                  allow="autoplay; encrypted-media"
+                />
+              </div>
+            )}
+            {/* Mobile YouTube Embed */}
+            {mobileVideo && getYoutubeId(mobileVideo) && (
+              <div className="absolute inset-0 w-full h-full block md:hidden">
+                <iframe
+                  src={`https://www.youtube.com/embed/${getYoutubeId(mobileVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(mobileVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
+                  className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none border-0"
+                  style={{ minWidth: '100%', minHeight: '100%', aspectRatio: '9/16', objectFit: 'cover' }}
+                  allow="autoplay; encrypted-media"
+                />
+              </div>
+            )}
+          </div>
+        ) : mediaType === 'video' && desktopVideo ? (
           <video
             autoPlay
             muted
             loop
             playsInline
-            poster={posterImage || desktopImage}
+            poster={safePosterImage || safeDesktopImage}
             className="w-full h-full object-cover"
           >
             <source src={desktopVideo} type="video/mp4" />
@@ -79,7 +115,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <picture className="relative block w-full h-full">
             {mobileImage && <source media="(max-width: 640px)" srcSet={mobileImage} />}
             <Image
-              src={desktopImage || posterImage}
+              src={safeDesktopImage || safePosterImage}
               alt="Your Choice Properties Banner"
               fill
               priority

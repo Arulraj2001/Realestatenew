@@ -12,6 +12,7 @@ export interface DialogProps {
   description?: string;
   children: React.ReactNode;
   className?: string;
+  bodyClassName?: string;
 }
 
 export const Dialog: React.FC<DialogProps> = ({
@@ -21,6 +22,7 @@ export const Dialog: React.FC<DialogProps> = ({
   description,
   children,
   className,
+  bodyClassName,
 }) => {
   const [mounted, setMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -63,7 +65,7 @@ export const Dialog: React.FC<DialogProps> = ({
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
       {/* Backdrop */}
       <div
-        className="dialog-backdrop absolute inset-0 bg-slate-950/75 backdrop-blur-md transition-opacity duration-300"
+        className="dialog-backdrop absolute inset-0 bg-black/60 transition-opacity duration-300"
         style={{ opacity: isVisible ? 1 : 0 }}
         onClick={onClose}
         aria-hidden="true"
@@ -84,22 +86,24 @@ export const Dialog: React.FC<DialogProps> = ({
         }}
       >
         {/* Header */}
-        <div className="flex items-start justify-between px-6 py-4 border-b border-slate-800/80">
-          <div className="flex-1 pr-4">
-            {title && <h3 className="text-lg font-serif font-bold text-white leading-snug">{title}</h3>}
-            {description && <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{description}</p>}
+        {title && (
+          <div className="flex items-start justify-between px-6 py-4 border-b border-slate-800/80">
+            <div className="flex-1 pr-4">
+              <h3 className="text-lg font-serif font-bold text-white leading-snug">{title}</h3>
+              {description && <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{description}</p>}
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-slate-100 rounded-xl hover:bg-slate-800 transition-colors cursor-pointer flex-shrink-0"
+              aria-label="Close dialog"
+            >
+              <X className="w-5 h-5 pointer-events-none" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-100 rounded-xl hover:bg-slate-800 transition-colors cursor-pointer flex-shrink-0"
-            aria-label="Close dialog"
-          >
-            <X className="w-5 h-5 pointer-events-none" />
-          </button>
-        </div>
+        )}
 
         {/* Body */}
-        <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+        <div className={cn("p-6 max-h-[80vh] overflow-y-auto", bodyClassName)}>{children}</div>
       </div>
     </div>,
     document.body

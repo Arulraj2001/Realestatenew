@@ -26,7 +26,7 @@ export default async function LocationsListingPage() {
   };
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen py-16 px-4 sm:px-6 lg:px-8 space-y-16">
+    <div className="bg-slate-950 text-slate-100 min-h-screen pt-8 pb-16 px-4 sm:px-6 lg:px-8 space-y-12">
       {/* Page Header */}
       <div className="max-w-7xl mx-auto border-b border-slate-800 pb-8">
         <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Layout Hubs</span>
@@ -76,7 +76,7 @@ export default async function LocationsListingPage() {
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent opacity-90" />
-                    <div className="absolute bottom-4 left-6 right-6">
+                    <div className="image-overlay-content absolute bottom-4 left-6 right-6 z-10 pointer-events-none">
                       <h3 className="font-serif text-2xl font-bold text-white group-hover:text-amber-400 transition-colors">
                         {loc.name}
                       </h3>
@@ -147,7 +147,7 @@ export default async function LocationsListingPage() {
                           Coming Soon
                         </Badge>
                       </div>
-                      <div className="absolute bottom-4 left-6 right-6">
+                      <div className="image-overlay-content absolute bottom-4 left-6 right-6 z-10 pointer-events-none">
                         <h3 className="font-serif text-2xl font-bold text-white">{loc.name}</h3>
                       </div>
                     </div>

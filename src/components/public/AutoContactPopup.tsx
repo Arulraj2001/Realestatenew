@@ -68,9 +68,9 @@ export const AutoContactPopup: React.FC = () => {
 
   return createPortal(
     <div className="fixed inset-0 z-[200] flex items-end sm:items-center justify-center p-3 sm:p-4" role="dialog" aria-modal="true">
-      {/* Backdrop — ultra-smooth blur fade */}
+      {/* Backdrop — clean dimming overlay without heavy blur */}
       <div
-        className="dialog-backdrop absolute inset-0 bg-slate-950/70 backdrop-blur-md transition-opacity duration-500 ease-out"
+        className="absolute inset-0 bg-black/60 transition-opacity duration-500 ease-out"
         style={{ opacity: isVisible ? 1 : 0 }}
         onClick={handleClose}
         aria-hidden="true"

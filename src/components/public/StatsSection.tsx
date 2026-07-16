@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Award, Building2, Users, Maximize, Home } from 'lucide-react';
 
 export interface StatItem {
@@ -21,6 +21,59 @@ const DEFAULT_STATS: StatItem[] = [
   { label: 'Plots Sold', value: '120+', icon: 'Maximize' },
   { label: 'Villas Sold', value: '15+', icon: 'Home' },
 ];
+
+const AnimatedCounter: React.FC<{ value: string }> = ({ value }) => {
+  const match = value.match(/(\d+)(.*)/);
+  const targetNum = match ? parseInt(match[1], 10) : 0;
+  const suffix = match ? match[2] : '';
+
+  const [count, setCount] = useState(0);
+  const containerRef = useRef<HTMLSpanElement>(null);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const element = containerRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          let startTime: number | null = null;
+          const duration = 1800; // 1.8 seconds smooth animation
+
+          const animate = (timestamp: number) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            // Smooth easeOutCubic curve
+            const easeOutProgress = 1 - Math.pow(1 - progress, 3);
+            const currentVal = Math.floor(easeOutProgress * targetNum);
+
+            setCount(currentVal);
+
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            } else {
+              setCount(targetNum);
+            }
+          };
+
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [targetNum]);
+
+  return (
+    <span ref={containerRef}>
+      {count}{suffix}
+    </span>
+  );
+};
 
 export const StatsSection: React.FC<StatsSectionProps> = ({ stats, isVisible = true }) => {
   if (!isVisible) return null;
@@ -52,7 +105,7 @@ export const StatsSection: React.FC<StatsSectionProps> = ({ stats, isVisible = t
               </div>
 
               <span className="font-serif font-extrabold text-2xl sm:text-3xl lg:text-4xl text-amber-400 group-hover:text-amber-300 transition-colors">
-                {stat.value}
+                <AnimatedCounter value={stat.value} />
               </span>
 
               <span className="text-[11px] sm:text-xs uppercase font-bold text-slate-300 tracking-wider leading-tight">
