@@ -10,66 +10,62 @@ import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
 export interface SiteVisitCTASectionProps {
   heading?: string;
   description?: string;
+  locationId?: string;
+  projectId?: string;
 }
 
 export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
-  heading = 'Visit the Project Before You Decide',
+  heading = 'Contact Our Sales Team',
   description = 'Tell us which location or property you are interested in, and our team will arrange a guided site visit.',
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-[#0f2e21] via-slate-950 to-slate-950 text-slate-100 border-t border-emerald-900/40 relative overflow-hidden">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider">
-          <Calendar className="w-4 h-4" /> Chauffeured Pickup Available
-        </div>
+    <>
+      <section className="py-16 bg-gradient-to-r from-emerald-950 via-slate-900 to-emerald-950 border-y border-emerald-900/60 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent pointer-events-none" />
 
-        <h2 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-          {heading}
-        </h2>
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 relative z-10">
+          <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            {heading}
+          </h2>
+          <p className="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto">
+            {description}
+          </p>
 
-        <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
-          {description}
-        </p>
-
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-          <Button
-            variant="gold"
-            size="lg"
-            onClick={() => setIsModalOpen(true)}
-            className="font-bold px-8 py-4 text-base shadow-xl"
-          >
-            <Calendar className="w-5 h-5 mr-2" /> Schedule a Site Visit
-          </Button>
-
-          <a
-            href={buildWhatsAppUrl({
-              customMessage: 'Hi Your Choice Properties team, I would like to schedule a site visit to inspect your layouts.',
-            })}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
             <Button
-              variant="outline"
+              variant="gold"
               size="lg"
-              className="border-emerald-600/60 hover:bg-emerald-950 text-white bg-slate-900/60 font-bold px-8 py-4 text-base"
+              onClick={() => setIsOpen(true)}
+              className="font-bold w-full sm:w-auto shadow-xl"
             >
-              <MessageSquare className="w-5 h-5 text-emerald-400 mr-2" /> Chat on WhatsApp
+              <Calendar className="w-5 h-5 mr-2" /> Contact Us
             </Button>
-          </a>
+            <a
+              href={buildWhatsAppUrl({
+                customMessage: 'Hi Your Choice Properties team, I would like to contact your sales team regarding your layouts.',
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto"
+            >
+              <Button variant="outline" size="lg" className="font-bold w-full border-emerald-500/40 text-emerald-400 hover:bg-emerald-950">
+                <MessageSquare className="w-5 h-5 mr-2" /> Chat on WhatsApp
+              </Button>
+            </a>
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Dialog Modal for Booking Site Visit */}
       <Dialog
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Schedule a Guided Site Visit"
-        description="Fill in your preferred date and contact details. Our team will coordinate."
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        title="Contact Us"
+        description="Our sales team will assist you with layout maps, pricing sheets, and site visits."
       >
-        <SiteVisitForm onSuccess={() => setIsModalOpen(false)} />
+        <SiteVisitForm onSuccess={() => setIsOpen(false)} />
       </Dialog>
-    </section>
+    </>
   );
 };

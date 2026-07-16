@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { FileText, Edit3, Save } from 'lucide-react';
-import { ContentPage, ContentPageKey } from '@/types/database';
+import { ContentPage, ContentPageKey, Json } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,7 +14,7 @@ import { useToast } from '@/components/ui/toast';
 
 export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ initialPages }) => {
   const { toast } = useToast();
-  const [pages] = useState<ContentPage[]>(initialPages);
+  const [pages, setPages] = useState<ContentPage[]>(initialPages);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
@@ -176,8 +176,26 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
     if (res.success) {
       toast({ type: 'success', title: 'Page Content & Controls Saved' });
+      setPages((prev) => {
+        const index = prev.findIndex((p) => p.page_key === selectedKey);
+        const updatedPage: ContentPage = {
+          id: prev[index]?.id || `page-${selectedKey}`,
+          page_key: selectedKey as ContentPageKey,
+          title: formData.title,
+          slug: selectedKey === 'home' ? 'home' : selectedKey === 'about' ? 'about-us' : selectedKey === 'privacy' ? 'privacy-policy' : selectedKey === 'terms' ? 'terms-and-conditions' : selectedKey,
+          content: updatedContent as unknown as Json,
+          published: true,
+          created_at: prev[index]?.created_at || new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        if (index >= 0) {
+          const next = [...prev];
+          next[index] = updatedPage;
+          return next;
+        }
+        return [...prev, updatedPage];
+      });
       setSelectedKey(null);
-      window.location.reload();
     } else {
       toast({ type: 'error', title: 'Update Failed', message: res.error });
     }
@@ -187,7 +205,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     <div className="space-y-6">
       <div className="border-b border-slate-800 pb-4">
         <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
-          <FileText className="w-6 h-6 text-amber-400" /> Editable Content Pages
+          <FileText className="w-6 h-6 text-amber-400 pointer-events-none" /> Editable Content Pages
         </h1>
         <p className="text-xs text-slate-400">Manage headlines, founder media, hero videos, and page copy</p>
       </div>
@@ -221,7 +239,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                   onClick={() => handleEditPage(item.key)}
                   className="flex-1 py-2 px-3 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-amber-400 text-xs font-bold rounded-xl flex items-center justify-center gap-1 transition-all duration-200 cursor-pointer"
                 >
-                  <Edit3 className="w-3.5 h-3.5" /> Edit Content
+                  <Edit3 className="w-3.5 h-3.5 pointer-events-none" /> Edit Content
                 </button>
                 <a
                   href={previewPath}
@@ -424,7 +442,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
           <div className="flex justify-end pt-4 border-t border-slate-800">
             <Button type="submit" variant="gold" size="md" className="font-bold">
-              <Save className="w-4 h-4 mr-1" /> Save & Publish Page Controls
+              <Save className="w-4 h-4 mr-1 pointer-events-none" /> Save &amp; Publish Page Controls
             </Button>
           </div>
         </form>

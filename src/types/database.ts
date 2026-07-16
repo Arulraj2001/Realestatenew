@@ -12,7 +12,7 @@ export type PropertyType = 'Plot' | 'Villa' | 'Apartment' | 'Commercial';
 export type PriceDisplayMode = 'On Request' | 'Starting From' | 'Fixed';
 export type AvailabilityStatus = 'Available' | 'Sold Out' | 'Fast Filling';
 export type MediaType = 'image' | 'video';
-export type ContentPageKey = 'home' | 'about' | 'services' | 'contact';
+export type ContentPageKey = 'home' | 'about' | 'services' | 'contact' | 'privacy' | 'terms';
 export type MessageType = 'contact' | 'site_visit';
 export type MessageStatus = 'new' | 'contacted' | 'site_visit_scheduled' | 'completed' | 'closed' | 'spam';
 

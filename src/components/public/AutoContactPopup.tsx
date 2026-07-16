@@ -100,13 +100,13 @@ export const AutoContactPopup: React.FC = () => {
         <div className="flex items-start justify-between px-6 pt-5 pb-0">
           <div className="space-y-1 flex-1 pr-4">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-[10px] font-bold uppercase tracking-wider mb-1">
-              <Sparkles className="w-3 h-3" /> Free Consultation
+              <Sparkles className="w-3 h-3" /> Contact Us
             </div>
             <h3 className="font-serif text-xl font-extrabold text-white leading-tight">
-              Book Your Free Site Visit
+              Contact Us
             </h3>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Chauffeured pickup &amp; drop · No obligation · Our team will call to confirm
+              Connect with our sales team · Quick response guaranteed
             </p>
           </div>
           <button

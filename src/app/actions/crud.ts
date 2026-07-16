@@ -363,9 +363,21 @@ export async function saveContentPageAction(
     await requireAdmin(['super_admin', 'content_admin']);
     const supabase = await getSupabaseAdmin();
 
+    const slugMap: Record<string, string> = {
+      home: 'home',
+      about: 'about-us',
+      services: 'services',
+      contact: 'contact-us',
+      privacy: 'privacy-policy',
+      terms: 'terms-and-conditions',
+    };
+
+    const slug = slugMap[pageKey] || pageKey;
+
     const { error } = await supabase.from('content_pages').upsert(
       {
         page_key: pageKey,
+        slug,
         title,
         content: content as unknown as Record<string, string>,
         published,
@@ -385,8 +397,9 @@ export async function saveContentPageAction(
     revalidatePath('/privacy-policy');
     revalidatePath('/terms-and-conditions');
     return { success: true };
-  } catch {
-    return { success: false, error: 'Failed to update content page.' };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Failed to update content page.';
+    return { success: false, error: message };
   }
 }
 

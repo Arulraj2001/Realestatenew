@@ -183,7 +183,7 @@ export const SiteVisitForm: React.FC<SiteVisitFormProps> = ({
         className="w-full font-bold mt-2"
       >
         <Calendar className="w-4 h-4" />
-        <span>Schedule Site Visit</span>
+        <span>Contact Us</span>
       </Button>
     </form>
   );
