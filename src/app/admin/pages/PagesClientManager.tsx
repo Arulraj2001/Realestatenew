@@ -68,6 +68,9 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     cta_heading: '',
     cta_description: '',
     services_list: [] as Array<{ id: string; title: string; content: string; image_url?: string }>,
+
+    // Contact Page
+    contact_bg_image: '',
   });
 
   const availablePages = [
@@ -172,6 +175,9 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
               image_url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80',
             },
           ],
+
+      // Contact Page
+      contact_bg_image: String(c.contact_bg_image || ''),
     });
   };
 
@@ -241,6 +247,13 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         cta_heading: formData.cta_heading,
         cta_description: formData.cta_description,
         services_list: formData.services_list,
+      };
+    } else if (selectedKey === 'contact') {
+      updatedContent = {
+        ...existingObj,
+        heading: formData.heading,
+        body: formData.body,
+        contact_bg_image: formData.contact_bg_image,
       };
     } else {
       updatedContent = {
@@ -840,6 +853,18 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                 <Label>Main Content Text</Label>
                 <Textarea rows={6} value={formData.body} onChange={(e) => setFormData({ ...formData, body: e.target.value })} />
               </div>
+
+              {selectedKey === 'contact' && (
+                <div>
+                  <MediaUploader
+                    label="Contact Banner Background Image"
+                    value={formData.contact_bg_image || ''}
+                    folder="banners"
+                    onChange={(url) => setFormData({ ...formData, contact_bg_image: url })}
+                  />
+                  <p className="text-[11px] text-slate-500 mt-1">Upload an image to show as the background of the Contact page header banner.</p>
+                </div>
+              )}
             </div>
           )}
 

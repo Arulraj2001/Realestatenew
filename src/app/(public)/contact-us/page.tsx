@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock, MessageSquare, ChevronRight, ExternalLink } from 'lucide-react';
 import { siteConfig } from '@/config/site';
-import { getFAQs } from '@/lib/data';
+import { getFAQs, getContentPage } from '@/lib/data';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { FAQSection } from '@/components/public/FAQSection';
 import { createAdminClient } from '@/lib/supabase/server';
@@ -19,6 +19,14 @@ export const metadata: Metadata = {
 
 export default async function ContactUsPage() {
   const faqs = await getFAQs();
+
+  // Load dynamic contact page content from DB
+  const contentRecord = await getContentPage('contact');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const contentJson = (contentRecord?.content as Record<string, any>) || {};
+  const contactBgImage = contentJson.contact_bg_image || null;
+  const bannerHeading = contentJson.heading || 'Contact Us';
+  const bannerBody = contentJson.body || 'We are here to assist you with layout site visits, pricing breakdowns, and title verification.';
 
   // Load live contact info (map_url) from DB
   const supabase = await createAdminClient();
@@ -92,8 +100,18 @@ export default async function ContactUsPage() {
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
         {/* Banner Header */}
-        <section className="py-6 sm:py-8 bg-slate-900 border-b border-slate-800 hero-dark-overlay">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+        <section 
+          className="relative py-12 sm:py-16 bg-slate-900 border-b border-slate-800 hero-dark-overlay overflow-hidden"
+          style={contactBgImage ? {
+            backgroundImage: `linear-gradient(to bottom right, rgba(15, 23, 42, 0.88), rgba(15, 23, 42, 0.94)), url(${contactBgImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          } : undefined}
+        >
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
               <Link href="/" className="hover:text-amber-400 transition-colors">
                 Home
@@ -103,11 +121,11 @@ export default async function ContactUsPage() {
             </div>
 
             <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-              Contact Us
+              {bannerHeading}
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-base max-w-2xl">
-              We are here to assist you with layout site visits, pricing breakdowns, and title verification.
+            <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+              {bannerBody}
             </p>
           </div>
         </section>
