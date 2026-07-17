@@ -1558,7 +1558,7 @@ body:has(.light-theme) {
 .light-theme .absolute .testimonial-verified-badge,
 .light-theme .testimonial-verified-badge.text-amber-400,
 .light-theme .testimonial-verified-badge {
-  color: #d97706 !important; /* Plain yellow color without shadow */
+  color: #082052 !important; /* Navy blue color without shadow in light theme */
   text-shadow: none !important;
 }
 
