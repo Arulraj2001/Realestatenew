@@ -77,7 +77,7 @@ export default async function ServicesPage() {
   const servicesList: ServiceItem[] = contentJson.services_list || defaultServices;
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen py-16 px-4 sm:px-6 lg:px-8 space-y-16">
+    <div className="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8 space-y-10">
       {/* Header Section */}
       <div className="max-w-7xl mx-auto border-b border-slate-800 pb-8">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider mb-3">

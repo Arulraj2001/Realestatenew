@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { buildWhatsAppUrl, buildCallUrl } from '@/lib/utils/whatsapp';
+import { WhatsAppIcon } from '@/components/ui/icons';
 import {
   updateMessageStatusAction,
   assignMessageAdminAction,
@@ -201,7 +202,7 @@ export const MessageDetailClient: React.FC<MessageDetailClientProps> = ({
                   rel="noopener noreferrer"
                   className="flex-1 py-2.5 px-3 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition-colors"
                 >
-                  <MessageSquare className="w-4 h-4 fill-current" /> Open WhatsApp
+                  <WhatsAppIcon className="w-4 h-4" /> Open WhatsApp
                 </a>
               </div>
             </div>

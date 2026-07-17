@@ -89,7 +89,7 @@ export const StatsSection: React.FC<StatsSectionProps> = ({ stats, isVisible = t
   };
 
   return (
-    <section className="relative py-12 bg-slate-900/80 border-y border-slate-800/80 overflow-hidden">
+    <section className="relative py-8 bg-slate-900/80 border-y border-slate-800/80 overflow-hidden">
       {/* Subtle Ambient Background Gradients */}
       <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-emerald-500/5 pointer-events-none" />
 

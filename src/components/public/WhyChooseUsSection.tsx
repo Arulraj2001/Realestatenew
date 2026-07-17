@@ -40,7 +40,7 @@ export const WhyChooseUsSection: React.FC<WhyChooseUsSectionProps> = ({ items })
   ];
 
   return (
-    <section className="py-16 bg-slate-950 text-slate-100 border-b border-slate-800">
+    <section className="py-10 bg-slate-950 text-slate-100 border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
           <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Why Choose Us</span>

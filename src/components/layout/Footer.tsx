@@ -17,7 +17,6 @@ export const Footer: React.FC = () => {
     { name: 'Namakkal Layouts', slug: 'namakkal', status: 'current' },
     { name: 'Paramathi Velur Layouts', slug: 'paramathi-velur', status: 'current' },
     { name: 'Salem Hub (Coming Soon)', slug: 'salem', status: 'upcoming' },
-    { name: 'Erode Hub (Coming Soon)', slug: 'erode', status: 'upcoming' },
   ];
 
   const handleFooterSubmit = async (e: React.FormEvent) => {
@@ -80,8 +79,9 @@ export const Footer: React.FC = () => {
                 { name: 'Home', path: '/' },
                 { name: 'Locations', path: '/locations' },
                 { name: 'Projects', path: '/projects' },
+                { name: 'Gallery', path: '/gallery' },
                 { name: 'Services', path: '/services' },
-                { name: 'About Us', path: '/about' },
+                { name: 'About Us', path: '/about-us' },
                 { name: 'Contact Us', path: '/contact-us' },
               ].map((item) => (
                 <li key={item.name}>
@@ -165,7 +165,7 @@ export const Footer: React.FC = () => {
                     placeholder="Full Name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#05130d] border border-emerald-900/80 rounded-lg text-xs text-white placeholder:text-slate-500 focus:border-amber-500 outline-none transition-colors"
+                    className="w-full px-3 py-2 text-xs footer-input-l-shape"
                   />
                 </div>
                 <div>
@@ -175,7 +175,7 @@ export const Footer: React.FC = () => {
                     placeholder="Mobile No"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#05130d] border border-emerald-900/80 rounded-lg text-xs text-white placeholder:text-slate-500 focus:border-amber-500 outline-none transition-colors"
+                    className="w-full px-3 py-2 text-xs footer-input-l-shape"
                   />
                 </div>
                 <button

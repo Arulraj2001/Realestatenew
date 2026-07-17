@@ -16,9 +16,9 @@ import {
   ChevronDown,
   Sparkles,
   Camera,
-  MessageSquare,
   ArrowRight,
 } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/icons';
 import { siteConfig } from '@/config/site';
 import { Drawer } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
@@ -333,7 +333,7 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
               className="block"
             >
               <Button variant="outline" size="md" className="w-full justify-center py-3 text-xs border-emerald-600/60 text-emerald-400 bg-slate-950 hover:bg-emerald-950 font-bold">
-                <MessageSquare className="w-4 h-4 mr-2" /> Chat on WhatsApp
+                <WhatsAppIcon className="w-4 h-4 mr-2" /> Chat on WhatsApp
               </Button>
             </a>
           </div>

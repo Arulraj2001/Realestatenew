@@ -19,7 +19,7 @@ export const CompanyIntroSection: React.FC<CompanyIntroSectionProps> = ({
   const paragraphs = introContent ? introContent.split('\n\n').filter(Boolean) : defaultParagraphs;
 
   return (
-    <section className="company-intro-hero-overlap pt-10 pb-16 bg-slate-900 border-b border-slate-800 text-slate-100 relative">
+    <section className="company-intro-hero-overlap pt-8 pb-10 bg-slate-900 border-b border-slate-800 text-slate-100 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           {/* Left Narrative Column */}

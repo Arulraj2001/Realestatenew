@@ -24,8 +24,8 @@ import {
   Car,
   IndianRupee,
   Phone,
-  MessageSquare,
 } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ProjectVideoPlayer } from '@/components/public/ProjectVideoPlayer';
@@ -139,7 +139,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-3 pt-1">
               <a href={`tel:${siteConfig.contact.phone}`}>
-                <Button variant="gold" size="lg" className="font-bold shadow-xl">
+                <Button variant="gold" size="md" className="font-bold shadow-xl">
                   <Phone className="w-4 h-4 mr-2 pointer-events-none" /> Call Now for Site Visit
                 </Button>
               </a>
@@ -150,8 +150,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button variant="outline" size="lg" className="font-bold border-emerald-500/60 text-emerald-400 bg-slate-900/60 backdrop-blur-sm hover:bg-emerald-950">
-                  <MessageSquare className="w-4 h-4 mr-2 pointer-events-none" /> WhatsApp Enquiry
+                <Button variant="outline" size="md" className="font-bold border-emerald-500/60 text-emerald-400 bg-slate-900/60 backdrop-blur-sm hover:bg-emerald-950">
+                  <WhatsAppIcon className="w-4 h-4 mr-2 pointer-events-none" /> WhatsApp Enquiry
                 </Button>
               </a>
             </div>
@@ -162,7 +162,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
 
       {/* ─── 3. MAIN ACCORDION DETAILS CONTAINER ─────────────────────── */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <ProjectAccordionSections
           project={project}
           villas={villas}

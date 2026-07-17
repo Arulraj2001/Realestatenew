@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar, MessageSquare } from 'lucide-react';
+import { Calendar } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/icons';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { SiteVisitForm } from '@/components/forms/SiteVisitForm';
@@ -22,7 +23,7 @@ export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
 
   return (
     <>
-      <section className="py-16 bg-slate-950 border-y border-emerald-500/30 relative overflow-hidden">
+      <section className="py-10 bg-slate-950 border-y border-emerald-500/30 relative overflow-hidden">
         {/* Dark Emerald Gradient Background overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-emerald-950 via-slate-950 to-emerald-950 pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/15 via-transparent to-transparent pointer-events-none" />
@@ -53,7 +54,7 @@ export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
               className="w-full sm:w-auto"
             >
               <Button variant="outline" size="lg" className="font-bold w-full border-2 border-emerald-500/60 bg-slate-950/80 !text-emerald-400 hover:bg-emerald-950 shadow-xl">
-                <MessageSquare className="w-5 h-5 mr-2 pointer-events-none" /> Chat on WhatsApp
+                <WhatsAppIcon className="w-5 h-5 mr-2 pointer-events-none" /> Chat on WhatsApp
               </Button>
             </a>
           </div>

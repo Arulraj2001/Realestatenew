@@ -856,7 +856,10 @@ body:has(.light-theme) {
 }
 
 /* 4. Hero Dark Overlays & Theater Mode (e.g. Gallery Lightbox, Vision Cards, Location Banner) */
-.light-theme .hero-dark-overlay {
+.light-theme .hero-dark-overlay,
+.light-theme section.hero-dark-overlay,
+.light-theme div.hero-dark-overlay {
+  background-color: #020617 !important;
   color: #ffffff !important;
 }
 .light-theme .hero-dark-overlay h1,
@@ -1080,4 +1083,84 @@ body:has(.light-theme) {
 .light-theme .header-nav-dropdown .item-link:hover {
   color: #b45309 !important; /* Amber-700 on hover */
   background-color: rgba(245, 158, 11, 0.03) !important;
+}
+
+/* 12. Footer Light Theme Content Contrast Enforcements */
+.light-theme footer,
+.light-theme footer * {
+  color: #94a3b8;
+}
+
+.light-theme footer h1,
+.light-theme footer h2,
+.light-theme footer h3,
+.light-theme footer h4,
+.light-theme footer .text-white,
+.light-theme footer h4.text-white,
+.light-theme footer span.text-white,
+.light-theme footer p.text-white {
+  color: #ffffff !important;
+}
+
+.light-theme footer a {
+  color: #94a3b8 !important;
+}
+
+.light-theme footer a:hover {
+  color: #fbbf24 !important; /* amber-400 */
+}
+
+.light-theme footer .text-slate-300,
+.light-theme footer .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+.light-theme footer .text-slate-500 {
+  color: #64748b !important;
+}
+
+.light-theme footer .text-amber-400,
+.light-theme footer .text-amber-500 {
+  color: #fbbf24 !important; /* amber-400 */
+}
+
+.light-theme footer .text-emerald-400,
+.light-theme footer .text-emerald-500 {
+  color: #34d399 !important; /* emerald-400 */
+}
+
+.light-theme footer button[type="submit"] {
+  background-color: #fbbf24 !important;
+}
+
+.light-theme footer button[type="submit"],
+.light-theme footer button[type="submit"] * {
+  color: #000000 !important;
+}
+
+.light-theme footer button[type="submit"]:hover {
+  background-color: #f59e0b !important;
+}
+
+/* 13. Footer Input L-Shape Styling */
+.footer-input-l-shape {
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-left: 2px solid rgba(255, 255, 255, 0.4) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 0 !important;
+  background-color: #05130d !important;
+  color: #ffffff !important;
+  transition: all 0.3s ease !important;
+}
+
+.footer-input-l-shape:focus {
+  border-left: 2px solid #fbbf24 !important;
+  border-bottom: 1px solid #fbbf24 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.footer-input-l-shape::placeholder {
+  color: #6b7280 !important;
 }

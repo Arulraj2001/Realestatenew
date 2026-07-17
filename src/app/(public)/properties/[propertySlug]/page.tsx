@@ -8,12 +8,12 @@ import {
   ChevronRight,
   CheckCircle2,
   PhoneCall,
-  MessageSquare,
   BedDouble,
   Bath,
   Car,
   IndianRupee,
 } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/icons';
 import {
   getConfigurationBySlug,
   getPublishedConfigurations,
@@ -231,7 +231,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
                 rel="noopener noreferrer"
               >
                 <Button variant="outline" size="lg" className="w-full font-bold border-emerald-600/60 text-emerald-400 bg-slate-950 hover:bg-emerald-950">
-                  <MessageSquare className="w-4 h-4 mr-2" /> Enquire Now on WhatsApp
+                  <WhatsAppIcon className="w-4 h-4 mr-2" /> Enquire Now on WhatsApp
                 </Button>
               </a>
             </div>

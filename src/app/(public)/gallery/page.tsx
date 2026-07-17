@@ -1,6 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { Camera, Sparkles, MapPin, Building2, Phone, MessageSquare } from 'lucide-react';
+import { Camera, Sparkles, MapPin, Building2, Phone } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/icons';
 import { getPublishedGalleryItems, getPublishedProjects, getPublishedLocations } from '@/lib/data';
 import { GalleryItem } from '@/types/database';
 import { siteConfig } from '@/config/site';
@@ -101,7 +102,7 @@ export default async function GalleryPage() {
                   rel="noopener noreferrer"
                   className="py-2.5 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
                 >
-                  <MessageSquare className="w-4 h-4 fill-current" />
+                  <WhatsAppIcon className="w-4 h-4" />
                   <span>WhatsApp Enquiry — {proj.name}</span>
                 </a>
                 <a
@@ -132,7 +133,7 @@ export default async function GalleryPage() {
                 rel="noopener noreferrer"
                 className="py-2.5 px-5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-md active:scale-95 cursor-pointer"
               >
-                <MessageSquare className="w-4 h-4 fill-current" />
+                <WhatsAppIcon className="w-4 h-4" />
                 <span>WhatsApp Sales Enquiry</span>
               </a>
               <a

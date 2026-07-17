@@ -124,7 +124,7 @@ export const StickyActionBar: React.FC = () => {
               setIsSiteVisitOpen(true);
             }}
             className="w-full flex items-center justify-end bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 px-3 rounded-xl shadow-lg shadow-amber-500/30 border border-amber-300 transition-all duration-300 hover:pl-4 cursor-pointer font-extrabold"
-            title="Book Free Site Visit"
+            title="Contact Us"
           >
             <ChevronLeft className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 mr-1 transition-opacity hidden group-hover:inline-block" />
             <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:mr-2 transition-all duration-300 text-xs font-extrabold tracking-wide">
@@ -139,8 +139,8 @@ export const StickyActionBar: React.FC = () => {
       <Dialog
         isOpen={isSiteVisitOpen}
         onClose={() => setIsSiteVisitOpen(false)}
-        title="Book Free Chauffeured Site Visit"
-        description="Pick-up and drop facility available across Namakkal and Paramathi Velur."
+        title="Request a Guided Site Visit"
+        description="Schedule a layout tour or site walkthrough with our Sales Advisor."
       >
         <SiteVisitForm onSuccess={() => setIsSiteVisitOpen(false)} />
       </Dialog>

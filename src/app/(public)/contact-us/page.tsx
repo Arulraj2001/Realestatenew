@@ -100,14 +100,14 @@ export default async function ContactUsPage() {
         </section>
 
         {/* Content Section */}
-        <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             {/* Info Cards */}
             <div className="lg:col-span-5 space-y-8">
               <div className="space-y-4">
                 <h2 className="font-serif text-2xl font-bold text-white">Headquarters & Office</h2>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  Visit our office or call us to schedule an exclusive chauffeured layout site visit.
+                  Visit our office or call us to schedule an exclusive guided layout site visit.
                 </p>
               </div>
 

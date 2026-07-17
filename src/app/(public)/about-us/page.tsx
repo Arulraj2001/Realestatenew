@@ -2,7 +2,6 @@ import React from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import {
-  Info,
   Award,
   Quote,
   ShieldCheck,
@@ -11,17 +10,12 @@ import {
   Sparkles,
   Building2,
   MapPin,
-  Calendar,
-  Layers,
-  Landmark,
-  FileCheck,
-  TrendingUp,
-  Users,
 } from 'lucide-react';
 import { getContentPage } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
 import { WhyChooseUsDeck } from '@/components/public/WhyChooseUsDeck';
+import { StatsSection } from '@/components/public/StatsSection';
 
 export const metadata: Metadata = {
   title: 'About Your Choice Properties | Real Estate Company in Namakkal',
@@ -40,6 +34,7 @@ export interface WhyChoiceItem {
 export interface StatItem {
   label: string;
   value: string;
+  icon?: string;
 }
 
 export interface TimelineMilestone {
@@ -83,11 +78,11 @@ export default async function AboutUsPage() {
   ];
 
   const defaultStats: StatItem[] = [
-    { label: 'Years of Experience', value: '13+' },
-    { label: 'Successful Projects', value: '5' },
-    { label: 'Happy Customers', value: '135+' },
-    { label: 'Plots Sold', value: '120+' },
-    { label: 'Villas Sold', value: '15+' },
+    { label: 'Years of Experience', value: '13+', icon: 'Award' },
+    { label: 'Successful Projects', value: '5', icon: 'Building2' },
+    { label: 'Happy Customers', value: '135+', icon: 'Users' },
+    { label: 'Plots Sold', value: '120+', icon: 'Maximize' },
+    { label: 'Villas Sold', value: '15+', icon: 'Home' },
   ];
 
   const timelineMilestones: TimelineMilestone[] = [
@@ -138,6 +133,19 @@ export default async function AboutUsPage() {
   const isStatsVisible = contentJson.stats_visible !== false;
   const activeTimeline: TimelineMilestone[] = contentJson.timeline_milestones?.length > 0 ? contentJson.timeline_milestones : timelineMilestones;
 
+  const labelToIcon: Record<string, string> = {
+    'years of experience': 'Award',
+    'successful projects': 'Building2',
+    'happy customers': 'Users',
+    'plots sold': 'Maximize',
+    'villas sold': 'Home',
+  };
+
+  const statsWithIcons = statsList.map((stat) => ({
+    ...stat,
+    icon: stat.icon || labelToIcon[stat.label.toLowerCase()] || 'Award',
+  }));
+
   const defaultFounderParagraphs = [
     'Your Choice Properties is led by Thennarasu Sambathkumar, who has more than 13 years of experience in land development, villa construction and residential property sales in Tamil Nadu.',
     'Before starting Your Choice Properties in 2024, he worked for six years as a Director at VIP Housing and Properties and another six years as a Director at MG Properties. This experience helped him understand land selection, layout planning, villa construction and the practical needs of property buyers.',
@@ -149,7 +157,7 @@ export default async function AboutUsPage() {
     : defaultFounderParagraphs;
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+    <div className="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
       <div 
         className="max-w-7xl mx-auto relative rounded-2xl overflow-hidden border border-emerald-900/60 p-6 sm:p-8 shadow-2xl hero-dark-overlay"
         style={contentJson.about_bg_image ? {
@@ -351,16 +359,7 @@ export default async function AboutUsPage() {
 
       {/* Statistics Section (Only rendered if published/visible) */}
       {isStatsVisible && (
-        <section className="max-w-7xl mx-auto py-10 bg-slate-900/60 border-y border-slate-800">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 text-center">
-            {statsList.map((stat, idx) => (
-              <div key={idx} className="p-4 bg-slate-950/80 rounded-2xl border border-slate-800">
-                <span className="font-serif font-extrabold text-3xl text-amber-400 block">{stat.value}</span>
-                <span className="text-[11px] uppercase font-bold text-slate-400 tracking-wider block mt-1">{stat.label}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+        <StatsSection stats={statsWithIcons} />
       )}
 
       {/* CTA Section */}

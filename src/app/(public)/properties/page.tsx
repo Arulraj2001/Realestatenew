@@ -69,8 +69,8 @@ export default async function PropertiesListingPage({ searchParams }: Properties
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <div className="bg-slate-950 text-slate-100 min-h-screen py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="bg-slate-950 text-slate-100 min-h-screen py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           {/* Header */}
           <div className="space-y-4 border-b border-slate-800 pb-8">
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">

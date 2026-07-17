@@ -58,7 +58,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
   }));
 
   return (
-    <section className="py-20 bg-slate-950 text-slate-100 border-t border-slate-800">
+    <section className="py-10 bg-slate-950 text-slate-100 border-t border-slate-800">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14 space-y-3">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider">

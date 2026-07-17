@@ -52,6 +52,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 }) => {
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
 
+  // Dynamic fallback to intercept seeded value
+  const displaySecondaryCta = secondaryCtaLabel === 'Schedule a Site Visit' ? 'Contact Us' : secondaryCtaLabel;
+
   if (heroEnabled === false) return null;
 
   // Safeguard against empty string database configurations
@@ -171,7 +174,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               className="group border-slate-400 hover:border-amber-400 text-slate-100 hover:text-amber-300 bg-slate-900/70 hover:bg-slate-900 backdrop-blur-md font-bold px-5 py-2.5 text-xs sm:text-sm rounded-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 shadow-lg"
             >
               <Calendar className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300" />
-              <span>{secondaryCtaLabel}</span>
+              <span>{displaySecondaryCta}</span>
             </Button>
           </div>
         </div>
@@ -181,8 +184,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <Dialog
         isOpen={isVisitModalOpen}
         onClose={() => setIsVisitModalOpen(false)}
-        title="Schedule a Free Chauffeured Site Visit"
-        description="Select your preferred project and visit timing. Our team will arrange pickup."
+        title="Request a Guided Site Visit"
+        description="Provide your details below, and our team will get in touch to confirm layout availability and schedule your visit."
       >
         <SiteVisitForm onSuccess={() => setIsVisitModalOpen(false)} />
       </Dialog>

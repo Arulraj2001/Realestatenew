@@ -16,13 +16,13 @@ import {
   Bath,
   Maximize,
   Phone,
-  MessageSquare,
   ZoomIn,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   X,
 } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/ui/icons';
 import {
   Project,
   PropertyConfiguration,
@@ -130,9 +130,9 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
   // Collapsible Accordion Panels Below Villas & Plots
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     video: true,
-    amenities: false,
+    amenities: true,
     gallery: false,
-    landmarks: false,
+    landmarks: true,
     location: true,
   });
 
@@ -433,7 +433,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                             size="md"
                             className="w-full border-emerald-500/40 text-emerald-400 hover:bg-emerald-950 font-bold text-xs"
                           >
-                            <MessageSquare className="w-4 h-4 mr-1.5 pointer-events-none" /> WhatsApp
+                            <WhatsAppIcon className="w-4 h-4 mr-1.5 pointer-events-none" /> WhatsApp
                           </Button>
                         </a>
                       </div>
@@ -652,7 +652,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                             size="md"
                             className="w-full border-emerald-500/40 text-emerald-400 hover:bg-emerald-950 font-bold text-xs"
                           >
-                            <MessageSquare className="w-4 h-4 mr-1.5 pointer-events-none" /> WhatsApp
+                            <WhatsAppIcon className="w-4 h-4 mr-1.5 pointer-events-none" /> WhatsApp
                           </Button>
                         </a>
                       </div>
@@ -915,9 +915,9 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
             {openSections.location && (
               <div className="p-6 bg-slate-950 space-y-4">
-                {/* Compact Centered Interactive Google Map Iframe */}
-                <div className="max-w-xl mx-auto space-y-3">
-                  <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 shadow-xl">
+                {/* Expanded Interactive Google Map Iframe */}
+                <div className="max-w-3xl mx-auto space-y-4">
+                  <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden border border-slate-800 bg-slate-900 shadow-xl hover:border-amber-500/30 transition-colors duration-500">
                     <iframe
                       title={`${project.name} Google Map Location`}
                       src={buildEmbeddedMapUrl(project)}
@@ -927,23 +927,28 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                     />
                   </div>
 
-                  {/* Address Box Compact */}
-                  <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-center sm:text-left">
-                    <div className="space-y-0.5">
-                      <h4 className="text-xs font-bold text-white uppercase tracking-wider">Project Site Location:</h4>
-                      <p className="text-xs text-slate-300">
-                        {project.address || `${project.name}, Main Layout Road, ${project.location?.name || 'Namakkal'}, Tamil Nadu.`}
-                      </p>
+                  {/* Redesigned Address Box Premium */}
+                  <div className="p-4 sm:p-5 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-center sm:text-left shadow-lg hover:border-amber-500/30 transition-colors">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3.5">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0 shadow-inner">
+                        <MapPin className="w-5 h-5 pointer-events-none" />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-xs font-bold text-amber-400 uppercase tracking-widest font-mono">Project Site Location</h4>
+                        <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-semibold">
+                          {project.address || `${project.name}, Main Layout Road, ${project.location?.name || 'Namakkal'}, Tamil Nadu.`}
+                        </p>
+                      </div>
                     </div>
                     {project.map_url && (
                       <a
                         href={project.map_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="shrink-0 mx-auto sm:mx-0"
+                        className="shrink-0 w-full sm:w-auto"
                       >
-                        <Button variant="gold" size="sm" className="font-bold text-xs">
-                          Google Maps App <ExternalLink className="w-3.5 h-3.5 ml-1 pointer-events-none" />
+                        <Button variant="gold" size="md" className="w-full sm:w-auto font-bold text-xs shadow-lg hover:-translate-y-0.5 transition-transform">
+                          Google Maps App <ExternalLink className="w-3.5 h-3.5 ml-1.5 pointer-events-none" />
                         </Button>
                       </a>
                     )}

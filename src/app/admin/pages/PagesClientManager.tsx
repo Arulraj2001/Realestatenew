@@ -102,7 +102,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       hero_description: String(c.hero_description || c.hero_subtitle || 'Explore residential plots, gated-community villas and independent houses across our projects in Namakkal and Paramathi Velur.'),
       primary_cta_label: String(c.primary_cta_label || 'Explore Projects'),
       primary_cta_link: String(c.primary_cta_link || '/projects'),
-      secondary_cta_label: String(c.secondary_cta_label || 'Schedule a Site Visit'),
+      secondary_cta_label: String(c.secondary_cta_label || 'Contact Us'),
       text_alignment: String(c.text_alignment || 'center'),
       intro_h2: String(c.intro_h2 || 'Find Residential Plots and Dream Villas in Namakkal and Paramathi Velur'),
       intro_content: String(c.intro_content || ''),
@@ -437,7 +437,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <Label>Secondary CTA Label</Label>
-                    <Input value={formData.secondary_cta_label} onChange={(e) => setFormData({ ...formData, secondary_cta_label: e.target.value })} placeholder="Schedule a Site Visit" />
+                    <Input value={formData.secondary_cta_label} onChange={(e) => setFormData({ ...formData, secondary_cta_label: e.target.value })} placeholder="Contact Us" />
                   </div>
                   <div>
                     <Label>Text Alignment</Label>

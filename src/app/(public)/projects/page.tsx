@@ -13,7 +13,7 @@ export default async function ProjectsPage() {
   const projects = await getPublishedProjects();
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* H1 & Overview Description Header */}
       <div className="max-w-7xl mx-auto border-b border-slate-800 pb-6">
         <span className="text-xs font-bold uppercase tracking-widest text-amber-400">Layout Projects</span>

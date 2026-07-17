@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Play, ExternalLink } from 'lucide-react';
+import { Play, X } from 'lucide-react';
 import { Dialog } from '@/components/ui/dialog';
 
 export interface ProjectVideoPlayerProps {
@@ -49,8 +49,8 @@ export const ProjectVideoPlayer: React.FC<ProjectVideoPlayerProps> = ({
 
   return (
     <div className="py-2 space-y-4">
-      {/* Compact Video Card Frame Centered */}
-      <div className="max-w-md mx-auto space-y-3">
+      {/* Expanded Video Card Frame Centered */}
+      <div className="max-w-3xl mx-auto space-y-3">
         <div
           onClick={() => setIsPlayingModalOpen(true)}
           className="group relative aspect-[16/9] w-full rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl cursor-pointer"
@@ -59,7 +59,7 @@ export const ProjectVideoPlayer: React.FC<ProjectVideoPlayerProps> = ({
             src={poster}
             alt={title}
             fill
-            sizes="(max-width: 768px) 100vw, 400px"
+            sizes="(max-width: 1024px) 100vw, 800px"
             className="object-cover transition-transform duration-500 ease-out group-hover:scale-105 z-0"
           />
           <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors z-10" />
@@ -80,39 +80,33 @@ export const ProjectVideoPlayer: React.FC<ProjectVideoPlayerProps> = ({
         </div>
       </div>
 
-      {/* Video Modal Frame */}
+      {/* Video Modal Frame (Edge-to-edge cinematic style) */}
       <Dialog
         isOpen={isPlayingModalOpen}
         onClose={() => setIsPlayingModalOpen(false)}
-        title={title}
+        className="max-w-4xl bg-slate-950 p-0 overflow-hidden border-slate-800 hero-dark-overlay"
+        bodyClassName="p-0 max-h-none overflow-hidden"
       >
-        <div className="space-y-4">
-          <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-slate-950 border border-slate-800 shadow-2xl">
-            {embedUrl ? (
-              <iframe
-                src={embedUrl}
-                title={title}
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <div className="flex flex-col items-center justify-center h-full text-slate-400 text-sm">
-                No video URL configured.
-              </div>
-            )}
-          </div>
+        <div className="relative aspect-video w-full bg-black">
+          <button
+            onClick={() => setIsPlayingModalOpen(false)}
+            className="absolute top-3 right-3 z-30 p-2 bg-black/60 text-white rounded-full hover:bg-amber-500 hover:text-slate-950 transition-colors cursor-pointer"
+            aria-label="Close dialog"
+          >
+            <X className="w-5 h-5 pointer-events-none" />
+          </button>
 
-          {rawUrl && (
-            <div className="flex justify-between items-center text-xs text-slate-400 pt-2 border-t border-slate-800">
-              <a
-                href={rawUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-amber-400 hover:underline"
-              >
-                Open directly in YouTube / App <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+          {embedUrl ? (
+            <iframe
+              src={embedUrl}
+              title={title}
+              className="w-full h-full border-0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full text-slate-400 text-sm">
+              No video URL configured.
             </div>
           )}
         </div>

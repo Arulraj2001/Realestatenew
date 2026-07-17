@@ -3,12 +3,13 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { MapPin, Building2, ChevronRight, Compass, ShieldCheck } from 'lucide-react';
+import { MapPin, ChevronRight, Compass, ShieldCheck } from 'lucide-react';
 import { getLocationBySlug, getPublishedProjects, getPublishedConfigurations, getPublishedLocations } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { Badge } from '@/components/ui/badge';
 import { FeaturedProjectsSection } from '@/components/public/FeaturedProjectsSection';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
+import { LocationAmenities } from '@/components/public/LocationAmenities';
 
 export interface LocationDetailPageProps {
   params: Promise<{
@@ -100,9 +101,10 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
       <div className="bg-slate-950 text-slate-100 min-h-screen">
         {/* Compact Location Hero Header */}
         <section className="relative py-6 sm:py-8 bg-slate-950 border-b border-slate-900 overflow-hidden hero-dark-overlay">
-          <div className="absolute inset-0 z-0 opacity-25">
+          <div className="absolute inset-0 z-0">
             <Image src={fallbackImage} alt={location.name} fill className="object-cover" />
-            <div className="absolute inset-0 bg-slate-950/85" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent" />
           </div>
 
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
@@ -140,9 +142,12 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
         {/* Location Projects Section */}
         <FeaturedProjectsSection projects={projects} />
 
+        {/* Township & Villa Amenities Section */}
+        <LocationAmenities />
+
         {/* Configurations Breakdown */}
         {configurations.length > 0 && (
-          <section className="py-16 bg-slate-950 border-t border-slate-800">
+          <section className="py-10 bg-slate-950 border-t border-slate-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
               <div className="flex items-center justify-between border-b border-slate-800 pb-4">
                 <h2 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
@@ -176,7 +181,7 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
 
         {/* Map Embed Section if Map URL exists */}
         {location.map_url && (
-          <section className="py-16 bg-slate-900/60 border-t border-slate-800">
+          <section className="py-10 bg-slate-900/60 border-t border-slate-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
               <h2 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-amber-400" />

@@ -36,7 +36,7 @@ const FALLBACK_PAGES: Record<ContentPageKey, ContentPage> = {
     published: true,
     content: {
       heading: 'End-to-End Real Estate Solutions',
-      body: 'From plot purchase and legal document verification to chauffeured site visits and custom villa construction.',
+      body: 'From plot purchase and legal document verification to guided layout walkthroughs and custom villa construction.',
     },
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
