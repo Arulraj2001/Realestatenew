@@ -43,7 +43,7 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
             </h2>
           </div>
           <Link
-            href="/projects"
+            href="/locations"
             className="plain-yellow-link mt-4 md:mt-0 text-xs font-bold uppercase tracking-wider text-amber-400 hover:text-amber-300 flex items-center gap-1 group"
           >
             <span>View All Locations →</span>
