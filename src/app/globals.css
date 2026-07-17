@@ -1682,12 +1682,12 @@ body:has(.light-theme) {
 }
 
 .blob-btn:hover .blob-btn__blob {
-  transform: translateZ(0) scale(1.7);
+  transform: translate3d(0, 0, 0) scale(1.7) !important;
 }
 
 @supports (filter: url('#goo')) {
   .blob-btn:hover .blob-btn__blob {
-    transform: translateZ(0) scale(1.4);
+    transform: translate3d(0, 0, 0) scale(1.4) !important;
   }
 }
 
@@ -1708,23 +1708,6 @@ body:has(.light-theme) {
   color: #020617;
 }
 
-/* Light Theme Explore Button */
-.light-theme .blob-btn-explore {
-  color: #2596be !important;
-}
-.light-theme .blob-btn-explore:before {
-  border-color: #2596be !important;
-}
-.light-theme .blob-btn-explore .blob-btn__blob {
-  background: #2596be !important;
-}
-.light-theme .blob-btn-explore .blob-btn__inner {
-  background: #ffffff !important;
-}
-.light-theme .blob-btn-explore:hover {
-  color: #ffffff !important;
-}
-
 /* Contact Button (White in dark, Navy in light) */
 .blob-btn-contact {
   color: #ffffff;
@@ -1743,26 +1726,6 @@ body:has(.light-theme) {
 }
 .blob-btn-contact:hover:before {
   border-color: #ffffff;
-}
-
-/* Light Theme Contact Button */
-.light-theme .blob-btn-contact {
-  color: #082052 !important;
-}
-.light-theme .blob-btn-contact:before {
-  border-color: rgba(8, 32, 82, 0.35) !important;
-}
-.light-theme .blob-btn-contact .blob-btn__blob {
-  background: #082052 !important;
-}
-.light-theme .blob-btn-contact .blob-btn__inner {
-  background: #ffffff !important;
-}
-.light-theme .blob-btn-contact:hover {
-  color: #F8F0E5 !important;
-}
-.light-theme .blob-btn-contact:hover:before {
-  border-color: #082052 !important;
 }
 
 

@@ -7,6 +7,7 @@ import { Sparkles, Calendar, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { SiteVisitForm } from '@/components/forms/SiteVisitForm';
+import { useTheme } from '@/components/layout/ThemeProvider';
 
 export interface HeroSectionProps {
   heroTitle?: string;
@@ -51,6 +52,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   heroEnabled = true,
 }) => {
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
+  const { theme } = useTheme();
 
   // Dynamic fallback to intercept seeded value
   const displaySecondaryCta = secondaryCtaLabel === 'Schedule a Site Visit' ? 'Contact Us' : secondaryCtaLabel;
@@ -156,34 +158,61 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
           {/* Compact Designed CTA Buttons with Mouse Hover Animations */}
           <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
-            <Link href={primaryCtaLink} className="blob-btn blob-btn-explore">
-              <span>{primaryCtaLabel}</span>
-              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />
-              <span className="blob-btn__inner">
-                <span className="blob-btn__blobs">
-                  <span className="blob-btn__blob"></span>
-                  <span className="blob-btn__blob"></span>
-                  <span className="blob-btn__blob"></span>
-                  <span className="blob-btn__blob"></span>
-                </span>
-              </span>
-            </Link>
+            {theme === 'light' ? (
+              <>
+                <Link href={primaryCtaLink} className="group">
+                  <Button
+                    variant="gold"
+                    size="sm"
+                    className="font-bold px-5 py-2.5 text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-500/20 hover:scale-105 hover:shadow-amber-500/35 transition-all duration-300 flex items-center gap-2"
+                  >
+                    <span>{primaryCtaLabel}</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300 pointer-events-none" />
+                  </Button>
+                </Link>
 
-            <button
-              onClick={() => setIsVisitModalOpen(true)}
-              className="blob-btn blob-btn-contact"
-            >
-              <Calendar className="w-4 h-4 shrink-0" />
-              <span>{displaySecondaryCta}</span>
-              <span className="blob-btn__inner">
-                <span className="blob-btn__blobs">
-                  <span className="blob-btn__blob"></span>
-                  <span className="blob-btn__blob"></span>
-                  <span className="blob-btn__blob"></span>
-                  <span className="blob-btn__blob"></span>
-                </span>
-              </span>
-            </button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsVisitModalOpen(true)}
+                  className="group border-slate-400 hover:border-amber-400 text-slate-100 hover:text-amber-300 bg-slate-900/70 hover:bg-slate-900 backdrop-blur-md font-bold px-5 py-2.5 text-xs sm:text-sm rounded-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 shadow-lg"
+                >
+                  <Calendar className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300 pointer-events-none" />
+                  <span>{displaySecondaryCta}</span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href={primaryCtaLink} className="blob-btn blob-btn-explore">
+                  <span>{primaryCtaLabel}</span>
+                  <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 pointer-events-none" />
+                  <span className="blob-btn__inner">
+                    <span className="blob-btn__blobs">
+                      <span className="blob-btn__blob"></span>
+                      <span className="blob-btn__blob"></span>
+                      <span className="blob-btn__blob"></span>
+                      <span className="blob-btn__blob"></span>
+                    </span>
+                  </span>
+                </Link>
+
+                <button
+                  onClick={() => setIsVisitModalOpen(true)}
+                  className="blob-btn blob-btn-contact"
+                >
+                  <Calendar className="w-4 h-4 shrink-0 pointer-events-none" />
+                  <span>{displaySecondaryCta}</span>
+                  <span className="blob-btn__inner">
+                    <span className="blob-btn__blobs">
+                      <span className="blob-btn__blob"></span>
+                      <span className="blob-btn__blob"></span>
+                      <span className="blob-btn__blob"></span>
+                      <span className="blob-btn__blob"></span>
+                    </span>
+                  </span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -199,7 +228,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </Dialog>
 
       {/* SVG gooey blob filter definitions */}
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" className="hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style={{ position: 'absolute', width: 0, height: 0, opacity: 0, pointerEvents: 'none' }}>
         <defs>
           <filter id="goo">
             <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10"></feGaussianBlur>
