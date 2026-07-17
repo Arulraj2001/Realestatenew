@@ -30,12 +30,14 @@ export const GalleryClientManager: React.FC<GalleryClientManagerProps> = ({
 
   const [formData, setFormData] = useState({
     title: '',
-    media_type: 'image' as 'image' | 'video',
+    media_type: 'image' as 'image' | 'video' | 'youtube' | 'instagram',
     storage_path_or_url: '',
     thumbnail_path: '',
+    video_url: '',
+    embed_type: null as 'supabase' | 'youtube' | 'instagram' | null,
     caption: '',
     alt_text: '',
-    category: 'Overview',
+    category: 'Site Pictures',
     project_id: projects[0]?.id || '',
     location_id: '',
     display_order: 0,
@@ -50,9 +52,11 @@ export const GalleryClientManager: React.FC<GalleryClientManagerProps> = ({
       media_type: 'image',
       storage_path_or_url: '',
       thumbnail_path: '',
+      video_url: '',
+      embed_type: null,
       caption: '',
       alt_text: '',
-      category: 'Overview',
+      category: 'Site Pictures',
       project_id: projects[0]?.id || '',
       location_id: '',
       display_order: items.length + 1,
@@ -69,9 +73,11 @@ export const GalleryClientManager: React.FC<GalleryClientManagerProps> = ({
       media_type: item.media_type || 'image',
       storage_path_or_url: item.storage_path_or_url || '',
       thumbnail_path: item.thumbnail_path || '',
+      video_url: item.video_url || item.storage_path_or_url || '',
+      embed_type: item.embed_type || null,
       caption: item.caption || '',
       alt_text: item.alt_text || '',
-      category: item.category || 'Overview',
+      category: item.category || 'Site Pictures',
       project_id: item.project_id || projects[0]?.id || '',
       location_id: item.location_id || '',
       display_order: item.display_order,
@@ -83,15 +89,22 @@ export const GalleryClientManager: React.FC<GalleryClientManagerProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.storage_path_or_url) {
-      toast({ type: 'error', title: 'Missing Media', message: 'Please upload or select an image asset.' });
+    if (!formData.storage_path_or_url && !formData.video_url) {
+      toast({ type: 'error', title: 'Missing Media', message: 'Please upload an image asset or enter a video URL.' });
       return;
     }
 
-    const res = await saveGalleryItemAction(formData, editingItem?.id);
+    const payload = {
+      ...formData,
+      storage_path_or_url: formData.media_type === 'youtube' || formData.media_type === 'instagram' ? (formData.video_url || formData.storage_path_or_url) : formData.storage_path_or_url,
+      video_url: formData.video_url || formData.storage_path_or_url,
+      embed_type: formData.media_type === 'youtube' ? 'youtube' : formData.media_type === 'instagram' ? 'instagram' : formData.media_type === 'video' ? 'supabase' : null,
+    };
+
+    const res = await saveGalleryItemAction(payload, editingItem?.id);
 
     if (res.success) {
-      toast({ type: 'success', title: editingItem ? 'Gallery Item Updated' : 'Gallery Photo Added' });
+      toast({ type: 'success', title: editingItem ? 'Gallery Item Updated' : 'Gallery Asset Added' });
       setIsDialogOpen(false);
       window.location.reload();
     } else {
@@ -203,54 +216,20 @@ export const GalleryClientManager: React.FC<GalleryClientManagerProps> = ({
         className="max-w-3xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
-          <div>
-            <MediaUploader
-              label="Select Image or Floor Plan"
-              value={formData.storage_path_or_url}
-              folder="gallery"
-              onChange={(url) => setFormData({ ...formData, storage_path_or_url: url })}
-            />
-          </div>
-
-          <div>
-            <Label>Thumbnail Image (Optional - separate preview)</Label>
-            <Input
-              value={formData.thumbnail_path}
-              onChange={(e) => setFormData({ ...formData, thumbnail_path: e.target.value })}
-              placeholder="https://your-storage/thumbnail.jpg"
-            />
-          </div>
-
-          <div>
-            <Label required>Asset Title</Label>
-            <Input
-              required
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="Entrance Arch Vista / Master Layout Plan"
-            />
-          </div>
-
-          <div>
-            <Label>Alt Text (SEO)</Label>
-            <Input
-              value={formData.alt_text}
-              onChange={(e) => setFormData({ ...formData, alt_text: e.target.value })}
-              placeholder="Descriptive text for screen readers and SEO"
-            />
-          </div>
-
-          <div>
-            <Label>Caption</Label>
-            <Textarea
-              rows={2}
-              value={formData.caption}
-              onChange={(e) => setFormData({ ...formData, caption: e.target.value })}
-              placeholder="Brief description of the photo..."
-            />
-          </div>
-
           <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label required>Media Type</Label>
+              <select
+                value={formData.media_type}
+                onChange={(e) => setFormData({ ...formData, media_type: e.target.value as 'image' | 'video' | 'youtube' | 'instagram' })}
+                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white font-bold"
+              >
+                <option value="image">🖼️ Picture / Photo</option>
+                <option value="youtube">🎥 YouTube Video Walkthrough</option>
+                <option value="instagram">📸 Instagram Influencer Reel</option>
+                <option value="video">🎞️ Direct Upload Video</option>
+              </select>
+            </div>
             <div>
               <Label required>Tag Project</Label>
               <select
@@ -258,7 +237,7 @@ export const GalleryClientManager: React.FC<GalleryClientManagerProps> = ({
                 onChange={(e) => setFormData({ ...formData, project_id: e.target.value })}
                 className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
               >
-                <option value="">— No Project —</option>
+                <option value="">— General / No Project —</option>
                 {projects.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
@@ -266,23 +245,62 @@ export const GalleryClientManager: React.FC<GalleryClientManagerProps> = ({
                 ))}
               </select>
             </div>
+          </div>
+
+          {formData.media_type === 'image' || formData.media_type === 'video' ? (
             <div>
-              <Label>Category</Label>
-              <select
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
-              >
-                <option value="Overview">Overview & Aerial View</option>
-                <option value="Layout Photos">Layout Photos</option>
-                <option value="Roads">Roads & Avenues</option>
-                <option value="Villas & Houses">Villas & Houses</option>
-                <option value="Villas">Villa Builds</option>
-                <option value="Parks">Parks & Greenery</option>
-                <option value="floor_plan">Master Floor Plan Diagram</option>
-                <option value="project_video">Project Video</option>
-              </select>
+              <MediaUploader
+                label={formData.media_type === 'video' ? 'Select MP4 Video File' : 'Select Photo Image Asset'}
+                value={formData.storage_path_or_url}
+                folder="gallery"
+                onChange={(url) => setFormData({ ...formData, storage_path_or_url: url })}
+              />
             </div>
+          ) : (
+            <div className="space-y-3">
+              <div>
+                <Label required>{formData.media_type === 'youtube' ? 'YouTube Video URL' : 'Instagram Influencer Reel URL'}</Label>
+                <Input
+                  value={formData.video_url}
+                  onChange={(e) => setFormData({ ...formData, video_url: e.target.value, storage_path_or_url: e.target.value })}
+                  placeholder={formData.media_type === 'youtube' ? 'https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID' : 'https://www.instagram.com/reel/REEL_ID/'}
+                />
+              </div>
+              <div>
+                <MediaUploader
+                  label="Custom Cover / Preview Image (Optional)"
+                  value={formData.thumbnail_path}
+                  folder="gallery"
+                  onChange={(url) => setFormData({ ...formData, thumbnail_path: url })}
+                />
+              </div>
+            </div>
+          )}
+
+          <div>
+            <Label required>Asset Title</Label>
+            <Input
+              required
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder="Rasi Garden Site Walkthrough Video / 3BHK Villa Front View"
+            />
+          </div>
+
+          <div>
+            <Label>Category</Label>
+            <select
+              value={formData.category}
+              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
+            >
+              <option value="Site Pictures">Site Pictures</option>
+              <option value="Villas & Houses">Villas & Houses (2BHK, 3BHK, 4BHK)</option>
+              <option value="Roads & Infrastructure">Roads & Infrastructure</option>
+              <option value="YouTube Videos">YouTube Videos</option>
+              <option value="Instagram Influencer Videos">Instagram Influencer Videos</option>
+              <option value="Master Floor Plan">Master Floor Plan</option>
+            </select>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

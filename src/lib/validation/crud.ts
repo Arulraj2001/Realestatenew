@@ -86,7 +86,7 @@ export const landmarkCrudSchema = z.object({
 
 export const galleryCrudSchema = z.object({
   title: z.string().optional().or(z.literal('')),
-  media_type: z.enum(['image', 'video']).default('image'),
+  media_type: z.enum(['image', 'video', 'youtube', 'instagram']).default('image'),
   storage_path_or_url: z.string().min(5, 'Media URL or storage path required'),
   thumbnail_path: z.string().optional().or(z.literal('')),
   alt_text: z.string().optional().or(z.literal('')),
@@ -94,6 +94,8 @@ export const galleryCrudSchema = z.object({
   project_id: z.string().uuid().optional().or(z.literal('')),
   location_id: z.string().uuid().optional().or(z.literal('')),
   category: z.string().default('Overview'),
+  video_url: z.string().optional().or(z.literal('')),
+  embed_type: z.enum(['supabase', 'youtube', 'instagram']).optional().nullable(),
   display_order: z.number().int().default(0),
   published: z.boolean().default(true),
   featured: z.boolean().default(false),

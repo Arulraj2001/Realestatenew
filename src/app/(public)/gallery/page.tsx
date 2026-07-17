@@ -10,9 +10,9 @@ import { GalleryLightbox } from '@/components/public/GalleryLightbox';
 import { Badge } from '@/components/ui/badge';
 
 export const metadata: Metadata = {
-  title: 'Photo Gallery | Your Choice Properties',
+  title: 'Photo Gallery – Your Choice Properties',
   description:
-    'View photos and videos of residential plots, 2BHK, 3BHK and 4BHK villas at Rasi Garden, Kongu Nagar and Kongu Garden in Namakkal and Paramathi Velur.',
+    'View photos of our plots, 2BHK/3BHK/4BHK villas & houses at Rasi Garden, Kongu Nagar & Kongu Garden. See real projects in Namakkal & Paramathy Velur.',
   alternates: {
     canonical: `${siteConfig.domain}/gallery`,
   },
@@ -53,6 +53,12 @@ export default async function GalleryPage() {
     locationNames[loc.id] = loc.name;
   });
 
+  const projectDescriptions: Record<string, string> = {
+    'rasi-garden': 'Explore layout views, road infrastructure, and villa designs from our Rasi Garden project in Namakkal.',
+    'kongu-nagar': 'See plot layouts and villa designs from our Kongu Nagar residential project in Namakkal.',
+    'kongu-garden': 'View plot layouts, road infrastructure, and villa designs from our Kongu Garden project in Paramathi Velur.',
+  };
+
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen pt-8 pb-16 px-4 sm:px-6 lg:px-8 space-y-12">
       {/* Page Header with Single H1 */}
@@ -61,10 +67,10 @@ export default async function GalleryPage() {
           <Camera className="w-3.5 h-3.5" /> Project Showcase
         </div>
         <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl">
-          See Our Plots, Villas and Completed Projects in Namakkal and Paramathi Velur
+          See Our Plots, Villas & Completed Projects in Namakkal & Paramathy Velur
         </h1>
         <p className="text-slate-300 text-sm sm:text-base max-w-3xl mt-3 leading-relaxed">
-          Browse real site photography, asphalt road infrastructure, villa designs, elevation models, and floor plan drawings across our townships.
+          Explore real site pictures, road infrastructure, 2BHK/3BHK/4BHK villa designs, YouTube video walkthroughs, and Instagram influencer reels across Rasi Garden, Kongu Nagar, and Kongu Garden.
         </p>
       </div>
 
@@ -75,6 +81,7 @@ export default async function GalleryPage() {
           if (items.length === 0) return null;
 
           const locName = proj.location?.name || locationNames[proj.location_id] || 'Tamil Nadu';
+          const introDesc = projectDescriptions[proj.slug] || `View site photos, roads, plot layouts and villa designs from ${proj.name} in ${locName}.`;
 
           return (
             <section key={proj.id} className="space-y-6 border-b border-slate-800 pb-12">
@@ -89,8 +96,8 @@ export default async function GalleryPage() {
                 </div>
                 <Badge variant="gold">{proj.project_status || 'Ongoing'}</Badge>
               </div>
-              <p className="text-xs sm:text-sm text-slate-300">
-                View site photos, roads, plot layouts and villa designs from {proj.name} in {locName}.
+              <p className="text-xs sm:text-sm text-slate-300 font-medium">
+                {introDesc}
               </p>
               <GalleryLightbox items={items} />
 
