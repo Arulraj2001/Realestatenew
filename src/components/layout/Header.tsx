@@ -73,8 +73,12 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center font-serif font-bold text-slate-950 text-xl shadow-lg group-hover:bg-amber-400 transition-colors">
-            Y
+          {/* Logo with blue curved border ring */}
+          <div className="relative w-11 h-11 rounded-full p-[2.5px] bg-gradient-to-br from-[#1da1f2] via-[#0e87d4] to-[#1da1f2] shadow-lg shadow-blue-500/30 group-hover:shadow-blue-400/50 transition-shadow">
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Your Choice Properties Logo" className="w-8 h-8 object-contain" />
+            </div>
           </div>
           <div>
             <span className="font-serif font-bold text-lg md:text-xl text-white tracking-tight block leading-none">

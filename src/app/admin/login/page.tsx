@@ -35,8 +35,12 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-6">
         {/* Brand Lock Tag */}
         <div className="text-center space-y-3">
-          <div className="w-12 h-12 rounded-xl bg-amber-500 flex items-center justify-center font-serif font-bold text-slate-950 text-2xl mx-auto shadow-lg">
-            Y
+          {/* Logo with blue curved border ring */}
+          <div className="relative w-14 h-14 rounded-full p-[3px] bg-gradient-to-br from-[#1da1f2] via-[#0e87d4] to-[#1da1f2] shadow-lg shadow-blue-500/30 mx-auto">
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.png" alt="Your Choice Properties Logo" className="w-10 h-10 object-contain" />
+            </div>
           </div>
           <h1 className="font-serif text-2xl font-bold text-white tracking-tight">
             {siteConfig.name} Admin Login

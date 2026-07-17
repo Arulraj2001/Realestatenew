@@ -63,9 +63,10 @@ export default async function LocationsListingPage() {
                 .join(', ');
 
               return (
-                <div
+                <Link
                   key={loc.id}
-                  className="group relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl flex flex-col justify-between"
+                  href={`/locations/${loc.slug}`}
+                  className="group relative rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl flex flex-col justify-between cursor-pointer hover:border-amber-500/50 hover:shadow-amber-500/10 hover:shadow-2xl transition-all duration-300"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image
@@ -98,15 +99,13 @@ export default async function LocationsListingPage() {
                         <Building2 className="w-3.5 h-3.5 text-emerald-400" /> {loc.projectCount} Published Projects
                       </span>
 
-                      <Link
-                        href={`/locations/${loc.slug}`}
-                        className="py-2 px-4 bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 border border-amber-500/30 text-xs font-bold rounded-xl inline-flex items-center gap-1 transition-all"
-                      >
+                      {/* Visual indicator — whole card is the link */}
+                      <span className="py-2 px-4 bg-amber-500/10 group-hover:bg-amber-500 text-amber-400 group-hover:text-slate-950 border border-amber-500/30 text-xs font-bold rounded-xl inline-flex items-center gap-1 transition-all pointer-events-none">
                         View Projects <ArrowRight className="w-3.5 h-3.5" />
-                      </Link>
+                      </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>

@@ -229,8 +229,12 @@ export default async function AboutUsPage() {
               </div>
             ) : (
               <div className="w-56 h-72 rounded-xl bg-slate-950 border-2 border-amber-500/40 flex flex-col items-center justify-center p-5 text-center space-y-3 shadow-xl">
-                <div className="w-16 h-16 rounded-xl bg-amber-500 flex items-center justify-center font-serif font-extrabold text-slate-950 text-2xl shadow-lg">
-                  YCP
+                {/* Logo with blue curved border ring */}
+                <div className="relative w-16 h-16 rounded-full p-[3.5px] bg-gradient-to-br from-[#1da1f2] via-[#0e87d4] to-[#1da1f2] shadow-lg shadow-blue-500/30">
+                  <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/logo.png" alt="Your Choice Properties Logo" className="w-11 h-11 object-contain" />
+                  </div>
                 </div>
                 <div>
                   <h4 className="font-serif font-bold text-white text-base">{contentJson.founder_name || 'Thennarasu Sambathkumar'}</h4>
