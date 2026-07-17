@@ -1547,3 +1547,33 @@ body:has(.light-theme) {
 }
 
 
+/* 18. Testimonial Verified Badge Overrides (Plain, Clean Style for Light Theme) */
+.light-theme .testimonial-verified-badge {
+  background-color: #ffffff !important;
+  border-color: rgba(15, 30, 46, 0.12) !important;
+  box-shadow: 0 2px 6px rgba(15, 30, 46, 0.06) !important;
+}
+
+.light-theme .absolute .testimonial-verified-badge.text-amber-400,
+.light-theme .absolute .testimonial-verified-badge,
+.light-theme .testimonial-verified-badge.text-amber-400,
+.light-theme .testimonial-verified-badge {
+  color: #d97706 !important; /* Plain yellow color without shadow */
+  text-shadow: none !important;
+}
+
+.light-theme .testimonial-verified-badge *,
+.light-theme .absolute .testimonial-verified-badge * {
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.light-theme .testimonial-verified-badge svg {
+  color: #10b981 !important; /* Plain emerald color without shadow/glow */
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+
+
+

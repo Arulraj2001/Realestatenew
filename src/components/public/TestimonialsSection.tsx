@@ -207,8 +207,8 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
               </div>
 
               {/* Verified Badge Header Chip */}
-              <div className="absolute top-3 left-3">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-950/80 backdrop-blur-md rounded-full text-[10px] font-bold text-amber-400 border border-amber-500/30">
+              <div className="absolute top-3 left-3 z-10">
+                <span className="testimonial-verified-badge inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-950/80 backdrop-blur-md rounded-full text-[10px] font-bold text-amber-400 border border-amber-500/30">
                   <ShieldCheck className="w-3 h-3 text-emerald-400" /> Verified Customer
                 </span>
               </div>
