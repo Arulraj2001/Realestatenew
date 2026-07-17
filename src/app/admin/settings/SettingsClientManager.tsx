@@ -100,6 +100,7 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
     whatsapp: String(contactRec.whatsapp || '+919842722123'),
     email: String(contactRec.email || 'info@yourchoiceproperties.in'),
     address: String(contactRec.address || 'Main Road, Namakkal, Tamil Nadu - 637001'),
+    map_url: String(contactRec.map_url || ''),
     working_hours: String(contactRec.working_hours || 'Mon - Sun: 9:00 AM - 8:00 PM'),
   });
 
@@ -217,6 +218,16 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
             <div>
               <Label required>Office Address</Label>
               <Textarea rows={2} value={contactData.address} onChange={(e) => setContactData({ ...contactData, address: e.target.value })} />
+            </div>
+            <div>
+              <Label>Google Maps URL</Label>
+              <Input
+                type="url"
+                placeholder="https://maps.google.com/?q=..."
+                value={contactData.map_url}
+                onChange={(e) => setContactData({ ...contactData, map_url: e.target.value })}
+              />
+              <p className="text-[11px] text-slate-500 mt-1">Paste the Google Maps link for your office. Visitors will be taken there when clicking the map on the Contact page.</p>
             </div>
             <div>
               <Label required>Working Hours</Label>

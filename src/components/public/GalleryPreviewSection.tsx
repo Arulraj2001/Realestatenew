@@ -51,9 +51,10 @@ export const GalleryPreviewSection: React.FC<GalleryPreviewSectionProps> = ({
         {/* 6 Grid Gallery Preview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayItems.map((item) => (
-            <div
+            <Link
               key={item.id}
-              className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl"
+              href="/gallery"
+              className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-xl cursor-pointer block"
             >
               <Image
                 src={item.storage_path_or_url}
@@ -67,7 +68,7 @@ export const GalleryPreviewSection: React.FC<GalleryPreviewSectionProps> = ({
                 <h3 className="font-serif text-base font-bold text-white mt-1">{item.title || 'Township Development'}</h3>
                 {item.caption && <p className="text-xs text-slate-300 line-clamp-1">{item.caption}</p>}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

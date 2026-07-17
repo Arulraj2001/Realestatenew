@@ -1088,61 +1088,137 @@ body:has(.light-theme) {
   background-color: rgba(37, 150, 190, 0.03) !important;
 }
 
-/* 12. Footer Light Theme Content Contrast Enforcements */
+/* 12. Footer Light Theme Navy Background & Content overrides */
+.light-theme footer {
+  background-color: #082052 !important;
+  border-top-color: #1d7b9d !important;
+}
+
 .light-theme footer,
 .light-theme footer * {
-  color: #94a3b8;
+  color: #F8F0E5;
 }
 
 .light-theme footer h1,
 .light-theme footer h2,
 .light-theme footer h3,
 .light-theme footer h4,
+.light-theme footer span,
+.light-theme footer p {
+  color: #F8F0E5 !important;
+}
+
 .light-theme footer .text-white,
-.light-theme footer h4.text-white,
-.light-theme footer span.text-white,
-.light-theme footer p.text-white {
-  color: #ffffff !important;
-}
-
-.light-theme footer a {
-  color: #94a3b8 !important;
-}
-
-.light-theme footer a:hover {
-  color: #fbbf24 !important; /* amber-400 */
-}
-
 .light-theme footer .text-slate-300,
 .light-theme footer .text-slate-400 {
-  color: #94a3b8 !important;
+  color: #F8F0E5 !important;
 }
 
 .light-theme footer .text-slate-500 {
-  color: #64748b !important;
+  color: #cbd5e1 !important;
 }
 
-.light-theme footer .text-amber-400,
-.light-theme footer .text-amber-500 {
-  color: #fbbf24 !important; /* amber-400 */
-}
-
+.light-theme footer .text-amber-500,
 .light-theme footer .text-emerald-400,
-.light-theme footer .text-emerald-500 {
-  color: #34d399 !important; /* emerald-400 */
+.light-theme footer .text-emerald-500,
+.light-theme footer svg {
+  color: #F8F0E5 !important;
 }
 
+/* Make logo text Properties cream in Light Theme */
+.light-theme footer span[class*="tracking-widest"],
+.light-theme footer span[class*="text-amber-400"],
+.light-theme footer span.text-amber-400 {
+  color: #F8F0E5 !important;
+}
+
+/* Make vertical accent lines next to headings cream */
+.light-theme footer h4,
+.light-theme footer h4[class*="border-l-2"],
+.light-theme footer h4.border-l-2,
+.light-theme footer h4.border-amber-500 {
+  border-left: 2px solid #F8F0E5 !important;
+  border-left-color: #F8F0E5 !important;
+}
+
+.light-theme footer a {
+  color: #F8F0E5 !important;
+}
+
+.light-theme footer a:hover,
+.light-theme footer a:hover *,
+.light-theme footer a[href*="/locations/"]:hover,
+.light-theme footer a[href*="/locations/"]:hover * {
+  color: #ffffff !important;
+  text-decoration: underline !important;
+}
+
+/* Namakkal Layouts and Paramathi Velur Layouts links: Bold Cream, Hover White */
+.light-theme footer a[href*="/locations/"] {
+  font-weight: 800 !important;
+  color: #F8F0E5 !important;
+}
+
+/* Footer Submit Button styling: Solid Black */
 .light-theme footer button[type="submit"] {
-  background-color: #fbbf24 !important;
+  background-color: #000000 !important;
 }
 
 .light-theme footer button[type="submit"],
 .light-theme footer button[type="submit"] * {
-  color: #000000 !important;
+  color: #ffffff !important;
 }
 
 .light-theme footer button[type="submit"]:hover {
-  background-color: #f59e0b !important;
+  background-color: #1e293b !important;
+}
+
+/* Override input shape in footer: Background White, Text Navy */
+.light-theme footer .footer-input-l-shape {
+  background-color: #ffffff !important; /* Background white */
+  color: #082052 !important; /* Text navy */
+  border-left: 2px solid rgba(8, 32, 82, 0.4) !important;
+  border-bottom: 1px solid rgba(8, 32, 82, 0.4) !important;
+  border-top: 0 !important;
+  border-right: 0 !important;
+}
+
+.light-theme footer .footer-input-l-shape::placeholder {
+  color: rgba(8, 32, 82, 0.6) !important; /* Muted navy placeholder */
+}
+
+.light-theme footer .footer-input-l-shape:focus {
+  border-left-color: #082052 !important;
+  border-bottom-color: #082052 !important;
+  box-shadow: none !important;
+}
+
+/* Override Logo box color in footer */
+.light-theme footer .bg-amber-500 {
+  background-color: #2596be !important;
+  color: #ffffff !important;
+}
+
+/* Success Card Background: Solid White */
+.light-theme footer .bg-emerald-950\/60,
+.light-theme footer [class*="bg-emerald-950/60"],
+.light-theme footer div[class*="bg-emerald-950/"],
+.light-theme footer .border-emerald-700\/60 {
+  background-color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.light-theme footer .bg-emerald-950\/60 p,
+.light-theme footer [class*="bg-emerald-950/60"] p,
+.light-theme footer div[class*="bg-emerald-950/"] p {
+  color: #082052 !important;
+}
+
+.light-theme footer .bg-emerald-950\/60 button,
+.light-theme footer [class*="bg-emerald-950/60"] button,
+.light-theme footer div[class*="bg-emerald-950/"] button {
+  color: #2596be !important;
+  font-weight: 800 !important;
 }
 
 /* 13. Footer Input L-Shape Styling */
@@ -1286,3 +1362,120 @@ body:has(.light-theme) {
   border-color: #2596be !important;
   outline-color: #2596be !important;
 }
+
+/* 15. Site Visit CTA Section — Dark Theme (default) */
+.site-visit-cta-section {
+  background: linear-gradient(135deg, #064e3b 0%, #020617 50%, #0a2540 100%);
+  border-top: 1px solid rgba(16, 185, 129, 0.3);
+  border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* Dark theme decorative shapes */
+.site-visit-cta-section .cta-deco-shape {
+  color: #34d399;
+}
+
+.site-visit-cta-section .cta-heading {
+  color: #ffffff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+.site-visit-cta-section .cta-description {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.site-visit-cta-section .cta-primary-btn {
+  background-color: #f59e0b;
+  color: #0f172a;
+}
+
+.site-visit-cta-section .cta-primary-btn:hover {
+  background-color: #fbbf24;
+}
+
+.site-visit-cta-section .cta-primary-btn svg {
+  color: #0f172a;
+}
+
+.site-visit-cta-section .cta-whatsapp-btn {
+  background-color: rgba(2, 6, 23, 0.8);
+  border-color: rgba(16, 185, 129, 0.6);
+  color: #34d399;
+}
+
+.site-visit-cta-section .cta-whatsapp-btn:hover {
+  background-color: #064e3b;
+}
+
+.site-visit-cta-section .cta-whatsapp-btn svg {
+  color: #34d399;
+}
+
+/* 15b. Site Visit CTA Section — Light Theme */
+.light-theme .site-visit-cta-section {
+  background:
+    /* sheen strip across center */
+    linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%),
+    /* main diagonal gradient */
+    linear-gradient(135deg, #c8ddf2 0%, #e4edf8 35%, #f0f5fc 60%, #c8ddf2 100%) !important;
+  border-top: 1px solid rgba(8, 32, 82, 0.14) !important;
+  border-bottom: 1px solid rgba(8, 32, 82, 0.14) !important;
+  position: relative;
+}
+
+/* Top radial navy glow */
+.light-theme .site-visit-cta-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 15% 50%, rgba(8, 32, 82, 0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 85% 50%, rgba(8, 32, 82, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+/* Light theme decorative shapes — navy color */
+.light-theme .site-visit-cta-section .cta-deco-shape {
+  color: #082052;
+}
+
+.light-theme .site-visit-cta-section .cta-heading {
+  color: #0f1e2e !important;
+  text-shadow: 0 1px 4px rgba(8, 32, 82, 0.06) !important;
+}
+
+.light-theme .site-visit-cta-section .cta-description {
+  color: #2d3e50 !important;
+}
+
+/* Contact Us button: Navy bg, cream text */
+.light-theme .site-visit-cta-section .cta-primary-btn {
+  background-color: #082052 !important;
+  color: #F8F0E5 !important;
+}
+
+.light-theme .site-visit-cta-section .cta-primary-btn:hover {
+  background-color: #113175 !important;
+  color: #F8F0E5 !important;
+}
+
+.light-theme .site-visit-cta-section .cta-primary-btn svg {
+  color: #F8F0E5 !important;
+}
+
+/* WhatsApp button: White bg, emerald border & text */
+.light-theme .site-visit-cta-section .cta-whatsapp-btn {
+  background-color: #ffffff !important;
+  border-color: #10b981 !important;
+  color: #059669 !important;
+}
+
+.light-theme .site-visit-cta-section .cta-whatsapp-btn:hover {
+  background-color: #f0fdf4 !important;
+}
+
+.light-theme .site-visit-cta-section .cta-whatsapp-btn svg {
+  color: #059669 !important;
+}
+
+
