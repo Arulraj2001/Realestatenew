@@ -198,13 +198,13 @@ body:has(.light-theme) {
   border-bottom-color: #d4dce8 !important;
   box-shadow: 0 1px 16px rgba(15, 30, 46, 0.09) !important;
 }
-/* Top notification bar keeps dark brand green */
+/* Top notification bar uses brand navy in light theme */
 .light-theme header > div:first-child {
-  background-color: #0f2e21 !important;
-  border-bottom-color: rgba(15, 46, 33, 0.4) !important;
+  background-color: #082052 !important;
+  border-bottom-color: rgba(8, 32, 82, 0.15) !important;
 }
 .light-theme header > div:first-child * {
-  color: #a7f3d0 !important;
+  color: #F8F0E5 !important;
 }
 .light-theme header > div:first-child a:hover {
   color: #fbbf24 !important;
@@ -843,12 +843,12 @@ body:has(.light-theme) {
 /* 2. Header Top Announcement Bar */
 .light-theme .header-top-bar,
 .light-theme .header-top-bar * {
-  color: #6ee7b7 !important;
+  color: #F8F0E5 !important;
 }
 .light-theme .header-top-bar .text-white,
 .light-theme .header-top-bar a,
 .light-theme .header-top-bar span {
-  color: #ffffff !important;
+  color: #F8F0E5 !important;
 }
 
 /* 3. Dialog / Lightbox Modal Dark background override */
@@ -1764,3 +1764,47 @@ body:has(.light-theme) {
 .light-theme .blob-btn-contact:hover:before {
   border-color: #082052 !important;
 }
+
+
+/* 20. Header Top Notification Bar Styles */
+.header-top-bar {
+  background-color: #0b2218;
+  border-bottom: 1px solid rgb(2, 44, 27);
+  width: 100%;
+}
+
+.header-top-bar .header-top-text {
+  color: #6ee7b7;
+}
+
+.header-top-bar .header-top-phone {
+  color: #cbd5e1;
+}
+
+.header-top-bar .header-top-phone a {
+  color: #f1f5f9;
+}
+
+.header-top-bar .header-top-phone svg {
+  color: #fbbf24;
+}
+
+/* Light Theme overrides */
+.light-theme .header-top-bar {
+  background-color: #082052 !important; /* Navy background */
+  border-bottom: 1px solid rgba(8, 32, 82, 0.15) !important;
+}
+
+.light-theme .header-top-bar .header-top-text {
+  color: #F8F0E5 !important; /* Cream text */
+}
+
+.light-theme .header-top-bar .header-top-phone,
+.light-theme .header-top-bar .header-top-phone a {
+  color: #F8F0E5 !important; /* Cream text */
+}
+
+.light-theme .header-top-bar .header-top-phone svg {
+  color: #F8F0E5 !important; /* Cream icon */
+}
+

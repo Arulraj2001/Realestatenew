@@ -58,14 +58,16 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp }
   return (
     <header className="sticky top-0 z-40 bg-[#0f2e21]/95 backdrop-blur-md border-b border-emerald-900/60 shadow-md">
       {/* Top Notification Bar */}
-      <div className="header-top-bar bg-[#0b2218] text-xs py-1.5 px-4 border-b border-emerald-950 flex justify-between items-center max-w-7xl mx-auto" style={{ backgroundColor: '#0b2218' }}>
-        <p className="truncate font-medium" style={{ color: '#6ee7b7' }}>
-          ✨ DTCP &amp; RERA Approved Residential Plots &amp; Luxury Villas in Namakkal &amp; Paramathi Velur
-        </p>
-        <div className="hidden md:flex items-center gap-4" style={{ color: '#cbd5e1' }}>
-          <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-amber-400 transition-colors flex items-center gap-1" style={{ color: '#f1f5f9' }}>
-            <Phone className="w-3 h-3 text-amber-400" style={{ color: '#fbbf24' }} /> {siteConfig.contact.phone}
-          </a>
+      <div className="header-top-bar text-xs py-1.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+          <p className="header-top-text truncate font-medium">
+            ✨ DTCP &amp; RERA Approved Residential Plots &amp; Luxury Villas in Namakkal &amp; Paramathi Velur
+          </p>
+          <div className="header-top-phone hidden md:flex items-center gap-4">
+            <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-amber-400 transition-colors flex items-center gap-1">
+              <Phone className="w-3 h-3" /> {siteConfig.contact.phone}
+            </a>
+          </div>
         </div>
       </div>
 
