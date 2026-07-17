@@ -14,7 +14,7 @@ import {
   Compass,
   CheckCircle2,
   Sparkles,
-  Pointer,
+  MousePointerClick,
 } from 'lucide-react';
 
 interface AmenityItem {
@@ -127,8 +127,8 @@ export const LocationAmenities: React.FC = () => {
               <Trees className="w-4 h-4 shrink-0" />
               Land &amp; Plot Layout
               {activeTab !== 'land' && (
-                <div className="absolute -top-4 -right-2 text-amber-500 light-theme:text-[#2596be] pointer-events-none z-20 animate-hand-click">
-                  <Pointer className="w-4.5 h-4.5 rotate-[90deg] fill-current" />
+                <div className="absolute -bottom-3 -right-2 text-amber-500 light-theme:text-[#2596be] pointer-events-none z-20 animate-mouse-click">
+                  <MousePointerClick className="w-4 h-4 fill-current" />
                 </div>
               )}
             </button>
@@ -143,8 +143,8 @@ export const LocationAmenities: React.FC = () => {
               <Home className="w-4 h-4 shrink-0" />
               Villas &amp; Houses
               {activeTab !== 'house' && (
-                <div className="absolute -top-4 -right-2 text-amber-500 light-theme:text-[#2596be] pointer-events-none z-20 animate-hand-click">
-                  <Pointer className="w-4.5 h-4.5 rotate-[90deg] fill-current" />
+                <div className="absolute -bottom-3 -right-2 text-amber-500 light-theme:text-[#2596be] pointer-events-none z-20 animate-mouse-click">
+                  <MousePointerClick className="w-4 h-4 fill-current" />
                 </div>
               )}
             </button>

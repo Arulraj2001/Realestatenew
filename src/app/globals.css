@@ -1529,19 +1529,21 @@ body:has(.light-theme) {
 }
 
 
-/* 17. Hand clicking gesture animation for inactive tab pointer */
-.animate-hand-click {
-  animation: hand-click-movement 1.1s infinite ease-in-out !important;
-  transform-origin: bottom left;
+/* 17. Mouse click cursor indicator animation */
+.animate-mouse-click {
+  animation: mouse-click-movement 1.1s infinite ease-in-out !important;
+  transform-origin: top left;
 }
 
-@keyframes hand-click-movement {
+@keyframes mouse-click-movement {
   0%, 100% {
     transform: translate(0, 0) scale(1);
     opacity: 0.85;
   }
   50% {
-    transform: translate(-4px, 4px) scale(0.85); /* Diagonally moves towards the button and shrinks to simulate click */
+    transform: translate(-3px, -3px) scale(0.8); /* Moves up-left towards the button and shrinks to simulate click */
     opacity: 1;
   }
 }
+
+
