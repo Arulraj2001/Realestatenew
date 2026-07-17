@@ -1,32 +1,41 @@
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { MapPin, Phone, Mail, Clock, MessageSquare, ChevronRight, ExternalLink } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, MessageSquare, ChevronRight, ExternalLink, Share2 } from 'lucide-react';
+import { FacebookIcon, InstagramIcon, YoutubeIcon } from '@/components/ui/icons';
 import { siteConfig } from '@/config/site';
-import { getFAQs, getContentPage } from '@/lib/data';
+import { getFAQs, getContentPage, getSocialLinks } from '@/lib/data';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { FAQSection } from '@/components/public/FAQSection';
 import { createAdminClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Office Location & Phone Inquiries',
+  title: 'Contact Your Choice Properties | Villas & Plots in Namakkal & Paramathi velur',
   description:
-    'Get in touch with Your Choice Properties. Call +91 98765 43210 or visit our main office in Namakkal, Tamil Nadu.',
+    'Contact Your Choice Properties today for premium villas and DTCP approved plots in Namakkal and Paramathy Velur. Schedule a free site visit.',
   alternates: {
     canonical: `${siteConfig.domain}/contact-us`,
   },
 };
 
 export default async function ContactUsPage() {
-  const faqs = await getFAQs();
+  const [faqs, socialLinks] = await Promise.all([
+    getFAQs(),
+    getSocialLinks(),
+  ]);
+
+  const fbUrl = socialLinks?.facebook || 'https://facebook.com/yourchoiceproperties';
+  const instaUrl = socialLinks?.instagram || 'https://instagram.com/yourchoiceproperties';
+  const ytUrl = socialLinks?.youtube || 'https://youtube.com/@yourchoiceproperties';
 
   // Load dynamic contact page content from DB
   const contentRecord = await getContentPage('contact');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const contentJson = (contentRecord?.content as Record<string, any>) || {};
   const contactBgImage = contentJson.contact_bg_image || null;
-  const bannerHeading = contentJson.heading || 'Contact Us';
-  const bannerBody = contentJson.body || 'We are here to assist you with layout site visits, pricing breakdowns, and title verification.';
+  const bannerHeading = contentJson.heading || contentJson.title || 'Contact Your Choice Properties';
+  const bannerSubtitle = contentJson.subtitle || 'Looking for your dream home or the perfect investment?';
+  const bannerBody = contentJson.body || 'Our property experts are here to guide you through every step—from selecting the right plot or villa to documentation and loan assistance. Schedule your site visit today and explore our premium projects.';
 
   // Load live contact info (map_url) from DB
   const supabase = await createAdminClient();
@@ -111,8 +120,8 @@ export default async function ContactUsPage() {
           <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 pb-1">
               <Link href="/" className="hover:text-amber-400 transition-colors">
                 Home
               </Link>
@@ -124,9 +133,13 @@ export default async function ContactUsPage() {
               {bannerHeading}
             </h1>
 
-            <p className="text-slate-300 text-sm sm:text-base max-w-2xl leading-relaxed">
+            <h2 className="font-serif text-xl sm:text-2xl font-bold text-amber-400 pt-1">
+              {bannerSubtitle}
+            </h2>
+
+            <h3 className="text-slate-300 text-sm sm:text-base max-w-3xl leading-relaxed font-normal">
               {bannerBody}
-            </p>
+            </h3>
           </div>
         </section>
 
@@ -210,6 +223,47 @@ export default async function ContactUsPage() {
                   <div>
                     <h3 className="font-bold text-white text-sm">Working Hours</h3>
                     <p className="text-sm sm:text-base text-slate-200 mt-1">Monday - Sunday: 9:00 AM - 8:00 PM</p>
+                  </div>
+                </div>
+
+                {/* Social Media Channels */}
+                <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl flex items-start gap-4">
+                  <Share2 className="w-6 h-6 text-amber-400 shrink-0 mt-1" />
+                  <div className="flex-1">
+                    <h3 className="font-bold text-white text-sm">Official Social Media</h3>
+                    <p className="text-xs text-slate-400 mt-0.5 mb-3">Follow us for project walkthrough videos and new layout announcements.</p>
+                    <div className="flex items-center gap-4">
+                      {instaUrl && (
+                        <a
+                          href={instaUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#E4405F] text-xs font-bold flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                        >
+                          <InstagramIcon className="w-5 h-5" /> Instagram
+                        </a>
+                      )}
+                      {fbUrl && (
+                        <a
+                          href={fbUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#1877F2] text-xs font-bold flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                        >
+                          <FacebookIcon className="w-5 h-5" /> Facebook
+                        </a>
+                      )}
+                      {ytUrl && (
+                        <a
+                          href={ytUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#FF0000] text-xs font-bold flex items-center gap-1.5 hover:opacity-80 transition-opacity"
+                        >
+                          <YoutubeIcon className="w-5 h-5" /> YouTube
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

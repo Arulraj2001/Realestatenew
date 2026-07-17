@@ -5,7 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, ChevronRight, Compass, ShieldCheck } from 'lucide-react';
 import { getLocationBySlug, getPublishedProjects, getPublishedConfigurations, getPublishedLocations } from '@/lib/data';
+import { getActiveAmenities } from '@/lib/data/amenities';
 import { siteConfig } from '@/config/site';
+import { getSeoOverride, buildMetadataFromOverride, getLocationJsonLd, resolveJsonLd } from '@/lib/seo/metadata';
 import { Badge } from '@/components/ui/badge';
 import { FeaturedProjectsSection } from '@/components/public/FeaturedProjectsSection';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
@@ -34,18 +36,14 @@ export async function generateMetadata({ params }: LocationDetailPageProps): Pro
     };
   }
 
-  return {
+  const override = await getSeoOverride('location', location.id);
+
+  return buildMetadataFromOverride(override, {
     title: `${location.name} Real Estate & Villa Plots`,
     description: location.short_description || `Explore DTCP approved plots and villas in ${location.name}.`,
-    alternates: {
-      canonical: `${siteConfig.domain}/locations/${location.slug}`,
-    },
-    openGraph: {
-      title: `${location.name} Properties | ${siteConfig.name}`,
-      description: location.short_description || undefined,
-      url: `${siteConfig.domain}/locations/${location.slug}`,
-    },
-  };
+    canonicalUrl: `${siteConfig.domain}/locations/${location.slug}`,
+    ogImage: location.hero_image_path ?? undefined,
+  });
 }
 
 export default async function LocationDetailPage({ params }: LocationDetailPageProps) {
@@ -56,46 +54,26 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
     notFound();
   }
 
-  // Fetch projects and configurations belonging to this location
-  const [projects, configurations] = await Promise.all([
+  // Fetch projects, configurations, amenities, and SEO override for this location
+  const [projects, configurations, seoOverride, allAmenities] = await Promise.all([
     getPublishedProjects({ locationId: location.id }),
     getPublishedConfigurations({ locationId: location.id }),
+    getSeoOverride('location', location.id),
+    getActiveAmenities(),
   ]);
 
   const fallbackImage =
     location.hero_image_path ||
     'https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1200&q=80';
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: siteConfig.domain,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Locations',
-        item: `${siteConfig.domain}/locations`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: location.name,
-        item: `${siteConfig.domain}/locations/${location.slug}`,
-      },
-    ],
-  };
+  const jsonLd = resolveJsonLd(seoOverride, getLocationJsonLd(location));
 
   return (
     <>
+      {/* JSON-LD Structured Data (admin-overridable) */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
@@ -143,7 +121,7 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
         <FeaturedProjectsSection projects={projects} />
 
         {/* Township & Villa Amenities Section */}
-        <LocationAmenities />
+        <LocationAmenities amenities={allAmenities} />
 
         {/* Configurations Breakdown */}
         {configurations.length > 0 && (

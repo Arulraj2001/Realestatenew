@@ -200,6 +200,7 @@ export const GalleryClientManager: React.FC<GalleryClientManagerProps> = ({
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         title={editingItem ? 'Edit Gallery Asset' : 'Add Photo / Floor Plan Asset'}
+        className="max-w-3xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
           <div>

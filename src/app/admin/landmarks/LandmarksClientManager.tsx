@@ -103,7 +103,7 @@ export const LandmarksClientManager: React.FC<{
         ))}
       </div>
 
-      <Dialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} title={editingLandmark ? 'Edit Landmark' : 'Add New Landmark'}>
+      <Dialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)} title={editingLandmark ? 'Edit Landmark' : 'Add New Landmark'} className="max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label required>Project</Label>

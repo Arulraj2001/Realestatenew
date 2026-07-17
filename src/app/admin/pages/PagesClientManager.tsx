@@ -12,6 +12,14 @@ import { MediaUploader } from '@/components/admin/MediaUploader';
 import { saveContentPageAction } from '@/app/actions/crud';
 import { useToast } from '@/components/ui/toast';
 
+const ICON_OPTIONS = [
+  { value: 'Award',     label: '🏆 Award' },
+  { value: 'Building2', label: '🏢 Building' },
+  { value: 'Users',     label: '👥 Users' },
+  { value: 'Maximize',  label: '⊡ Maximize (Area)' },
+  { value: 'Home',      label: '🏠 Home' },
+];
+
 export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ initialPages }) => {
   const { toast } = useToast();
   const [pages, setPages] = useState<ContentPage[]>(initialPages);
@@ -70,6 +78,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     services_list: [] as Array<{ id: string; title: string; content: string; image_url?: string }>,
 
     // Contact Page
+    subtitle: '',
     contact_bg_image: '',
   });
 
@@ -177,6 +186,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
           ],
 
       // Contact Page
+      subtitle: String(c.subtitle || 'Looking for your dream home or the perfect investment?'),
       contact_bg_image: String(c.contact_bg_image || ''),
     });
   };
@@ -252,6 +262,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       updatedContent = {
         ...existingObj,
         heading: formData.heading,
+        subtitle: formData.subtitle,
         body: formData.body,
         contact_bg_image: formData.contact_bg_image,
       };
@@ -347,7 +358,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         })}
       </div>
 
-      <Dialog isOpen={Boolean(selectedKey)} onClose={() => setSelectedKey(null)} title={`Edit Page Content: ${selectedKey}`}>
+      <Dialog isOpen={Boolean(selectedKey)} onClose={() => setSelectedKey(null)} title={`Edit Page Content: ${selectedKey}`} className="max-w-4xl">
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
           <div>
             <Label required>Page Display Title</Label>
@@ -497,7 +508,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                           Remove
                         </button>
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-3 gap-2">
                         <div>
                           <Label>Value (e.g. 12+)</Label>
                           <Input value={stat.value} onChange={(e) => { const updated = [...formData.stats_list]; updated[idx] = { ...updated[idx], value: e.target.value }; setFormData({ ...formData, stats_list: updated }); }} placeholder="12+" />
@@ -505,6 +516,22 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                         <div>
                           <Label>Label</Label>
                           <Input value={stat.label} onChange={(e) => { const updated = [...formData.stats_list]; updated[idx] = { ...updated[idx], label: e.target.value }; setFormData({ ...formData, stats_list: updated }); }} placeholder="Years of Trust" />
+                        </div>
+                        <div>
+                          <Label>Icon</Label>
+                          <select
+                            value={stat.icon || 'Award'}
+                            onChange={(e) => {
+                              const updated = [...formData.stats_list];
+                              updated[idx] = { ...updated[idx], icon: e.target.value };
+                              setFormData({ ...formData, stats_list: updated });
+                            }}
+                            className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors font-sans"
+                          >
+                            {ICON_OPTIONS.map((o) => (
+                              <option key={o.value} value={o.value} className="bg-slate-900">{o.label}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     </div>
@@ -623,7 +650,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                       <span className="text-[10px] uppercase font-bold text-amber-400 font-mono">Stat #{idx + 1}</span>
                       <button type="button" onClick={() => setFormData({ ...formData, stats_list: formData.stats_list.filter((_, i) => i !== idx) })} className="text-xs text-red-400 hover:text-red-300 font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-md">Remove</button>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-2">
                       <div>
                         <Label>Value (e.g. 13+)</Label>
                         <Input value={stat.value} onChange={(e) => { const updated = [...formData.stats_list]; updated[idx] = { ...updated[idx], value: e.target.value }; setFormData({ ...formData, stats_list: updated }); }} placeholder="13+" />
@@ -631,6 +658,22 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                       <div>
                         <Label>Label</Label>
                         <Input value={stat.label} onChange={(e) => { const updated = [...formData.stats_list]; updated[idx] = { ...updated[idx], label: e.target.value }; setFormData({ ...formData, stats_list: updated }); }} placeholder="Years of Experience" />
+                      </div>
+                      <div>
+                        <Label>Icon</Label>
+                        <select
+                          value={stat.icon || 'Award'}
+                          onChange={(e) => {
+                            const updated = [...formData.stats_list];
+                            updated[idx] = { ...updated[idx], icon: e.target.value };
+                            setFormData({ ...formData, stats_list: updated });
+                          }}
+                          className="w-full mt-1 px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors font-sans"
+                        >
+                          {ICON_OPTIONS.map((o) => (
+                            <option key={o.value} value={o.value} className="bg-slate-900">{o.label}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
                   </div>
@@ -845,13 +888,20 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
           ) : (
             <div className="space-y-4">
               <div>
-                <Label>Section Heading</Label>
-                <Input value={formData.heading} onChange={(e) => setFormData({ ...formData, heading: e.target.value })} />
+                <Label>Main Heading (H1)</Label>
+                <Input value={formData.heading} onChange={(e) => setFormData({ ...formData, heading: e.target.value })} placeholder="Contact Your Choice Properties" />
               </div>
 
+              {selectedKey === 'contact' && (
+                <div>
+                  <Label>Sub-heading / Question (H2)</Label>
+                  <Input value={formData.subtitle} onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })} placeholder="Looking for your dream home or the perfect investment?" />
+                </div>
+              )}
+
               <div>
-                <Label>Main Content Text</Label>
-                <Textarea rows={6} value={formData.body} onChange={(e) => setFormData({ ...formData, body: e.target.value })} />
+                <Label>Main Description / Body (H3)</Label>
+                <Textarea rows={4} value={formData.body} onChange={(e) => setFormData({ ...formData, body: e.target.value })} />
               </div>
 
               {selectedKey === 'contact' && (

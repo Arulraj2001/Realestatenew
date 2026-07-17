@@ -21,6 +21,7 @@ import {
   getPublishedGalleryItems,
 } from '@/lib/data';
 import { siteConfig } from '@/config/site';
+import { getSeoOverride, buildMetadataFromOverride, getConfigurationJsonLd, resolveJsonLd } from '@/lib/seo/metadata';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
@@ -48,15 +49,15 @@ export async function generateMetadata({ params }: PropertyDetailPageProps): Pro
     return { title: 'Property Not Found' };
   }
 
-  return {
+  const override = await getSeoOverride('configuration', config.id);
+
+  return buildMetadataFromOverride(override, {
     title: `${config.name} | ${config.project?.name || 'Gated Layout'}`,
     description:
       config.short_description ||
       `Explore details for ${config.name} at ${config.project?.name} in ${config.project?.location?.name || 'Namakkal'}.`,
-    alternates: {
-      canonical: `${siteConfig.domain}/properties/${config.slug}`,
-    },
-  };
+    canonicalUrl: `${siteConfig.domain}/properties/${config.slug}`,
+  });
 }
 
 export default async function PropertyDetailPage({ params }: PropertyDetailPageProps) {
@@ -67,12 +68,15 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     notFound();
   }
 
-  // Fetch parallel relations
-  const [projectAmenities, galleryItems, siblingConfigurations] = await Promise.all([
+  // Fetch parallel relations + SEO override
+  const [projectAmenities, galleryItems, siblingConfigurations, seoOverride] = await Promise.all([
     config.project_id ? getProjectAmenities(config.project_id) : Promise.resolve([]),
     getPublishedGalleryItems({ propertyConfigurationId: config.id }),
     config.project_id ? getPublishedConfigurations({ projectId: config.project_id }) : Promise.resolve([]),
+    getSeoOverride('configuration', config.id),
   ]);
+
+  const jsonLd = resolveJsonLd(seoOverride, getConfigurationJsonLd(config));
 
   // Related properties (excluding current property, sorted: 4BHK -> 3BHK -> 2BHK -> Plots)
   const relatedProperties = siblingConfigurations
@@ -101,7 +105,14 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     : [];
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen">
+    <>
+      {/* JSON-LD Structured Data (admin-overridable) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <div className="bg-slate-950 text-slate-100 min-h-screen">
       {/* Breadcrumb Header */}
       <div className="bg-slate-900 border-b border-slate-800 py-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center gap-2 text-xs font-semibold text-slate-400">
@@ -331,5 +342,6 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
         description="Pick a date and time that works best for your family. We will arrange transport to inspect the layout."
       />
     </div>
+    </>
   );
 }

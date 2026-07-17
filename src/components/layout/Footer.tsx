@@ -1,17 +1,28 @@
 'use client';
+// Force HMR refresh for client social icons
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Phone, Mail, Clock, ArrowUpRight, Send, CheckCircle2 } from 'lucide-react';
+import { FacebookIcon, InstagramIcon, YoutubeIcon } from '@/components/ui/icons';
 import { siteConfig } from '@/config/site';
 import { submitContactEnquiryAction } from '@/app/actions/enquiries';
 import { useToast } from '@/components/ui/toast';
+import { SocialLinks } from '@/lib/data/settings';
 
-export const Footer: React.FC = () => {
+export interface FooterProps {
+  socialLinks?: SocialLinks | null;
+}
+
+export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({ name: '', phone: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const fbUrl = socialLinks?.facebook || 'https://facebook.com/yourchoiceproperties';
+  const instaUrl = socialLinks?.instagram || 'https://instagram.com/yourchoiceproperties';
+  const ytUrl = socialLinks?.youtube || 'https://youtube.com/@yourchoiceproperties';
 
   const primeLocations = [
     { name: 'Namakkal Layouts', slug: 'namakkal', status: 'current' },
@@ -49,7 +60,7 @@ export const Footer: React.FC = () => {
     <footer className="bg-[#091b13] text-slate-300 border-t border-emerald-950 pt-16 pb-24 md:pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-emerald-900/40">
-          {/* Col 1: Brand */}
+          {/* Col 1: Brand & Social Links */}
           <div className="space-y-4 lg:col-span-1">
             <div className="flex items-center gap-3">
               {/* Logo with blue curved border ring */}
@@ -71,6 +82,46 @@ export const Footer: React.FC = () => {
             <p className="text-xs text-slate-400 leading-relaxed">
               Premier real estate developer in Tamil Nadu specializing in DTCP approved villa plots and high-appreciation residential gated layouts.
             </p>
+
+            {/* Social Media Links */}
+            <div className="pt-2">
+              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Connect With Us</p>
+              <div className="flex items-center gap-3">
+                {instaUrl && (
+                  <a
+                    href={instaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Follow us on Instagram"
+                    className="text-[#E4405F] hover:opacity-80 transition-opacity"
+                  >
+                    <InstagramIcon className="w-5 h-5" />
+                  </a>
+                )}
+                {fbUrl && (
+                  <a
+                    href={fbUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Follow us on Facebook"
+                    className="text-[#1877F2] hover:opacity-80 transition-opacity"
+                  >
+                    <FacebookIcon className="w-5 h-5" />
+                  </a>
+                )}
+                {ytUrl && (
+                  <a
+                    href={ytUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Subscribe on YouTube"
+                    className="text-[#FF0000] hover:opacity-80 transition-opacity"
+                  >
+                    <YoutubeIcon className="w-5 h-5" />
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Col 2: Quick Navigation */}

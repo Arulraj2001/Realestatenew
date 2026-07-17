@@ -21,6 +21,11 @@ import {
   ChevronRight,
   ExternalLink,
   X,
+  ShieldCheck,
+  Road,
+  Lock,
+  Droplet,
+  Sun,
 } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/ui/icons';
 import {
@@ -755,13 +760,31 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
                   {amenities.map((item) => {
                     const am = item.amenity || item;
+                    const getIcon = (key: string | null) => {
+                      switch (key) {
+                        case 'shield-check':
+                          return <ShieldCheck className="w-3.5 h-3.5 pointer-events-none" />;
+                        case 'road':
+                          return <Road className="w-3.5 h-3.5 pointer-events-none" />;
+                        case 'lock':
+                          return <Lock className="w-3.5 h-3.5 pointer-events-none" />;
+                        case 'droplet':
+                          return <Droplet className="w-3.5 h-3.5 pointer-events-none" />;
+                        case 'sun':
+                          return <Sun className="w-3.5 h-3.5 pointer-events-none" />;
+                        case 'trees':
+                          return <Trees className="w-3.5 h-3.5 pointer-events-none" />;
+                        default:
+                          return <CheckCircle2 className="w-3.5 h-3.5 pointer-events-none" />;
+                      }
+                    };
                     return (
                       <div
                         key={item.amenity_id || (am as Amenity).id}
                         className="p-3 bg-slate-900 border border-slate-800 rounded-xl flex items-start gap-2.5"
                       >
                         <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                          <CheckCircle2 className="w-3.5 h-3.5 pointer-events-none" />
+                          {getIcon((am as Amenity).icon_key)}
                         </div>
                         <div>
                           <h4 className="font-bold text-white text-xs">{(am as Amenity).name}</h4>

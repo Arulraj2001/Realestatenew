@@ -6,7 +6,7 @@ import {
   getPublishedGalleryItems,
   getContentPage,
 } from '@/lib/data';
-import { getTestimonials } from '@/lib/data/settings';
+import { getTestimonials, getHomepageStats } from '@/lib/data/settings';
 import { generateHomePageMetadata, getHomePageJsonLd } from '@/lib/seo/metadata';
 
 import { HeroSection } from '@/components/public/HeroSection';
@@ -25,17 +25,25 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HomePage() {
   // Fetch dynamic content and records from data access layer
-  const [locations, projects, galleryItems, homeContent, testimonials] = await Promise.all([
+  const [locations, projects, galleryItems, homeContent, testimonials, siteStats] = await Promise.all([
     getPublishedLocations({ featuredOnly: true }),
     getPublishedProjects({ featuredOnly: true }),
     getPublishedGalleryItems({ featuredOnly: true }),
     getContentPage('home'),
     getTestimonials(),
+    getHomepageStats(),
   ]);
 
   const jsonLd = getHomePageJsonLd();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const contentJson = (homeContent?.content as Record<string, any>) || {};
+
+  // Stats priority: content_pages.stats_list → site_settings.homepage_stats → component defaults
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const resolvedStats: any[] | undefined =
+    Array.isArray(contentJson.stats_list) && contentJson.stats_list.length > 0
+      ? contentJson.stats_list
+      : siteStats ?? undefined;
 
   return (
     <>
@@ -76,7 +84,7 @@ export default async function HomePage() {
 
         {/* Key Statistics Highlights */}
         <StatsSection
-          stats={contentJson.stats_list}
+          stats={resolvedStats}
           isVisible={contentJson.stats_visible !== false}
         />
 

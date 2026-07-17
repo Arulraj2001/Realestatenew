@@ -55,3 +55,20 @@ export async function getFAQs(): Promise<FAQItem[] | null> {
     return null;
   }
 }
+
+export interface SocialLinks {
+  facebook?: string;
+  instagram?: string;
+  youtube?: string;
+}
+
+/** Fetch social links from site_settings['social_links']. Returns null if not set. */
+export async function getSocialLinks(): Promise<SocialLinks | null> {
+  try {
+    const setting = await getSiteSetting('social_links');
+    if (!setting || typeof setting.value !== 'object' || setting.value === null) return null;
+    return setting.value as SocialLinks;
+  } catch {
+    return null;
+  }
+}

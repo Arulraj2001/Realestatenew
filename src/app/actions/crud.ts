@@ -426,6 +426,40 @@ export async function saveSeoMetadataAction(data: Record<string, unknown>, id?: 
   }
 }
 
+export async function deleteSeoMetadataAction(id: string) {
+  try {
+    await requireAdmin(['super_admin', 'content_admin']);
+    const supabase = await getSupabaseAdmin();
+    const { error } = await supabase.from('seo_metadata').delete().eq('id', id);
+    if (error) return { success: false, error: error.message };
+    revalidatePath('/', 'layout');
+    return { success: true };
+  } catch {
+    return { success: false, error: 'Failed to delete SEO metadata entry.' };
+  }
+}
+
+export async function saveRobotsConfigAction(rulesJson: string) {
+  try {
+    await requireAdmin(['super_admin', 'content_admin']);
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(rulesJson);
+    } catch {
+      return { success: false, error: 'Invalid JSON in robots configuration.' };
+    }
+    const supabase = await getSupabaseAdmin();
+    const { error } = await supabase
+      .from('site_settings')
+      .upsert({ key: 'robots_config', value: parsed, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+    if (error) return { success: false, error: error.message };
+    revalidatePath('/robots.txt');
+    return { success: true };
+  } catch {
+    return { success: false, error: 'Failed to save robots configuration.' };
+  }
+}
+
 export async function updateAdminUserAction(
   id: string,
   data: { full_name: string; role: 'super_admin' | 'content_admin' | 'sales_admin'; is_active: boolean }
@@ -482,3 +516,62 @@ export async function saveSiteSettingAction(key: string, value: Record<string, u
     return { success: false, error: 'Permission denied or update error.' };
   }
 }
+
+export async function getProjectAmenitiesAction(projectId: string) {
+  try {
+    await requireAdmin(['super_admin', 'content_admin']);
+    const supabase = await getSupabaseAdmin();
+
+    const { data, error } = await supabase
+      .from('project_amenities')
+      .select('*, amenity:amenities(*)')
+      .eq('project_id', projectId)
+      .order('display_order', { ascending: true });
+
+    if (error) return { success: false, error: error.message };
+    return { success: true, data };
+  } catch {
+    return { success: false, error: 'Failed to fetch project amenities.' };
+  }
+}
+
+export async function saveProjectAmenitiesAction(
+  projectId: string,
+  amenities: Array<{ amenity_id: string; custom_description?: string; display_order: number }>
+) {
+  try {
+    await requireAdmin(['super_admin', 'content_admin']);
+    const supabase = await getSupabaseAdmin();
+
+    // Delete existing links
+    const { error: deleteError } = await supabase
+      .from('project_amenities')
+      .delete()
+      .eq('project_id', projectId);
+
+    if (deleteError) return { success: false, error: deleteError.message };
+
+    // Insert new links if any
+    if (amenities.length > 0) {
+      const inserts = amenities.map((am) => ({
+        project_id: projectId,
+        amenity_id: am.amenity_id,
+        custom_description: am.custom_description || null,
+        display_order: am.display_order,
+      }));
+
+      const { error: insertError } = await supabase
+        .from('project_amenities')
+        .insert(inserts);
+
+      if (insertError) return { success: false, error: insertError.message };
+    }
+
+    revalidatePath('/projects');
+    revalidatePath('/', 'layout');
+    return { success: true };
+  } catch {
+    return { success: false, error: 'Failed to update project amenities.' };
+  }
+}
+

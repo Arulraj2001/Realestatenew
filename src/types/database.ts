@@ -115,6 +115,7 @@ export interface Amenity {
   name: string;
   icon_key: string | null;
   description: string | null;
+  category?: 'land' | 'house' | 'general' | null;
   active: boolean;
   created_at: string;
   updated_at: string;
@@ -184,6 +185,8 @@ export interface SEOMetadata {
   open_graph_image_path: string | null;
   index_enabled: boolean;
   json_ld_override: Json | null;
+  sitemap_priority: number | null;
+  sitemap_change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never' | null;
   created_at: string;
   updated_at: string;
 }

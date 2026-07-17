@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Building2, CheckCircle2, Maximize2 } from 'lucide-react';
+import { Building2, CheckCircle2, Maximize2, ShieldCheck, Road, Lock, Droplet, Sun, Trees } from 'lucide-react';
 import { ProjectAmenity } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
@@ -71,22 +71,42 @@ export const ProjectAmenitiesPopup: React.FC<ProjectAmenitiesPopupProps> = ({
         description="Detailed list of all gated layout features and residential infrastructure."
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[65vh] overflow-y-auto pr-1">
-          {amenities.map((item) => (
-            <div
-              key={item.amenity_id}
-              className="p-4 bg-slate-950 border border-slate-800 rounded-2xl flex items-start gap-3 text-left"
-            >
-              <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                <CheckCircle2 className="w-4 h-4 text-amber-400" />
+          {amenities.map((item) => {
+            const getIcon = (key: string | null) => {
+              switch (key) {
+                case 'shield-check':
+                  return <ShieldCheck className="w-4 h-4 text-amber-400" />;
+                case 'road':
+                  return <Road className="w-4 h-4 text-emerald-400" />;
+                case 'lock':
+                  return <Lock className="w-4 h-4 text-amber-500" />;
+                case 'droplet':
+                  return <Droplet className="w-4 h-4 text-blue-400" />;
+                case 'sun':
+                  return <Sun className="w-4 h-4 text-amber-400" />;
+                case 'trees':
+                  return <Trees className="w-4 h-4 text-emerald-400" />;
+                default:
+                  return <CheckCircle2 className="w-4 h-4 text-amber-400" />;
+              }
+            };
+            return (
+              <div
+                key={item.amenity_id}
+                className="p-4 bg-slate-950 border border-slate-800 rounded-2xl flex items-start gap-3 text-left"
+              >
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                  {getIcon(item.amenity?.icon_key || null)}
+                </div>
+                <div>
+                  <h4 className="font-bold text-white text-sm">{item.amenity?.name}</h4>
+                  <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
+                    {item.custom_description || item.amenity?.description}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h4 className="font-bold text-white text-sm">{item.amenity?.name}</h4>
-                <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">
-                  {item.custom_description || item.amenity?.description}
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Dialog>
     </section>

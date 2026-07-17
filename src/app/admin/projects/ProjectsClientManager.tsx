@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Building2, Plus, Edit3, Trash2, Eye, EyeOff, Search, MapPin, Video } from 'lucide-react';
-import { Location, Project } from '@/types/database';
+import { Building2, Plus, Edit3, Trash2, Eye, EyeOff, Search, MapPin, Video, Sparkles, Check, CheckSquare } from 'lucide-react';
+import { Location, Project, Amenity } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,24 +10,32 @@ import { Label } from '@/components/ui/label';
 import { Dialog } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { MediaUploader } from '@/components/admin/MediaUploader';
-import { saveProjectAction, deleteProjectAction, togglePublishProjectAction } from '@/app/actions/crud';
+import { saveProjectAction, deleteProjectAction, togglePublishProjectAction, getProjectAmenitiesAction, saveProjectAmenitiesAction } from '@/app/actions/crud';
 import { generateSlug } from '@/lib/utils/slug';
 import { useToast } from '@/components/ui/toast';
 
 export interface ProjectsClientManagerProps {
   initialProjects: Project[];
   locations: Location[];
+  masterAmenities: Amenity[];
 }
 
 export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
   initialProjects,
   locations,
+  masterAmenities,
 }) => {
   const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+
+  // Project Amenities Configuration State
+  const [isAmenitiesDialogOpen, setIsAmenitiesDialogOpen] = useState(false);
+  const [selectedProjectForAmenities, setSelectedProjectForAmenities] = useState<Project | null>(null);
+  const [projectAmenitiesList, setProjectAmenitiesList] = useState<Array<{ amenity_id: string; custom_description: string; display_order: number }>>([]);
+  const [isSavingAmenities, setIsSavingAmenities] = useState(false);
 
   const [formData, setFormData] = useState({
     location_id: locations[0]?.id || '',
@@ -156,6 +164,40 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
     }
   };
 
+  const handleOpenAmenities = async (proj: Project) => {
+    setSelectedProjectForAmenities(proj);
+    setProjectAmenitiesList([]);
+    setIsAmenitiesDialogOpen(true);
+
+    const res = await getProjectAmenitiesAction(proj.id);
+    if (res.success && res.data) {
+      const list = (res.data as any[]).map((pa) => ({
+        amenity_id: pa.amenity_id,
+        custom_description: pa.custom_description || '',
+        display_order: pa.display_order || 0,
+      }));
+      setProjectAmenitiesList(list);
+    } else if (res.error) {
+      toast({ type: 'error', title: 'Error Loading Amenities', message: res.error });
+    }
+  };
+
+  const handleSaveAmenities = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedProjectForAmenities) return;
+
+    setIsSavingAmenities(true);
+    const res = await saveProjectAmenitiesAction(selectedProjectForAmenities.id, projectAmenitiesList);
+    setIsSavingAmenities(false);
+
+    if (res.success) {
+      toast({ type: 'success', title: 'Project Amenities Saved' });
+      setIsAmenitiesDialogOpen(false);
+    } else {
+      toast({ type: 'error', title: 'Error Saving Amenities', message: res.error });
+    }
+  };
+
   const filteredProjects = projects.filter(
     (p) =>
       p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -246,14 +288,23 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
                   </td>
                   <td className="p-4 text-right space-x-2">
                     <button
+                      onClick={() => handleOpenAmenities(proj)}
+                      className="p-1.5 text-slate-400 hover:text-emerald-400 transition-colors cursor-pointer"
+                      title="Configure Amenities"
+                    >
+                      <Sparkles className="w-4 h-4" />
+                    </button>
+                    <button
                       onClick={() => handleOpenEdit(proj)}
                       className="p-1.5 text-slate-400 hover:text-amber-400 transition-colors cursor-pointer"
+                      title="Edit"
                     >
                       <Edit3 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => handleDelete(proj)}
                       className="p-1.5 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+                      title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -269,6 +320,7 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         title={editingProject ? 'Edit Township Project' : 'Add New Township Project'}
+        className="max-w-4xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
           <div>
@@ -472,6 +524,132 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
 
             <Button type="submit" variant="gold" size="md">
               Save Project Record
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+
+      {/* Amenities Linker Dialog */}
+      <Dialog
+        isOpen={isAmenitiesDialogOpen}
+        onClose={() => setIsAmenitiesDialogOpen(false)}
+        title={`Configure Amenities: ${selectedProjectForAmenities?.name}`}
+        description="Select amenities for this project and customize their descriptions and display order."
+        className="max-w-3xl"
+      >
+        <form onSubmit={handleSaveAmenities} className="space-y-4 max-h-[75vh] overflow-y-auto pr-1">
+          <div className="space-y-3">
+            {masterAmenities.map((am) => {
+              const currentLink = projectAmenitiesList.find((pa) => pa.amenity_id === am.id);
+              const isChecked = !!currentLink;
+
+              const handleToggle = () => {
+                if (isChecked) {
+                  setProjectAmenitiesList(projectAmenitiesList.filter((pa) => pa.amenity_id !== am.id));
+                } else {
+                  setProjectAmenitiesList([
+                    ...projectAmenitiesList,
+                    {
+                      amenity_id: am.id,
+                      custom_description: '',
+                      display_order: projectAmenitiesList.length + 1,
+                    },
+                  ]);
+                }
+              };
+
+              const handleDescriptionChange = (val: string) => {
+                setProjectAmenitiesList(
+                  projectAmenitiesList.map((pa) =>
+                    pa.amenity_id === am.id ? { ...pa, custom_description: val } : pa
+                  )
+                );
+              };
+
+              const handleOrderChange = (val: number) => {
+                setProjectAmenitiesList(
+                  projectAmenitiesList.map((pa) =>
+                    pa.amenity_id === am.id ? { ...pa, display_order: val } : pa
+                  )
+                );
+              };
+
+              return (
+                <div
+                  key={am.id}
+                  className={`p-4 border rounded-xl transition-colors space-y-3 ${
+                    isChecked
+                      ? 'bg-slate-900/60 border-amber-500/30'
+                      : 'bg-slate-950/40 border-slate-800 hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={handleToggle}
+                      className="flex items-center gap-3 text-left focus:outline-none cursor-pointer group"
+                    >
+                      <div
+                        className={`w-5 h-5 rounded border flex items-center justify-center transition-all ${
+                          isChecked
+                            ? 'bg-amber-500 border-amber-500 text-slate-950'
+                            : 'border-slate-700 group-hover:border-slate-500 bg-slate-900'
+                        }`}
+                      >
+                        {isChecked && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                      </div>
+                      <div>
+                        <span className="font-bold text-sm text-white">{am.name}</span>
+                        {am.description && !isChecked && (
+                          <p className="text-[11px] text-slate-500 mt-0.5">{am.description}</p>
+                        )}
+                      </div>
+                    </button>
+                    {isChecked && (
+                      <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 text-[10px] uppercase font-bold tracking-wider border border-emerald-500/20">
+                        Selected
+                      </span>
+                    )}
+                  </div>
+
+                  {isChecked && (
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 pt-2 border-t border-slate-800/60">
+                      <div className="md:col-span-3">
+                        <Label className="text-[11px]">Custom Description (leave empty to use default: &ldquo;{am.description || 'Included'}&rdquo;)</Label>
+                        <Input
+                          value={currentLink.custom_description}
+                          onChange={(e) => handleDescriptionChange(e.target.value)}
+                          placeholder={am.description || 'Included in layout'}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-[11px]">Display Order</Label>
+                        <Input
+                          type="number"
+                          value={currentLink.display_order}
+                          onChange={(e) => handleOrderChange(parseInt(e.target.value, 10) || 0)}
+                          placeholder="1"
+                          className="mt-1"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
+            <button
+              type="button"
+              onClick={() => setIsAmenitiesDialogOpen(false)}
+              className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-colors bg-slate-800 hover:bg-slate-750 cursor-pointer"
+            >
+              Cancel
+            </button>
+            <Button type="submit" variant="gold" size="md" isLoading={isSavingAmenities}>
+              Save Project Amenities
             </Button>
           </div>
         </form>

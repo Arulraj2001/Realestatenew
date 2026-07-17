@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { HelpCircle } from 'lucide-react';
+import Link from 'next/link';
+import { HelpCircle, PhoneCall } from 'lucide-react';
 import { Accordion } from '@/components/ui/accordion';
 
 export interface FAQItem {
@@ -15,36 +16,16 @@ export interface FAQSectionProps {
 }
 
 const DEFAULT_FAQS: FAQItem[] = [
-  {
-    id: 'faq-1',
-    title: 'Are all plots and villas DTCP & RERA approved?',
-    content:
-      'Yes, 100% of our layout developments in Namakkal and Paramathi Velur hold full DTCP and RERA statutory approvals. All planning permissions and title deeds are verified by senior legal advisors.',
-  },
-  {
-    id: 'faq-2',
-    title: 'How do I book a site visit?',
-    content:
-      'You can click "Schedule Site Visit" on our website or call +91 98765 43210. We provide free private car pickup and drop facilities for families anywhere in Namakkal, Tiruchengodu, or Paramathi Velur.',
-  },
-  {
-    id: 'faq-3',
-    title: 'Do you offer assistance with bank housing loans?',
-    content:
-      'Yes, our dedicated documentation team manages the complete bank loan application process. We are pre-approved with nationalized banks including State Bank of India, HDFC Bank, and Canara Bank.',
-  },
-  {
-    id: 'faq-4',
-    title: 'Can I request custom villa construction on my purchased plot?',
-    content:
-      'Absolutely. We offer complete turn-key villa construction services. Our architects will customize floor plans (2BHK, 3BHK, 4BHK) according to your family requirements and vastu preferences.',
-  },
-  {
-    id: 'faq-5',
-    title: 'What basic infrastructure is provided in the gated layouts?',
-    content:
-      'All townships are delivered with 30ft & 40ft blacktop asphalt roads, underground drainage network, individual water supply tap connections, street lighting, compound wall, and children park zones.',
-  },
+  { id: 'faq-1', title: 'Are your plots DTCP approved?', content: 'Yes, our residential layouts — including Rasi Garden, Kongu Nagar, and Kongu Garden — are developed as DTCP-approved plots with clear documentation.' },
+  { id: 'faq-2', title: 'Do you provide clear title and patta for plots?', content: 'Yes, every plot sold by Your Choice Properties comes with clear title documents and patta, along with full support during the registration process.' },
+  { id: 'faq-3', title: 'What plot sizes are available?', content: 'Plot sizes vary by project and layout. Our team can share available dimensions and pricing for Rasi Garden, Kongu Nagar, and Kongu Garden during a site visit or consultation.' },
+  { id: 'faq-4', title: 'Do villas come with basic amenities like roads, drainage, and lighting?', content: 'Yes, all our residential layouts include internal roads, underground drainage, and street lighting as part of the planned infrastructure.' },
+  { id: 'faq-5', title: 'What villa configurations do you offer?', content: 'We offer 2BHK, 3BHK, and 4BHK villas and independent houses across our projects, so families of different sizes and budgets can find the right fit.' },
+  { id: 'faq-6', title: 'Are the villas ready to move in?', content: 'Many of our villas are ready-to-occupy, while some are available at various stages of construction. Our team can confirm current availability for each project.' },
+  { id: 'faq-7', title: 'Do you help with home loans or financing?', content: 'Yes, our team assists buyers with loan and financing guidance to make purchasing a plot or villa in Namakkal or Paramathy Velur more accessible.' },
+  { id: 'faq-8', title: 'What is the process to book a plot or villa?', content: 'The process typically starts with a free site visit, followed by document verification, booking, and registration — our team guides you through each step personally.' },
+  { id: 'faq-9', title: 'Can NRIs purchase property with Your Choice Properties?', content: 'Yes, we regularly assist NRI buyers looking to invest in plots and villas back home in Namakkal and Paramathy Velur, with remote consultation and documentation support available.' },
+  { id: 'faq-10', title: 'Do you offer support after the property is registered?', content: 'Yes, our relationship doesn\'t end at registration — we provide after-sales support for documentation, queries, and any assistance you may need as a homeowner.' },
 ];
 
 export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
@@ -73,6 +54,21 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
         </div>
 
         <Accordion items={faqItems} />
+
+        {/* Footer Callout Below FAQ */}
+        <div className="mt-12 text-center pt-8 border-t border-slate-900/80 space-y-4">
+          <h2 className="font-serif text-xl sm:text-2xl font-bold text-white max-w-2xl mx-auto leading-relaxed">
+            If you didn't find the answer you were looking for, our team is happy to help directly.
+          </h2>
+          <div>
+            <Link
+              href="/contact-us"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-lg hover:shadow-amber-500/20"
+            >
+              <PhoneCall className="w-4 h-4" /> Get Direct Help
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
   );

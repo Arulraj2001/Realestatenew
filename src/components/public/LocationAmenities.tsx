@@ -15,7 +15,10 @@ import {
   CheckCircle2,
   Sparkles,
   MousePointerClick,
+  Sun,
 } from 'lucide-react';
+
+import { Amenity } from '@/types/database';
 
 interface AmenityItem {
   name: string;
@@ -23,10 +26,41 @@ interface AmenityItem {
   icon: React.ReactNode;
 }
 
-export const LocationAmenities: React.FC = () => {
+export interface LocationAmenitiesProps {
+  amenities?: Amenity[];
+}
+
+export const LocationAmenities: React.FC<LocationAmenitiesProps> = ({ amenities }) => {
   const [activeTab, setActiveTab] = useState<'land' | 'house'>('land');
 
-  const landAmenities: AmenityItem[] = [
+  const getIcon = (key?: string | null) => {
+    switch (key) {
+      case 'shield-check':
+        return <ShieldCheck className="w-6 h-6 text-amber-400" />;
+      case 'road':
+        return <Road className="w-6 h-6 text-emerald-400" />;
+      case 'lock':
+        return <Lock className="w-6 h-6 text-amber-500" />;
+      case 'droplet':
+        return <Droplet className="w-6 h-6 text-blue-400" />;
+      case 'sun':
+        return <Sun className="w-6 h-6 text-amber-400" />;
+      case 'trees':
+        return <Trees className="w-6 h-6 text-emerald-500" />;
+      case 'car':
+        return <Car className="w-6 h-6 text-emerald-400" />;
+      case 'home':
+        return <Home className="w-6 h-6 text-amber-500" />;
+      case 'utensils':
+        return <Utensils className="w-6 h-6 text-blue-400" />;
+      case 'compass':
+        return <Compass className="w-6 h-6 text-amber-400" />;
+      default:
+        return <CheckCircle2 className="w-6 h-6 text-amber-400" />;
+    }
+  };
+
+  const defaultLandAmenities: AmenityItem[] = [
     {
       name: 'DTCP & RERA Approved',
       description: '100% legal title clearance and approved layout design records for secure resale value.',
@@ -59,7 +93,7 @@ export const LocationAmenities: React.FC = () => {
     },
   ];
 
-  const houseAmenities: AmenityItem[] = [
+  const defaultHouseAmenities: AmenityItem[] = [
     {
       name: 'Architectural Customization',
       description: 'Work with our expert planners to customize 2BHK, 3BHK, or 4BHK floor plans.',
@@ -92,7 +126,29 @@ export const LocationAmenities: React.FC = () => {
     },
   ];
 
-  const currentAmenities = activeTab === 'land' ? landAmenities : houseAmenities;
+  const dbLandAmenities = amenities
+    ?.filter((a) => a.category === 'land')
+    .map((a) => ({
+      name: a.name,
+      description: a.description || 'Included in township layout.',
+      icon: getIcon(a.icon_key),
+    }));
+
+  const dbHouseAmenities = amenities
+    ?.filter((a) => a.category === 'house')
+    .map((a) => ({
+      name: a.name,
+      description: a.description || 'Customized for residential homes.',
+      icon: getIcon(a.icon_key),
+    }));
+
+  const landAmenitiesToRender =
+    dbLandAmenities && dbLandAmenities.length > 0 ? dbLandAmenities : defaultLandAmenities;
+
+  const houseAmenitiesToRender =
+    dbHouseAmenities && dbHouseAmenities.length > 0 ? dbHouseAmenities : defaultHouseAmenities;
+
+  const currentAmenities = activeTab === 'land' ? landAmenitiesToRender : houseAmenitiesToRender;
 
   return (
     <section className="py-10 bg-slate-900 border-t border-slate-800 text-slate-100 relative overflow-hidden">

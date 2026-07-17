@@ -70,8 +70,11 @@ export const propertyConfigCrudSchema = z.object({
 export const amenityCrudSchema = z.object({
   name: z.string().min(2, 'Amenity name required'),
   icon_key: z.string().optional().or(z.literal('')),
+  description: z.string().optional().or(z.literal('')),
+  category: z.enum(['land', 'house', 'general']).default('general'),
   active: z.boolean().default(true),
 });
+
 
 export const landmarkCrudSchema = z.object({
   project_id: z.string().uuid('Project is required'),
@@ -98,7 +101,7 @@ export const galleryCrudSchema = z.object({
 
 export const seoMetadataCrudSchema = z.object({
   entity_type: z.string().min(2),
-  entity_id: z.string().uuid().optional().or(z.literal('')),
+  entity_id: z.string().uuid().optional().or(z.literal('')).nullable(),
   meta_title: z.string().min(5, 'Meta title required'),
   meta_description: z.string().min(10, 'Meta description required'),
   meta_keywords: z.string().optional().or(z.literal('')),
@@ -107,4 +110,10 @@ export const seoMetadataCrudSchema = z.object({
   open_graph_description: z.string().optional().or(z.literal('')),
   open_graph_image_path: z.string().optional().or(z.literal('')),
   index_enabled: z.boolean().default(true),
+  sitemap_priority: z.number().min(0).max(1).nullable().optional(),
+  sitemap_change_frequency: z
+    .enum(['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'])
+    .nullable()
+    .optional(),
 });
+

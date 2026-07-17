@@ -36,6 +36,7 @@ import { GalleryLightbox } from '@/components/public/GalleryLightbox';
 import { ProjectAccordionSections } from '@/components/public/ProjectAccordionSections';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
 import { siteConfig } from '@/config/site';
+import { getSeoOverride, buildMetadataFromOverride, getProjectJsonLd, resolveJsonLd } from '@/lib/seo/metadata';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
 
 export interface ProjectPageProps {
@@ -52,12 +53,16 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
     return { title: 'Project Not Found | Your Choice Properties' };
   }
 
-  return {
+  const override = await getSeoOverride('project', project.id);
+
+  return buildMetadataFromOverride(override, {
     title: `${project.name} | Gated Layout & Family Villas in ${project.location?.name || 'Namakkal'}`,
     description:
       project.short_description ||
       `${project.name} is a premier residential project offering DTCP approved villa plots and independent family homes in ${project.location?.name || 'Namakkal'}.`,
-  };
+    canonicalUrl: `${siteConfig.domain}/projects/${project.slug}`,
+    ogImage: project.hero_image_path ?? undefined,
+  });
 }
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
@@ -68,12 +73,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const [amenities, landmarks, allConfigurations, galleryItems] = await Promise.all([
+  const [amenities, landmarks, allConfigurations, galleryItems, seoOverride] = await Promise.all([
     getProjectAmenities(project.id),
     getProjectLandmarks(project.id),
     getPublishedConfigurations({ projectId: project.id }),
     getPublishedGalleryItems({ projectId: project.id }),
+    getSeoOverride('project', project.id),
   ]);
+
+  const jsonLd = resolveJsonLd(seoOverride, getProjectJsonLd(project));
 
   const villas = allConfigurations
     .filter((c) => c.property_type === 'Villa' || c.property_type === 'Apartment')
@@ -100,7 +108,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=80';
 
   return (
-    <div className="bg-slate-950 text-slate-100 min-h-screen">
+    <>
+      {/* JSON-LD Structured Data (admin-overridable) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <div className="bg-slate-950 text-slate-100 min-h-screen">
 
       {/* ─── 1. CINEMATIC HERO ─────────────────────────────────────── */}
       <section className="hero-dark-overlay relative py-5 sm:py-6 bg-slate-950 overflow-hidden border-b border-slate-800">
@@ -181,5 +196,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         description="Our team will pick you up and show you available plots and villas. No obligation, completely free."
       />
     </div>
+    </>
   );
 }

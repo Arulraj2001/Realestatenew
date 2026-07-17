@@ -124,7 +124,7 @@ export const UsersClientManager: React.FC<{ initialUsers: AdminProfile[] }> = ({
       </div>
 
       {/* Edit User Modal Dialog */}
-      <Dialog isOpen={Boolean(selectedUser)} onClose={() => setSelectedUser(null)} title={`Edit Admin Profile: ${selectedUser?.full_name}`}>
+      <Dialog isOpen={Boolean(selectedUser)} onClose={() => setSelectedUser(null)} title={`Edit Admin Profile: ${selectedUser?.full_name}`} className="max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label required>Full Name</Label>

@@ -236,6 +236,7 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         title={editingLocation ? 'Edit Location' : 'Add New Location'}
+        className="max-w-3xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

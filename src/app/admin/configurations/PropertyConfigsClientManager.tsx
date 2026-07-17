@@ -210,6 +210,7 @@ export const PropertyConfigsClientManager: React.FC<{
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         title={editingConfig ? 'Edit Configuration' : 'Add New Configuration'}
+        className="max-w-4xl"
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
