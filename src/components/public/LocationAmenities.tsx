@@ -14,6 +14,7 @@ import {
   Compass,
   CheckCircle2,
   Sparkles,
+  Pointer,
 } from 'lucide-react';
 
 interface AmenityItem {
@@ -117,25 +118,35 @@ export const LocationAmenities: React.FC = () => {
           <div className="inline-flex p-1 bg-slate-950 border border-slate-800 rounded-xl shadow-lg">
             <button
               onClick={() => setActiveTab('land')}
-              className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-300 ${
+              className={`relative flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-300 ${
                 activeTab === 'land'
                   ? 'bg-amber-500 text-slate-950 shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/50 animate-inactive-tab'
               }`}
             >
               <Trees className="w-4 h-4 shrink-0" />
               Land &amp; Plot Layout
+              {activeTab !== 'land' && (
+                <div className="absolute -top-4 -right-2 text-amber-500 light-theme:text-[#2596be] pointer-events-none z-20 animate-hand-click">
+                  <Pointer className="w-4.5 h-4.5 rotate-[90deg] fill-current" />
+                </div>
+              )}
             </button>
             <button
               onClick={() => setActiveTab('house')}
-              className={`flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-300 ${
+              className={`relative flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all duration-300 ${
                 activeTab === 'house'
                   ? 'bg-amber-500 text-slate-950 shadow-md'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-900/50'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-900/50 animate-inactive-tab'
               }`}
             >
               <Home className="w-4 h-4 shrink-0" />
               Villas &amp; Houses
+              {activeTab !== 'house' && (
+                <div className="absolute -top-4 -right-2 text-amber-500 light-theme:text-[#2596be] pointer-events-none z-20 animate-hand-click">
+                  <Pointer className="w-4.5 h-4.5 rotate-[90deg] fill-current" />
+                </div>
+              )}
             </button>
           </div>
         </div>

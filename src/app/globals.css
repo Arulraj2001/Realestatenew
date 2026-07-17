@@ -1479,3 +1479,69 @@ body:has(.light-theme) {
 }
 
 
+/* 16. Inactive Tab Pulse Animation for Location Page Amenities */
+.animate-inactive-tab {
+  animation: tab-glow-pulse-dark 1.4s infinite ease-in-out !important;
+  transition: none !important;
+  border: 1px solid rgba(245, 158, 11, 0.1) !important;
+}
+
+.light-theme .animate-inactive-tab {
+  animation: tab-glow-pulse-light 1.4s infinite ease-in-out !important;
+  transition: none !important;
+  border: 1px solid rgba(37, 150, 190, 0.15) !important;
+}
+
+@keyframes tab-glow-pulse-dark {
+  0%, 100% {
+    border-color: rgba(245, 158, 11, 0.15) !important;
+    background-color: transparent !important;
+    color: #94a3b8 !important;
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  50% {
+    border-color: rgba(245, 158, 11, 0.7) !important;
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    color: #ffffff !important;
+    opacity: 1;
+    transform: scale(1.03);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.35) !important;
+  }
+}
+
+@keyframes tab-glow-pulse-light {
+  0%, 100% {
+    border-color: rgba(37, 150, 190, 0.2) !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    color: #475569 !important;
+    opacity: 0.65;
+    transform: scale(1);
+  }
+  50% {
+    border-color: rgba(37, 150, 190, 0.8) !important;
+    background-color: rgba(37, 150, 190, 0.18) !important;
+    color: #082052 !important;
+    opacity: 1;
+    transform: scale(1.03);
+    box-shadow: 0 0 12px rgba(37, 150, 190, 0.35) !important;
+  }
+}
+
+
+/* 17. Hand clicking gesture animation for inactive tab pointer */
+.animate-hand-click {
+  animation: hand-click-movement 1.1s infinite ease-in-out !important;
+  transform-origin: bottom left;
+}
+
+@keyframes hand-click-movement {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate(-4px, 4px) scale(0.85); /* Diagonally moves towards the button and shrinks to simulate click */
+    opacity: 1;
+  }
+}
