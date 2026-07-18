@@ -135,6 +135,33 @@ export const StickyActionBar: React.FC = () => {
         </div>
       </aside>
 
+      {/* ── Mobile Right-Bottom Corner Floating Action Buttons ────── */}
+      <div className="md:hidden fixed bottom-6 right-4 z-50 flex flex-col gap-3 select-none">
+        {/* 1. Mobile WhatsApp Button */}
+        <a
+          href={buildWhatsAppUrl({ customMessage: 'Hi Your Choice Properties team, I am interested in property details.' })}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => trackConversionEvent('whatsapp_clicked', { source: 'mobile_sticky_float' })}
+          className="w-12 h-12 flex items-center justify-center bg-[#25D366] hover:bg-[#20ba59] text-white rounded-full shadow-xl border border-white/20 transition-transform active:scale-95 cursor-pointer"
+          title="Chat on WhatsApp"
+        >
+          <svg className="w-6 h-6 fill-current text-white" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12.012 2c-5.506 0-9.989 4.478-9.99 9.984 0 1.762.459 3.48 1.332 5.001L2 22l5.127-1.333c1.464.795 3.11 1.217 4.881 1.217h.004c5.505 0 9.989-4.478 9.99-9.984 0-2.669-1.038-5.176-2.925-7.062A9.921 9.921 0 0 0 12.012 2zm5.834 14.164c-.244.686-1.42 1.309-1.959 1.391-.497.075-1.144.108-1.85-.118-.429-.137-.98-.318-1.688-.624-2.973-1.288-4.912-4.305-5.06-4.503-.148-.198-1.21-1.61-1.21-3.072 0-1.461.766-2.181 1.038-2.479.272-.298.594-.372.793-.372.199 0 .397.002.57.01.185.009.431-.07.674.513.248.595.842 2.054.917 2.203.074.149.123.323.025.521-.099.198-.148.322-.297.496-.149.174-.313.389-.447.522-.148.148-.303.31-.13.608.173.297.768 1.267 1.648 2.049 1.132 1.008 2.086 1.32 2.384 1.468.298.149.471.124.645-.074.174-.198.744-.868.942-1.166.198-.298.397-.248.669-.149.273.099 1.734.818 2.032.967.298.149.496.223.57.347.075.124.075.72-.169 1.406z"/>
+          </svg>
+        </a>
+
+        {/* 2. Mobile Contact Button */}
+        <a
+          href={buildCallUrl()}
+          onClick={() => trackConversionEvent('call_clicked', { source: 'mobile_sticky_float' })}
+          className="w-12 h-12 flex items-center justify-center bg-slate-900 border border-slate-800 text-amber-400 rounded-full shadow-xl hover:border-amber-400/60 transition-transform active:scale-95 cursor-pointer"
+          title="Call Sales Advisor"
+        >
+          <Phone className="w-5 h-5 text-amber-400" />
+        </a>
+      </div>
+
       {/* Quick Site Visit Dialog */}
       <Dialog
         isOpen={isSiteVisitOpen}
