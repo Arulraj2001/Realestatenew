@@ -38,12 +38,8 @@ export default async function HomePage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const contentJson = (homeContent?.content as Record<string, any>) || {};
 
-  // Stats priority: content_pages.stats_list → site_settings.homepage_stats → component defaults
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const resolvedStats: any[] | undefined =
-    Array.isArray(contentJson.stats_list) && contentJson.stats_list.length > 0
-      ? contentJson.stats_list
-      : siteStats ?? undefined;
+  // Render stats strictly from the page content's stats_list
+  const resolvedStats = Array.isArray(contentJson.stats_list) ? contentJson.stats_list : [];
 
   return (
     <>

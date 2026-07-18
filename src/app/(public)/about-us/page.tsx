@@ -129,7 +129,7 @@ export default async function AboutUsPage() {
   ];
 
   const whyItems: WhyChoiceItem[] = contentJson.why_choose_us_items || contentJson.why_choice_items || defaultWhyItems;
-  const statsList: StatItem[] = contentJson.stats_list || defaultStats;
+  const statsList: StatItem[] = Array.isArray(contentJson.stats_list) ? contentJson.stats_list : [];
   const isStatsVisible = contentJson.stats_visible !== false;
   const activeTimeline: TimelineMilestone[] = contentJson.timeline_milestones?.length > 0 ? contentJson.timeline_milestones : timelineMilestones;
 

@@ -76,9 +76,9 @@ const AnimatedCounter: React.FC<{ value: string }> = ({ value }) => {
 };
 
 export const StatsSection: React.FC<StatsSectionProps> = ({ stats, isVisible = true }) => {
-  if (!isVisible) return null;
+  if (!isVisible || !stats || stats.length === 0) return null;
 
-  const list = stats && stats.length > 0 ? stats : DEFAULT_STATS;
+  const list = stats;
 
   const iconMap: Record<string, React.ReactNode> = {
     Award: <Award className="w-5 h-5 text-amber-400" />,

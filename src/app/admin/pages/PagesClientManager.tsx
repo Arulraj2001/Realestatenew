@@ -96,6 +96,29 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const c = (existing?.content as Record<string, any>) || {};
 
+    const defaultHomeStats = [
+      { label: "Years of Trust", value: "12+", icon: "Award" },
+      { label: "Happy Homeowners", value: "1,200+", icon: "Users" },
+      { label: "DTCP Layouts Completed", value: "25+", icon: "Building2" },
+      { label: "Sq.Ft Developed", value: "1.5M+", icon: "Maximize" }
+    ];
+
+    const defaultAboutStats = [
+      { label: 'Years of Experience', value: '13+', icon: 'Award' },
+      { label: 'Successful Projects', value: '5', icon: 'Building2' },
+      { label: 'Happy Customers', value: '135+', icon: 'Users' },
+      { label: 'Plots Sold', value: '120+', icon: 'Maximize' },
+      { label: 'Villas Sold', value: '15+', icon: 'Home' }
+    ];
+
+    const resolvedStatsList = (Array.isArray(c.stats_list) && c.stats_list.length > 0)
+      ? c.stats_list
+      : key === 'home'
+      ? defaultHomeStats
+      : key === 'about'
+      ? defaultAboutStats
+      : [];
+
     setSelectedKey(key);
     setFormData({
       title: existing?.title || availablePages.find((p) => p.key === key)?.title || '',
@@ -119,7 +142,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       intro_h2: String(c.intro_h2 || 'Find Residential Plots and Dream Villas in Namakkal and Paramathi Velur'),
       intro_content: String(c.intro_content || ''),
       stats_visible: c.stats_visible !== false,
-      stats_list: (Array.isArray(c.stats_list) && c.stats_list.length > 0) ? c.stats_list : [],
+      stats_list: resolvedStatsList,
       why_choose_us_items: (Array.isArray(c.why_choose_us_items) && c.why_choose_us_items.length > 0) ? c.why_choose_us_items : [],
       gallery_heading: String(c.gallery_heading || 'See Our Projects'),
       gallery_description: String(c.gallery_description || 'View real site photos, villa designs, roads, layouts and construction updates from our projects.'),
