@@ -2063,3 +2063,51 @@ select option:checked {
 .dialog-modal .text-slate-400 {
   color: #94a3b8 !important;
 }
+
+/* About Hero Card Background Toggle */
+.about-hero-card {
+  /* Default Dark Theme (No Image): Filled dark gradient */
+  background: linear-gradient(to bottom right, #0f2e21, #0f172a, #020617) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.about-hero-card[style*="--about-bg-image"] {
+  /* Default Dark Theme (With Image): Show image with subtle, reduced dark overlay */
+  background-image: linear-gradient(to bottom right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.65)), var(--about-bg-image) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+.light-theme .about-hero-card {
+  /* Light Theme: Show original background image cleanly (no color fill) */
+  background-color: #f8fafc !important;
+  background-image: var(--about-bg-image) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* Contact Banner Background Toggle */
+.contact-banner {
+  /* Default Dark Theme (No Image): Filled dark gradient */
+  background: linear-gradient(135deg, #064e3b 0%, #020617 50%, #0a2540 100%) !important;
+  border-top: 1px solid rgba(16, 185, 129, 0.3) !important;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+.contact-banner[style*="--contact-bg-image"] {
+  /* Default Dark Theme (With Image): Show image with subtle, reduced dark overlay */
+  background-image: linear-gradient(to bottom right, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.65)), var(--contact-bg-image) !important;
+  background-size: cover !important;
+  background-position: center !important;
+}
+
+.light-theme .contact-banner {
+  /* Light Theme: Show original background image cleanly (no color fill) */
+  background-color: #f1f5f9 !important;
+  background-image: var(--contact-bg-image) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  border-top: 1px solid rgba(8, 32, 82, 0.14) !important;
+  border-bottom: 1px solid rgba(8, 32, 82, 0.14) !important;
+}

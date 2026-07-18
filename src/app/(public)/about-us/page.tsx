@@ -159,19 +159,15 @@ export default async function AboutUsPage() {
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
       <div 
-        className="max-w-7xl mx-auto relative rounded-3xl overflow-hidden border border-slate-800 p-6 sm:p-8 shadow-2xl"
+        className="max-w-7xl mx-auto relative rounded-3xl overflow-hidden p-6 sm:p-8 shadow-2xl about-hero-card"
         style={contentJson.about_bg_image ? {
-          backgroundImage: `url(${contentJson.about_bg_image})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        } : {
-          background: 'linear-gradient(to bottom right, #1e293b, #0f172a, #020617)'
-        }}
+          '--about-bg-image': `url(${contentJson.about_bg_image})`
+        } as React.CSSProperties : undefined}
       >
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 space-y-4 drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+        <div className="relative z-10 space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-xs font-bold uppercase tracking-wider shadow-lg backdrop-blur-md">
             <Sparkles className="w-3.5 h-3.5" /> Company Profile &amp; Integrity
           </div>

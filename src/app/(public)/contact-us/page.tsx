@@ -110,17 +110,15 @@ export default async function ContactUsPage() {
       <div className="bg-slate-950 text-slate-100 min-h-screen">
         {/* Banner Header */}
         <section 
-          className="relative py-5 sm:py-6 bg-slate-900 border-b border-slate-800 overflow-hidden"
+          className="relative py-5 sm:py-6 overflow-hidden contact-banner"
           style={contactBgImage ? {
-            backgroundImage: `url(${contactBgImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center'
-          } : undefined}
+            '--contact-bg-image': `url(${contactBgImage})`
+          } as React.CSSProperties : undefined}
         >
           <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3 drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 pb-1">
               <Link href="/" className="hover:text-amber-400 transition-colors">
                 Home
