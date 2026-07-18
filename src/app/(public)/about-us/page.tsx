@@ -159,11 +159,30 @@ export default async function AboutUsPage() {
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
       <div 
-        className="max-w-7xl mx-auto relative rounded-3xl overflow-hidden p-6 sm:p-8 shadow-2xl about-hero-card"
+        className="max-w-7xl mx-auto relative rounded-3xl overflow-hidden border border-slate-800 p-6 sm:p-8 shadow-2xl about-hero-card"
         style={contentJson.about_bg_image ? {
-          '--about-bg-image': `url(${contentJson.about_bg_image})`
-        } as React.CSSProperties : undefined}
+          backgroundImage: `url(${contentJson.about_bg_image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        } : {
+          background: 'linear-gradient(to bottom right, #1e293b, #0f172a, #020617)'
+        }}
       >
+        {contentJson.about_bg_image && (
+          <div className="absolute inset-0 z-0 about-hero-bg-container hidden">
+            <Image
+              src={contentJson.about_bg_image}
+              alt="About Background"
+              fill
+              priority
+              className="object-cover"
+              sizes="100vw"
+            />
+            {/* Cinematic Gradient overlays identical to project page */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent" />
+          </div>
+        )}
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 

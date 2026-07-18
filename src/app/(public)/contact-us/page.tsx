@@ -1,5 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock, MessageSquare, ChevronRight, ExternalLink, Share2 } from 'lucide-react';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from '@/components/ui/icons';
@@ -112,9 +113,26 @@ export default async function ContactUsPage() {
         <section 
           className="relative py-5 sm:py-6 overflow-hidden contact-banner"
           style={contactBgImage ? {
-            '--contact-bg-image': `url(${contactBgImage})`
-          } as React.CSSProperties : undefined}
+            backgroundImage: `url(${contactBgImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          } : undefined}
         >
+          {contactBgImage && (
+            <div className="absolute inset-0 z-0 contact-banner-bg-container hidden">
+              <Image
+                src={contactBgImage}
+                alt="Contact Background"
+                fill
+                priority
+                className="object-cover"
+                sizes="100vw"
+              />
+              {/* Cinematic Gradient overlays identical to project page */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/10" />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent" />
+            </div>
+          )}
           <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           
