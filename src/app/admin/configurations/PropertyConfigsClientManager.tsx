@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Plus, Edit3, Trash2, Sliders, Search } from 'lucide-react';
+import Image from 'next/image';
 import { PropertyConfiguration, Project } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +40,7 @@ export const PropertyConfigsClientManager: React.FC<{
     full_description: '',
     feature_list: [] as string[],
     hero_image_path: '',
+    gallery_images: [] as string[],
     display_order: 0,
     published: true,
     featured: false,
@@ -62,6 +64,7 @@ export const PropertyConfigsClientManager: React.FC<{
       full_description: '',
       feature_list: [],
       hero_image_path: '',
+      gallery_images: [],
       display_order: configs.length + 1,
       published: true,
       featured: false,
@@ -75,6 +78,12 @@ export const PropertyConfigsClientManager: React.FC<{
       ? (config.feature_list as string[])
       : typeof config.feature_list === 'string'
       ? JSON.parse(config.feature_list || '[]')
+      : [];
+
+    const parsedGallery = Array.isArray(config.gallery_images)
+      ? (config.gallery_images as string[])
+      : typeof config.gallery_images === 'string'
+      ? JSON.parse(config.gallery_images || '[]')
       : [];
 
     setFormData({
@@ -93,6 +102,7 @@ export const PropertyConfigsClientManager: React.FC<{
       full_description: config.full_description || '',
       feature_list: parsedFeatures,
       hero_image_path: config.hero_image_path || '',
+      gallery_images: parsedGallery,
       display_order: config.display_order,
       published: config.published,
       featured: config.featured,
@@ -307,14 +317,64 @@ export const PropertyConfigsClientManager: React.FC<{
             />
           </div>
 
-          <div>
-            <MediaUploader
-              label="Layout Media Image"
-              value={formData.hero_image_path}
-              folder="properties"
-              onChange={(url) => setFormData({ ...formData, hero_image_path: url })}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <MediaUploader
+                label="Layout Media Image (Hero)"
+                value={formData.hero_image_path}
+                folder="properties"
+                onChange={(url) => setFormData({ ...formData, hero_image_path: url })}
+              />
+            </div>
+
+            <div>
+              <MediaUploader
+                label="Add Photo to Gallery (Multiple)"
+                folder="properties"
+                onChange={(url) => {
+                  if (url) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      gallery_images: [...prev.gallery_images, url],
+                    }));
+                  }
+                }}
+              />
+            </div>
           </div>
+
+          {/* Previews Grid for gallery_images */}
+          {formData.gallery_images && formData.gallery_images.length > 0 && (
+            <div className="space-y-2">
+              <Label>Current Gallery Preview ({formData.gallery_images.length} images)</Label>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 p-3 bg-slate-900 border border-slate-800 rounded-xl">
+                {formData.gallery_images.map((imgUrl, index) => (
+                  <div key={index} className="relative aspect-video rounded-lg overflow-hidden bg-slate-950 border border-slate-800 group/img">
+                    <Image
+                      unoptimized
+                      src={imgUrl}
+                      alt={`Gallery item ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          gallery_images: prev.gallery_images.filter((_, idx) => idx !== index),
+                        }));
+                      }}
+                      className="absolute top-1 right-1 p-1 bg-red-600/90 text-white rounded-full opacity-0 group-hover/img:opacity-100 transition-opacity hover:bg-red-700 cursor-pointer shadow-md"
+                      title="Remove image"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex items-center justify-between pt-2">
             <label className="text-xs text-slate-300 flex items-center gap-2">

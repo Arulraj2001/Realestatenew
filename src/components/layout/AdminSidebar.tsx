@@ -17,6 +17,8 @@ import {
   Settings,
   ShieldCheck,
   LogOut,
+  HelpCircle,
+  Star,
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { AdminProfile } from '@/types/database';
@@ -47,6 +49,8 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ admin }) => {
       items: [
         { href: '/admin/messages', label: 'Messages & Leads', icon: <MessageSquare className="w-4 h-4" /> },
         { href: '/admin/pages', label: 'Content Pages', icon: <FileText className="w-4 h-4" /> },
+        { href: '/admin/faqs', label: 'FAQ Manager', icon: <HelpCircle className="w-4 h-4" /> },
+        { href: '/admin/testimonials', label: 'Client Testimonials', icon: <Star className="w-4 h-4" /> },
         { href: '/admin/seo', label: 'SEO Management', icon: <Search className="w-4 h-4" /> },
         { href: '/admin/settings', label: 'Website Settings', icon: <Settings className="w-4 h-4" /> },
         ...(admin?.role === 'super_admin'

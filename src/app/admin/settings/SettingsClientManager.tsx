@@ -111,31 +111,6 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
     ),
   });
 
-  // ── Testimonials ──────────────────────────────────────────────────────────
-  const [testimonials, setTestimonials] = useState<TestimonialItem[]>(
-    parseArray<TestimonialItem>(initialSettings, 'testimonials', DEFAULT_TESTIMONIALS)
-  );
-
-  const updateTestimonial = (idx: number, field: keyof TestimonialItem, val: string | number) => {
-    setTestimonials((prev) => prev.map((t, i) => (i === idx ? { ...t, [field]: val } : t)));
-  };
-  const addTestimonial = () =>
-    setTestimonials((prev) => [...prev, { name: '', location: '', rating: 5, comment: '' }]);
-  const removeTestimonial = (idx: number) =>
-    setTestimonials((prev) => prev.filter((_, i) => i !== idx));
-
-  // ── FAQs ──────────────────────────────────────────────────────────────────
-  const [faqs, setFaqs] = useState<FAQItem[]>(
-    parseArray<FAQItem>(initialSettings, 'faqs', DEFAULT_FAQS)
-  );
-
-  const updateFaq = (idx: number, field: keyof FAQItem, val: string) => {
-    setFaqs((prev) => prev.map((f, i) => (i === idx ? { ...f, [field]: val } : f)));
-  };
-  const addFaq = () =>
-    setFaqs((prev) => [...prev, { id: `faq-${Date.now()}`, title: '', content: '' }]);
-  const removeFaq = (idx: number) => setFaqs((prev) => prev.filter((_, i) => i !== idx));
-
   // ── Save handlers ─────────────────────────────────────────────────────────
   const save = async (key: string, value: unknown, label: string) => {
     const res = await saveSiteSettingAction(key, value as Record<string, unknown>);
@@ -149,8 +124,6 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
   const handleSaveContact = async (e: React.FormEvent) => { e.preventDefault(); await save('contact_info', contactData, 'Contact Settings'); };
   const handleSaveSocial = async (e: React.FormEvent) => { e.preventDefault(); await save('social_links', socialData, 'Social Media Links'); };
   const handleSaveAnnouncement = async (e: React.FormEvent) => { e.preventDefault(); await save('global_announcement', announcementData, 'Announcement Bar'); };
-  const handleSaveTestimonials = async (e: React.FormEvent) => { e.preventDefault(); await save('testimonials', testimonials, 'Testimonials'); };
-  const handleSaveFaqs = async (e: React.FormEvent) => { e.preventDefault(); await save('faqs', faqs, 'FAQ Section'); };
 
   // ─────────────────────────────────────────────────────────────────────────
   // Shared panel header style
@@ -276,146 +249,229 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
         </div>
       </div>
 
+    </div>
+  );
+};
 
-      {/* ── Section 3: Testimonials ──────────────────────────────── */}
-      <div>
-        <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-4">Client Testimonials</h2>
-        <form onSubmit={handleSaveTestimonials} className={panelClass}>
-          <div className={panelTitleClass}>
-            <Star className="w-4 h-4 text-amber-400" /> Testimonials (shown in Hear From Our Homeowners section)
-          </div>
-          <p className="text-xs text-slate-400">Add up to 6 testimonials. Each will appear as a card on the testimonials section.</p>
+// ─────────────────────────────────────────────
+// Testimonials Client Manager
+// ─────────────────────────────────────────────
+export const TestimonialsClientManager: React.FC<{ initialSettings: SiteSettingRecord[] }> = ({
+  initialSettings,
+}) => {
+  const { toast } = useToast();
+  const [testimonials, setTestimonials] = useState<TestimonialItem[]>(
+    parseArray<TestimonialItem>(initialSettings, 'testimonials', DEFAULT_TESTIMONIALS)
+  );
 
-          <div className="space-y-4">
-            {testimonials.map((t, idx) => (
-              <div key={idx} className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-300">Review #{idx + 1}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeTestimonial(idx)}
-                    className="p-1 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                    title="Remove testimonial"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label required>Customer Name</Label>
-                    <Input value={t.name} onChange={(e) => updateTestimonial(idx, 'name', e.target.value)} placeholder="Dr. K. Senthil Nathan" />
-                  </div>
-                  <div>
-                    <Label required>Location / Project</Label>
-                    <Input value={t.location} onChange={(e) => updateTestimonial(idx, 'location', e.target.value)} placeholder="Rasi Garden, Namakkal" />
-                  </div>
-                </div>
-                <div>
-                  <Label>Star Rating (1–5)</Label>
-                  <select
-                    value={t.rating}
-                    onChange={(e) => updateTestimonial(idx, 'rating', Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
-                  >
-                    {[5, 4, 3, 2, 1].map((r) => (
-                      <option key={r} value={r}>{r} Star{r !== 1 ? 's' : ''}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Label>Video URL (YouTube or MP4 Video Link)</Label>
-                  <Input
-                    value={t.video_url || ''}
-                    onChange={(e) => updateTestimonial(idx, 'video_url', e.target.value)}
-                    placeholder="https://www.youtube.com/watch?v=... or MP4 link"
-                  />
-                </div>
-                <div>
-                  <MediaUploader
-                    label="Testimonial Video Cover / Thumbnail Image"
-                    value={t.thumbnail_url || ''}
-                    folder="testimonials"
-                    onChange={(url) => updateTestimonial(idx, 'thumbnail_url', url)}
-                  />
-                </div>
-                <div>
-                  <Label>Testimonial Text / Caption</Label>
-                  <Textarea
-                    rows={2}
-                    value={t.comment || ''}
-                    onChange={(e) => updateTestimonial(idx, 'comment', e.target.value)}
-                    placeholder="Brief highlight or quote..."
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+  const updateTestimonial = (idx: number, field: keyof TestimonialItem, val: string | number) => {
+    setTestimonials((prev) => prev.map((t, i) => (i === idx ? { ...t, [field]: val } : t)));
+  };
+  const addTestimonial = () =>
+    setTestimonials((prev) => [...prev, { name: '', location: '', rating: 5, comment: '' }]);
+  const removeTestimonial = (idx: number) =>
+    setTestimonials((prev) => prev.filter((_, i) => i !== idx));
 
-          <div className="flex items-center justify-between pt-2">
-            <button type="button" onClick={addTestimonial} className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold">
-              <Plus className="w-3.5 h-3.5" /> Add Testimonial
-            </button>
-            <Button type="submit" variant="gold" size="sm" className="font-bold">
-              <Save className="w-3.5 h-3.5 mr-1" /> Save Testimonials
-            </Button>
-          </div>
-        </form>
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await saveSiteSettingAction('testimonials', testimonials as any);
+    if (res.success) {
+      toast({ type: 'success', title: 'Testimonials Saved' });
+    } else {
+      toast({ type: 'error', title: 'Save Failed', message: res.error });
+    }
+  };
+
+  const panelClass = 'p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-4 shadow-xl';
+  const panelTitleClass = 'flex items-center gap-2 font-bold text-white text-sm border-b border-slate-800 pb-3';
+
+  return (
+    <div className="space-y-6">
+      <div className="border-b border-slate-800 pb-4">
+        <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
+          <Star className="w-6 h-6 text-amber-400" /> Client Testimonials
+        </h1>
+        <p className="text-xs text-slate-400 mt-1">
+          Manage testimonials shown in the "Hear From Our Homeowners" section.
+        </p>
       </div>
 
-      {/* ── Section 4: FAQ ───────────────────────────────────────── */}
-      <div>
-        <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-4">FAQ Section</h2>
-        <form onSubmit={handleSaveFaqs} className={panelClass}>
-          <div className={panelTitleClass}>
-            <HelpCircle className="w-4 h-4 text-emerald-400" /> FAQ Questions & Answers (shown on Contact Us page)
-          </div>
-          <p className="text-xs text-slate-400">Edit existing questions or add new ones. They appear in the accordion on the Contact page.</p>
+      <form onSubmit={handleSave} className={panelClass}>
+        <div className={panelTitleClass}>
+          <Star className="w-4 h-4 text-amber-400" /> Testimonials List
+        </div>
+        <p className="text-xs text-slate-400">Add up to 6 testimonials. Each will appear as a card on the testimonials section.</p>
 
-          <div className="space-y-4">
-            {faqs.map((faq, idx) => (
-              <div key={idx} className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-300">FAQ #{idx + 1}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeFaq(idx)}
-                    className="p-1 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-                    title="Remove FAQ"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
+        <div className="space-y-4">
+          {testimonials.map((t, idx) => (
+            <div key={idx} className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-300">Review #{idx + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeTestimonial(idx)}
+                  className="p-1 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                  title="Remove testimonial"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label required>Customer Name</Label>
+                  <Input value={t.name} onChange={(e) => updateTestimonial(idx, 'name', e.target.value)} placeholder="Dr. K. Senthil Nathan" />
                 </div>
                 <div>
-                  <Label required>Question</Label>
-                  <Input
-                    value={faq.title}
-                    onChange={(e) => updateFaq(idx, 'title', e.target.value)}
-                    placeholder="Are all plots DTCP approved?"
-                  />
-                </div>
-                <div>
-                  <Label required>Answer</Label>
-                  <Textarea
-                    rows={3}
-                    value={faq.content}
-                    onChange={(e) => updateFaq(idx, 'content', e.target.value)}
-                    placeholder="Yes, all our layouts..."
-                  />
+                  <Label required>Location / Project</Label>
+                  <Input value={t.location} onChange={(e) => updateTestimonial(idx, 'location', e.target.value)} placeholder="Rasi Garden, Namakkal" />
                 </div>
               </div>
-            ))}
-          </div>
+              <div>
+                <Label>Star Rating (1–5)</Label>
+                <select
+                  value={t.rating}
+                  onChange={(e) => updateTestimonial(idx, 'rating', Number(e.target.value))}
+                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
+                >
+                  {[5, 4, 3, 2, 1].map((r) => (
+                    <option key={r} value={r}>{r} Star{r !== 1 ? 's' : ''}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <Label>Video URL (YouTube or MP4 Video Link)</Label>
+                <Input
+                  value={t.video_url || ''}
+                  onChange={(e) => updateTestimonial(idx, 'video_url', e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=... or MP4 link"
+                />
+              </div>
+              <div>
+                <MediaUploader
+                  label="Testimonial Video Cover / Thumbnail Image"
+                  value={t.thumbnail_url || ''}
+                  folder="testimonials"
+                  onChange={(url) => updateTestimonial(idx, 'thumbnail_url', url)}
+                />
+              </div>
+              <div>
+                <Label>Testimonial Text / Caption</Label>
+                <Textarea
+                  rows={2}
+                  value={t.comment || ''}
+                  onChange={(e) => updateTestimonial(idx, 'comment', e.target.value)}
+                  placeholder="Brief highlight or quote..."
+                />
+              </div>
+            </div>
+          ))}
+        </div>
 
-          <div className="flex items-center justify-between pt-2">
-            <button type="button" onClick={addFaq} className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold">
-              <Plus className="w-3.5 h-3.5" /> Add FAQ
-            </button>
-            <Button type="submit" variant="gold" size="sm" className="font-bold">
-              <Save className="w-3.5 h-3.5 mr-1" /> Save FAQs
-            </Button>
-          </div>
-        </form>
+        <div className="flex items-center justify-between pt-2">
+          <button type="button" onClick={addTestimonial} className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold cursor-pointer">
+            <Plus className="w-3.5 h-3.5" /> Add Testimonial
+          </button>
+          <Button type="submit" variant="gold" size="sm" className="font-bold">
+            <Save className="w-3.5 h-3.5 mr-1" /> Save Testimonials
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────
+// FAQs Client Manager
+// ─────────────────────────────────────────────
+export const FaqsClientManager: React.FC<{ initialSettings: SiteSettingRecord[] }> = ({
+  initialSettings,
+}) => {
+  const { toast } = useToast();
+  const [faqs, setFaqs] = useState<FAQItem[]>(
+    parseArray<FAQItem>(initialSettings, 'faqs', DEFAULT_FAQS)
+  );
+
+  const updateFaq = (idx: number, field: keyof FAQItem, val: string) => {
+    setFaqs((prev) => prev.map((f, i) => (i === idx ? { ...f, [field]: val } : f)));
+  };
+  const addFaq = () =>
+    setFaqs((prev) => [...prev, { id: `faq-${Date.now()}`, title: '', content: '' }]);
+  const removeFaq = (idx: number) => setFaqs((prev) => prev.filter((_, i) => i !== idx));
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await saveSiteSettingAction('faqs', faqs as any);
+    if (res.success) {
+      toast({ type: 'success', title: 'FAQs Saved' });
+    } else {
+      toast({ type: 'error', title: 'Save Failed', message: res.error });
+    }
+  };
+
+  const panelClass = 'p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-4 shadow-xl';
+  const panelTitleClass = 'flex items-center gap-2 font-bold text-white text-sm border-b border-slate-800 pb-3';
+
+  return (
+    <div className="space-y-6">
+      <div className="border-b border-slate-800 pb-4">
+        <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
+          <HelpCircle className="w-6 h-6 text-emerald-400" /> FAQ Section
+        </h1>
+        <p className="text-xs text-slate-400 mt-1">
+          Manage questions and answers shown in the accordion on the Contact Us page.
+        </p>
       </div>
+
+      <form onSubmit={handleSave} className={panelClass}>
+        <div className={panelTitleClass}>
+          <HelpCircle className="w-4 h-4 text-emerald-400" /> FAQ Questions & Answers
+        </div>
+        <p className="text-xs text-slate-400">Edit existing questions or add new ones.</p>
+
+        <div className="space-y-4">
+          {faqs.map((faq, idx) => (
+            <div key={idx} className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-slate-300">FAQ #{idx + 1}</span>
+                <button
+                  type="button"
+                  onClick={() => removeFaq(idx)}
+                  className="p-1 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                  title="Remove FAQ"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div>
+                <Label required>Question</Label>
+                <Input
+                  value={faq.title}
+                  onChange={(e) => updateFaq(idx, 'title', e.target.value)}
+                  placeholder="Are all plots DTCP approved?"
+                />
+              </div>
+              <div>
+                <Label required>Answer</Label>
+                <Textarea
+                  rows={3}
+                  value={faq.content}
+                  onChange={(e) => updateFaq(idx, 'content', e.target.value)}
+                  placeholder="Yes, all our layouts..."
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between pt-2">
+          <button type="button" onClick={addFaq} className="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold cursor-pointer">
+            <Plus className="w-3.5 h-3.5" /> Add FAQ
+          </button>
+          <Button type="submit" variant="gold" size="sm" className="font-bold">
+            <Save className="w-3.5 h-3.5 mr-1" /> Save FAQs
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };
