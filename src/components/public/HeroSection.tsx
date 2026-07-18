@@ -54,8 +54,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
   const { theme } = useTheme();
 
-  // Dynamic fallback to intercept seeded value
-  const displaySecondaryCta = secondaryCtaLabel === 'Schedule a Site Visit' ? 'Contact Us' : secondaryCtaLabel;
+  const secondaryLabel = secondaryCtaLabel || 'Schedule a Site Visit';
+  const isContactAction = secondaryLabel.toLowerCase().includes('contact');
 
   if (heroEnabled === false) return null;
 
@@ -171,15 +171,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </Button>
                 </Link>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsVisitModalOpen(true)}
-                  className="group border-slate-400 hover:border-amber-400 text-slate-100 hover:text-amber-300 bg-slate-900/70 hover:bg-slate-900 backdrop-blur-md font-bold px-5 py-2.5 text-xs sm:text-sm rounded-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 shadow-lg"
-                >
-                  <Calendar className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300 pointer-events-none" />
-                  <span>{displaySecondaryCta}</span>
-                </Button>
+                {isContactAction ? (
+                  <Link href="/contact-us">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="group border-slate-400 hover:border-amber-400 text-slate-100 hover:text-amber-300 bg-slate-900/70 hover:bg-slate-900 backdrop-blur-md font-bold px-5 py-2.5 text-xs sm:text-sm rounded-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 shadow-lg"
+                    >
+                      <Calendar className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300 pointer-events-none" />
+                      <span>{secondaryLabel}</span>
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsVisitModalOpen(true)}
+                    className="group border-slate-400 hover:border-amber-400 text-slate-100 hover:text-amber-300 bg-slate-900/70 hover:bg-slate-900 backdrop-blur-md font-bold px-5 py-2.5 text-xs sm:text-sm rounded-xl hover:scale-105 transition-all duration-300 flex items-center gap-2 shadow-lg"
+                  >
+                    <Calendar className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform duration-300 pointer-events-none" />
+                    <span>{secondaryLabel}</span>
+                  </Button>
+                )}
               </>
             ) : (
               <>
@@ -196,21 +209,36 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </span>
                 </Link>
 
-                <button
-                  onClick={() => setIsVisitModalOpen(true)}
-                  className="blob-btn blob-btn-contact"
-                >
-                  <Calendar className="w-4 h-4 shrink-0 pointer-events-none" />
-                  <span>{displaySecondaryCta}</span>
-                  <span className="blob-btn__inner">
-                    <span className="blob-btn__blobs">
-                      <span className="blob-btn__blob"></span>
-                      <span className="blob-btn__blob"></span>
-                      <span className="blob-btn__blob"></span>
-                      <span className="blob-btn__blob"></span>
+                {isContactAction ? (
+                  <Link href="/contact-us" className="blob-btn blob-btn-contact">
+                    <Calendar className="w-4 h-4 shrink-0 pointer-events-none" />
+                    <span>{secondaryLabel}</span>
+                    <span className="blob-btn__inner">
+                      <span className="blob-btn__blobs">
+                        <span className="blob-btn__blob"></span>
+                        <span className="blob-btn__blob"></span>
+                        <span className="blob-btn__blob"></span>
+                        <span className="blob-btn__blob"></span>
+                      </span>
                     </span>
-                  </span>
-                </button>
+                  </Link>
+                ) : (
+                  <button
+                    onClick={() => setIsVisitModalOpen(true)}
+                    className="blob-btn blob-btn-contact"
+                  >
+                    <Calendar className="w-4 h-4 shrink-0 pointer-events-none" />
+                    <span>{secondaryLabel}</span>
+                    <span className="blob-btn__inner">
+                      <span className="blob-btn__blobs">
+                        <span className="blob-btn__blob"></span>
+                        <span className="blob-btn__blob"></span>
+                        <span className="blob-btn__blob"></span>
+                        <span className="blob-btn__blob"></span>
+                      </span>
+                    </span>
+                  </button>
+                )}
               </>
             )}
           </div>
