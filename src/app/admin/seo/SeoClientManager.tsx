@@ -100,6 +100,10 @@ const defaultForm = {
   og_type: 'website',
   twitter_card: 'summary_large_image',
   focus_keyword: '',
+  redirect_url: '',
+  redirect_type: 301,
+  open_graph_image_alt: '',
+  custom_tracking_script: '',
 };
 
 // ─── Tab type ─────────────────────────────────────────────────────────────────
@@ -292,7 +296,7 @@ export const SeoClientManager: React.FC<Props> = ({
   const [robotsError, setRobotsError] = useState('');
   const [isSavingRobots, setIsSavingRobots] = useState(false);
 
-  const patch = (key: string, value: string | boolean) =>
+  const patch = (key: string, value: string | boolean | number) =>
     setFormData((prev) => ({ ...prev, [key]: value }));
 
   const entityTypeConfig = ENTITY_TYPES.find((t) => t.value === formData.entity_type)!;
@@ -348,6 +352,10 @@ export const SeoClientManager: React.FC<Props> = ({
       og_type: rec.og_type || 'website',
       twitter_card: rec.twitter_card || 'summary_large_image',
       focus_keyword: rec.focus_keyword || '',
+      redirect_url: rec.redirect_url || '',
+      redirect_type: rec.redirect_type || 301,
+      open_graph_image_alt: rec.open_graph_image_alt || '',
+      custom_tracking_script: rec.custom_tracking_script || '',
     });
     setJsonError('');
     setIsDialogOpen(true);
@@ -366,6 +374,10 @@ export const SeoClientManager: React.FC<Props> = ({
       json_ld_override: formData.json_ld_override.trim() ? JSON.parse(formData.json_ld_override) : null,
       sitemap_priority: formData.sitemap_priority ? parseFloat(formData.sitemap_priority) : null,
       sitemap_change_frequency: formData.sitemap_change_frequency || null,
+      redirect_type: formData.redirect_url ? parseInt(String(formData.redirect_type)) : 301,
+      redirect_url: formData.redirect_url.trim() || null,
+      open_graph_image_alt: formData.open_graph_image_alt.trim() || null,
+      custom_tracking_script: formData.custom_tracking_script.trim() || null,
     };
     const res = await saveSeoMetadataAction(payload, editingRecord?.id);
     setIsSaving(false);
@@ -838,6 +850,10 @@ export const SeoClientManager: React.FC<Props> = ({
                   <Input value={formData.open_graph_image_path} onChange={(e) => patch('open_graph_image_path', e.target.value)} placeholder="/og-image.jpg or full URL" />
                   <p className="text-[11px] text-slate-500 mt-1">Recommended: 1200×630 pixels</p>
                 </div>
+                <div>
+                  <Label>OG Image Alt Text (for accessibility)</Label>
+                  <Input value={formData.open_graph_image_alt} onChange={(e) => patch('open_graph_image_alt', e.target.value)} placeholder="Describe the image contents for bots and screen readers" />
+                </div>
               </div>
 
               {/* Step 5: Sitemap Settings */}
@@ -939,6 +955,46 @@ export const SeoClientManager: React.FC<Props> = ({
                     onChange={(e) => { patch('json_ld_override', e.target.value); setJsonError(''); }}
                     placeholder={'{\n  "@context": "https://schema.org",\n  "@type": "WebPage"\n}'} className="font-mono text-xs" />
                   {jsonError && <p className="text-xs text-red-400 mt-1">⚠ {jsonError}</p>}
+                </div>
+              </div>
+
+              {/* Step 8: Redirection */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-4">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">8 · Page URL Redirection</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div className="md:col-span-2">
+                    <Label>Destination Redirect URL</Label>
+                    <Input
+                      value={formData.redirect_url}
+                      onChange={(e) => patch('redirect_url', e.target.value)}
+                      placeholder="e.g., /projects/new-project or absolute URL"
+                    />
+                  </div>
+                  <div>
+                    <Label>Redirect Status</Label>
+                    <select value={formData.redirect_type} onChange={(e) => patch('redirect_type', parseInt(e.target.value))}
+                      className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors">
+                      <option value="301">301 (Permanent)</option>
+                      <option value="302">302 (Temporary)</option>
+                    </select>
+                  </div>
+                </div>
+                <p className="text-[10px] text-slate-500">Redirects help pass rank when villas sell out or layouts are renamed.</p>
+              </div>
+
+              {/* Step 9: Tracking Pixels */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-4">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">9 · Page-Specific Analytics Script (Custom Pixel)</p>
+                <div>
+                  <Label>Facebook Pixel / GA Custom Conversion Script</Label>
+                  <Textarea
+                    rows={4}
+                    value={formData.custom_tracking_script}
+                    onChange={(e) => patch('custom_tracking_script', e.target.value)}
+                    placeholder="<!-- Enter custom JS script/iframe code that will run only on this landing page -->"
+                    className="font-mono text-xs"
+                  />
+                  <p className="text-[10px] text-slate-500 mt-1">Paste HTML tag codes here (e.g. Facebook pixel base tag / custom conversion event codes).</p>
                 </div>
               </div>
             </div>

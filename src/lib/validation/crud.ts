@@ -126,5 +126,9 @@ export const seoMetadataCrudSchema = z.object({
   og_type: z.string().optional().nullable(),
   twitter_card: z.string().optional().nullable(),
   focus_keyword: z.string().optional().nullable(),
+  redirect_url: z.string().optional().or(z.literal('')).nullable(),
+  redirect_type: z.number().optional().nullable(),
+  open_graph_image_alt: z.string().optional().or(z.literal('')).nullable(),
+  custom_tracking_script: z.string().optional().or(z.literal('')).nullable(),
 });
 

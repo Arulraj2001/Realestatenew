@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, redirect, permanentRedirect } from 'next/navigation';
 import {
   getProjectBySlug,
   getProjectAmenities,
@@ -81,6 +81,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     getSeoOverride('project', project.id),
   ]);
 
+  if (seoOverride?.redirect_url) {
+    if (seoOverride.redirect_type === 301) {
+      permanentRedirect(seoOverride.redirect_url);
+    } else {
+      redirect(seoOverride.redirect_url);
+    }
+  }
+
   const jsonLd = resolveJsonLd(seoOverride, getProjectJsonLd(project));
 
   const villas = allConfigurations
@@ -114,6 +122,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      {/* Custom Tracking script */}
+      {seoOverride?.custom_tracking_script && (
+        <div dangerouslySetInnerHTML={{ __html: seoOverride.custom_tracking_script }} />
+      )}
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
 

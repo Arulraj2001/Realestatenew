@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect, permanentRedirect } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -76,6 +76,14 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     getSeoOverride('configuration', config.id),
   ]);
 
+  if (seoOverride?.redirect_url) {
+    if (seoOverride.redirect_type === 301) {
+      permanentRedirect(seoOverride.redirect_url);
+    } else {
+      redirect(seoOverride.redirect_url);
+    }
+  }
+
   const jsonLd = resolveJsonLd(seoOverride, getConfigurationJsonLd(config));
 
   // Related properties (excluding current property, sorted: 4BHK -> 3BHK -> 2BHK -> Plots)
@@ -111,6 +119,11 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      {/* Custom Tracking script */}
+      {seoOverride?.custom_tracking_script && (
+        <div dangerouslySetInnerHTML={{ __html: seoOverride.custom_tracking_script }} />
+      )}
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
       {/* Breadcrumb Header */}

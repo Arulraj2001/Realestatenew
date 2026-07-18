@@ -286,7 +286,11 @@ ALTER TABLE public.seo_metadata
   ADD COLUMN IF NOT EXISTS robots_directives TEXT DEFAULT 'index, follow',
   ADD COLUMN IF NOT EXISTS og_type TEXT DEFAULT 'website',
   ADD COLUMN IF NOT EXISTS twitter_card TEXT DEFAULT 'summary_large_image',
-  ADD COLUMN IF NOT EXISTS focus_keyword TEXT;
+  ADD COLUMN IF NOT EXISTS focus_keyword TEXT,
+  ADD COLUMN IF NOT EXISTS redirect_url TEXT,
+  ADD COLUMN IF NOT EXISTS redirect_type INTEGER DEFAULT 301 CHECK (redirect_type IN (301, 302)),
+  ADD COLUMN IF NOT EXISTS open_graph_image_alt TEXT,
+  ADD COLUMN IF NOT EXISTS custom_tracking_script TEXT;
 
 DROP TRIGGER IF EXISTS update_seo_metadata_updated_at ON public.seo_metadata;
 CREATE TRIGGER update_seo_metadata_updated_at

@@ -193,6 +193,10 @@ export interface SEOMetadata {
   og_type?: string | null;
   twitter_card?: string | null;
   focus_keyword?: string | null;
+  redirect_url?: string | null;
+  redirect_type?: number | null;
+  open_graph_image_alt?: string | null;
+  custom_tracking_script?: string | null;
   created_at: string;
   updated_at: string;
 }

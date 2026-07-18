@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect, permanentRedirect } from 'next/navigation';
 import {
   getProjectBySlug,
   getLocationBySlug,
@@ -85,6 +85,14 @@ export default async function HierarchicalProjectPage({ params }: HierarchicalPr
     getSeoOverride('project', project.id),
   ]);
 
+  if (seoOverride?.redirect_url) {
+    if (seoOverride.redirect_type === 301) {
+      permanentRedirect(seoOverride.redirect_url);
+    } else {
+      redirect(seoOverride.redirect_url);
+    }
+  }
+
   const jsonLd = resolveJsonLd(seoOverride, getProjectJsonLd(project));
 
   const villas = allConfigurations
@@ -119,6 +127,11 @@ export default async function HierarchicalProjectPage({ params }: HierarchicalPr
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+
+      {/* Custom Tracking script */}
+      {seoOverride?.custom_tracking_script && (
+        <div dangerouslySetInnerHTML={{ __html: seoOverride.custom_tracking_script }} />
+      )}
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
         {/* Hierarchical Breadcrumb Header Banner */}
