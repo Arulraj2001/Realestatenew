@@ -104,7 +104,7 @@ export async function submitContactEnquiryAction(formData: {
     }
 
     return { success: true };
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.error('Validation error processing contact enquiry:', err);
     return { success: false, error: 'Please check your name, phone number, and consent check.' };
   }
@@ -180,8 +180,8 @@ export async function submitSiteVisitBookingAction(formData: {
       location_id: validLocationId,
       project_id: validProjectId,
       property_configuration_id: validConfigId,
-      preferred_visit_date: validated.preferred_visit_date,
-      preferred_visit_time: validated.preferred_visit_time,
+      preferred_visit_date: validated.preferred_visit_date || null,
+      preferred_visit_time: validated.preferred_visit_time || null,
       message: validated.message ? validated.message.trim() : null,
       source_page: validated.source_page || '/contact-us',
       utm_source: validated.utm_source || null,
@@ -202,7 +202,7 @@ export async function submitSiteVisitBookingAction(formData: {
     }
 
     return { success: true };
-  } catch (err: unknown) {
+  } catch (err: any) {
     console.error('Validation error processing site visit booking:', err);
     return { success: false, error: 'Please check your name, phone number, and visit date.' };
   }

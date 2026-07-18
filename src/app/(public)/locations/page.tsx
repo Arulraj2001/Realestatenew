@@ -6,6 +6,8 @@ import { MapPin, ArrowRight, Building2, Sparkles } from 'lucide-react';
 import { getPublishedLocations } from '@/lib/data';
 import { Badge } from '@/components/ui/badge';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Explore Locations | Your Choice Properties',
   description:

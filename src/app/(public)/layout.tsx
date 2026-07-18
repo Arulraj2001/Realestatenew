@@ -6,6 +6,8 @@ import { AutoContactPopup } from '@/components/public/AutoContactPopup';
 import { ToastProvider } from '@/components/ui/toast';
 import { getNavLocations, getSocialLinks } from '@/lib/data';
 
+export const dynamic = 'force-dynamic';
+
 export default async function PublicLayout({
   children,
 }: {
