@@ -111,15 +111,6 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
     ),
   });
 
-  const integrationsRec = initialSettings.find((s) => s.key === 'integrations')?.value || {};
-
-  const [integrationsData, setIntegrationsData] = useState({
-    google_search_console: String(integrationsRec.google_search_console || ''),
-    google_analytics: String(integrationsRec.google_analytics || ''),
-    google_tag_manager: String(integrationsRec.google_tag_manager || ''),
-    facebook_pixel: String(integrationsRec.facebook_pixel || ''),
-  });
-
   // ── Save handlers ─────────────────────────────────────────────────────────
   const save = async (key: string, value: unknown, label: string) => {
     const res = await saveSiteSettingAction(key, value as Record<string, unknown>);
@@ -133,7 +124,6 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
   const handleSaveContact = async (e: React.FormEvent) => { e.preventDefault(); await save('contact_info', contactData, 'Contact Settings'); };
   const handleSaveSocial = async (e: React.FormEvent) => { e.preventDefault(); await save('social_links', socialData, 'Social Media Links'); };
   const handleSaveAnnouncement = async (e: React.FormEvent) => { e.preventDefault(); await save('global_announcement', announcementData, 'Announcement Bar'); };
-  const handleSaveIntegrations = async (e: React.FormEvent) => { e.preventDefault(); await save('integrations', integrationsData, 'Integrations & Analytics'); };
 
   // ─────────────────────────────────────────────────────────────────────────
   // Shared panel header style
@@ -258,80 +248,6 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
           </div>
         </div>
       </div>
-
-      {/* ── Section 2: Integrations & Analytics ────────────────── */}
-      <div>
-        <h2 className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-4">SEO & Third-Party Integrations</h2>
-        <form onSubmit={handleSaveIntegrations} className={panelClass}>
-          <div className={panelTitleClass}>
-            <Settings className="w-4 h-4 text-amber-400" /> Webmasters & Tracking Consoles
-          </div>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Paste your external search verification and marketing pixel IDs. The required meta tags and script snippets will be automatically injected into your public pages' header.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <Label>Google Search Console Verification ID</Label>
-                <Input
-                  value={integrationsData.google_search_console}
-                  onChange={(e) => setIntegrationsData({ ...integrationsData, google_search_console: e.target.value })}
-                  placeholder="e.g., d5B8_Xq12_..."
-                />
-                <p className="text-[10px] text-slate-500 mt-1 leading-normal">
-                  Paste the verification token code from your GSC HTML tag: <code>&lt;meta name="google-site-verification" content="<b>YOUR_ID</b>" /&gt;</code>.
-                </p>
-              </div>
-
-              <div>
-                <Label>Google Analytics Measurement ID (G- ID)</Label>
-                <Input
-                  value={integrationsData.google_analytics}
-                  onChange={(e) => setIntegrationsData({ ...integrationsData, google_analytics: e.target.value })}
-                  placeholder="e.g., G-XXXXXXXXXX"
-                />
-                <p className="text-[10px] text-slate-500 mt-1 leading-normal">
-                  Paste your standard GA4 stream ID starting with <code>G-</code>.
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label>Google Tag Manager Container ID (GTM- ID)</Label>
-                <Input
-                  value={integrationsData.google_tag_manager}
-                  onChange={(e) => setIntegrationsData({ ...integrationsData, google_tag_manager: e.target.value })}
-                  placeholder="e.g., GTM-XXXXXXX"
-                />
-                <p className="text-[10px] text-slate-500 mt-1 leading-normal">
-                  Paste the container ID starting with <code>GTM-</code>.
-                </p>
-              </div>
-
-              <div>
-                <Label>Facebook Pixel ID</Label>
-                <Input
-                  value={integrationsData.facebook_pixel}
-                  onChange={(e) => setIntegrationsData({ ...integrationsData, facebook_pixel: e.target.value })}
-                  placeholder="e.g., 123456789012345"
-                />
-                <p className="text-[10px] text-slate-500 mt-1 leading-normal">
-                  Paste the numeric Meta/Facebook Pixel identifier.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end pt-2 border-t border-slate-800/40">
-            <Button type="submit" variant="gold" size="sm" className="font-bold">
-              <Save className="w-3.5 h-3.5 mr-1" /> Save Integrations
-            </Button>
-          </div>
-        </form>
-      </div>
-
     </div>
   );
 };
@@ -552,6 +468,118 @@ export const FaqsClientManager: React.FC<{ initialSettings: SiteSettingRecord[] 
           </button>
           <Button type="submit" variant="gold" size="sm" className="font-bold">
             <Save className="w-3.5 h-3.5 mr-1" /> Save FAQs
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+// ─────────────────────────────────────────────
+// Integrations Client Manager
+// ─────────────────────────────────────────────
+export const IntegrationsClientManager: React.FC<{ initialSettings: SiteSettingRecord[] }> = ({
+  initialSettings,
+}) => {
+  const { toast } = useToast();
+  const integrationsRec = initialSettings.find((s) => s.key === 'integrations')?.value || {};
+
+  const [integrationsData, setIntegrationsData] = useState({
+    google_search_console: String(integrationsRec.google_search_console || ''),
+    google_analytics: String(integrationsRec.google_analytics || ''),
+    google_tag_manager: String(integrationsRec.google_tag_manager || ''),
+    facebook_pixel: String(integrationsRec.facebook_pixel || ''),
+  });
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const res = await saveSiteSettingAction('integrations', integrationsData);
+    if (res.success) {
+      toast({ type: 'success', title: 'Integrations Saved' });
+    } else {
+      toast({ type: 'error', title: 'Save Failed', message: res.error });
+    }
+  };
+
+  const panelClass = 'p-6 bg-slate-900 border border-slate-800 rounded-2xl space-y-4 shadow-xl';
+  const panelTitleClass = 'flex items-center gap-2 font-bold text-white text-sm border-b border-slate-800 pb-3';
+
+  return (
+    <div className="space-y-6">
+      <div className="border-b border-slate-800 pb-4">
+        <h1 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
+          <Settings className="w-6 h-6 text-amber-400" /> SEO & Third-Party Integrations
+        </h1>
+        <p className="text-xs text-slate-400 mt-1">
+          Manage Google Search Console, Google Analytics, Google Tag Manager, and Meta/Facebook Pixel.
+        </p>
+      </div>
+
+      <form onSubmit={handleSave} className={panelClass}>
+        <div className={panelTitleClass}>
+          <Settings className="w-4 h-4 text-amber-400" /> Webmasters & Tracking Consoles
+        </div>
+        <p className="text-xs text-slate-400 leading-relaxed font-semibold">
+          Paste your external search verification and marketing pixel IDs. The required meta tags and script snippets will be automatically injected into your public pages' header.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
+            <div>
+              <Label>Google Search Console Verification ID</Label>
+              <Input
+                value={integrationsData.google_search_console}
+                onChange={(e) => setIntegrationsData({ ...integrationsData, google_search_console: e.target.value })}
+                placeholder="e.g., d5B8_Xq12_..."
+              />
+              <p className="text-[10px] text-slate-500 mt-1 leading-normal font-normal">
+                Paste the verification token code from your GSC HTML tag: <code>&lt;meta name="google-site-verification" content="<b>YOUR_ID</b>" /&gt;</code>.
+              </p>
+            </div>
+
+            <div>
+              <Label>Google Analytics Measurement ID (G- ID)</Label>
+              <Input
+                value={integrationsData.google_analytics}
+                onChange={(e) => setIntegrationsData({ ...integrationsData, google_analytics: e.target.value })}
+                placeholder="e.g., G-XXXXXXXXXX"
+              />
+              <p className="text-[10px] text-slate-500 mt-1 leading-normal font-normal">
+                Paste your standard GA4 stream ID starting with <code>G-</code>.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <Label>Google Tag Manager Container ID (GTM- ID)</Label>
+              <Input
+                value={integrationsData.google_tag_manager}
+                onChange={(e) => setIntegrationsData({ ...integrationsData, google_tag_manager: e.target.value })}
+                placeholder="e.g., GTM-XXXXXXX"
+              />
+              <p className="text-[10px] text-slate-500 mt-1 leading-normal font-normal">
+                Paste the container ID starting with <code>GTM-</code>.
+              </p>
+            </div>
+
+            <div>
+              <Label>Facebook Pixel ID</Label>
+              <Input
+                value={integrationsData.facebook_pixel}
+                onChange={(e) => setIntegrationsData({ ...integrationsData, facebook_pixel: e.target.value })}
+                placeholder="e.g., 123456789012345"
+              />
+              <p className="text-[10px] text-slate-500 mt-1 leading-normal font-normal">
+                Paste the numeric Meta/Facebook Pixel identifier.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-2 border-t border-slate-800/40">
+          <Button type="submit" variant="gold" size="sm" className="font-bold">
+            <Save className="w-3.5 h-3.5 mr-1" /> Save Integrations
           </Button>
         </div>
       </form>
