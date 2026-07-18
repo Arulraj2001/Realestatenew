@@ -23,9 +23,12 @@ const DEFAULT_STATS: StatItem[] = [
 ];
 
 const AnimatedCounter: React.FC<{ value: string }> = ({ value }) => {
-  const match = value.match(/(\d+)(.*)/);
-  const targetNum = match ? parseInt(match[1], 10) : 0;
+  // Strip commas to correctly parse values like "1,200"
+  const cleanValue = value.replace(/,/g, '');
+  const match = cleanValue.match(/^([\d.]+)(.*)/);
+  const targetNum = match ? parseFloat(match[1]) : 0;
   const suffix = match ? match[2] : '';
+  const isDecimal = match ? match[1].includes('.') : false;
 
   const [count, setCount] = useState(0);
   const containerRef = useRef<HTMLSpanElement>(null);
@@ -47,7 +50,7 @@ const AnimatedCounter: React.FC<{ value: string }> = ({ value }) => {
             const progress = Math.min((timestamp - startTime) / duration, 1);
             // Smooth easeOutCubic curve
             const easeOutProgress = 1 - Math.pow(1 - progress, 3);
-            const currentVal = Math.floor(easeOutProgress * targetNum);
+            const currentVal = easeOutProgress * targetNum;
 
             setCount(currentVal);
 
@@ -68,9 +71,14 @@ const AnimatedCounter: React.FC<{ value: string }> = ({ value }) => {
     return () => observer.disconnect();
   }, [targetNum]);
 
+  // Format with commas if integer, keep single decimal if float
+  const displayValue = isDecimal
+    ? count.toFixed(1)
+    : Math.floor(count).toLocaleString('en-US');
+
   return (
     <span ref={containerRef}>
-      {count}{suffix}
+      {displayValue}{suffix}
     </span>
   );
 };
