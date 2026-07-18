@@ -103,6 +103,17 @@ export default function AdminLoginPage() {
             <Lock className="w-4 h-4" />
             <span>Sign In to Admin Portal</span>
           </Button>
+
+          <Link href="/" className="block mt-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="w-full font-bold border-slate-800 text-slate-300 hover:text-white"
+            >
+              Return to Home Page
+            </Button>
+          </Link>
         </form>
 
         <div className="pt-4 border-t border-slate-800 text-center text-xs text-slate-500">

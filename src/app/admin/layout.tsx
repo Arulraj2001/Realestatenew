@@ -13,6 +13,16 @@ export default async function AdminLayout({
 }) {
   const admin = await getAuthenticatedAdmin();
 
+  if (!admin) {
+    return (
+      <ToastProvider>
+        <div className="min-h-screen bg-slate-950 text-slate-100 font-sans">
+          {children}
+        </div>
+      </ToastProvider>
+    );
+  }
+
   return (
     <ToastProvider>
       <div className="min-h-screen flex bg-slate-950 text-slate-100 font-sans">
