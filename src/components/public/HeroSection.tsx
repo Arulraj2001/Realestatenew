@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Sparkles, Calendar, ArrowRight } from 'lucide-react';
@@ -54,6 +54,27 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
   const { theme } = useTheme();
 
+  // Defer YouTube iframe loading until browser is idle to avoid blocking LCP
+  const [iframeReady, setIframeReady] = useState(false);
+  useEffect(() => {
+    if (mediaType !== 'video') return;
+    const hasYoutube = getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo);
+    if (!hasYoutube) return;
+
+    // Use requestIdleCallback for browsers that support it, otherwise setTimeout
+    let timeoutId: ReturnType<typeof setTimeout>;
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      const idleId = (window as unknown as { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(
+        () => setIframeReady(true),
+        { timeout: 2500 }
+      );
+      return () => (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
+    } else {
+      timeoutId = setTimeout(() => setIframeReady(true), 1500);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [mediaType, desktopVideo, mobileVideo]);
+
   const secondaryLabel = secondaryCtaLabel || 'Schedule a Site Visit';
   const isContactAction = secondaryLabel.toLowerCase().includes('contact');
 
@@ -62,6 +83,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   // Safeguard against empty string database configurations
   const safeDesktopImage = desktopImage || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80';
   const safePosterImage = posterImage || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
+
+  // Derive YouTube thumbnail for video poster when no explicit poster image is configured
+  const videoPosterUrl = (() => {
+    if (posterImage) return posterImage;
+    const ytId = getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo);
+    if (ytId) return `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`;
+    return safePosterImage || safeDesktopImage;
+  })();
 
   // Safe clamping of opacity 0-100 & blur (0-100% maps to 0-25px blur)
   const safeOpacity = Math.max(0, Math.min(100, overlayOpacity)) / 100;
@@ -81,25 +110,36 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="absolute inset-0 z-0 overflow-hidden" style={blurStyle}>
         {mediaType === 'video' && (getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo)) ? (
           <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
-            {/* Desktop YouTube Embed */}
-            {getYoutubeId(desktopVideo) && (
+            {/* Poster image shown instantly while YouTube iframe loads */}
+            <Image
+              src={videoPosterUrl}
+              alt="Your Choice Properties Banner"
+              fill
+              priority
+              sizes="100vw"
+              className={`object-cover transition-opacity duration-1000 ${iframeReady ? 'opacity-0' : 'opacity-100'}`}
+            />
+            {/* Desktop YouTube Embed — deferred until browser idle */}
+            {iframeReady && getYoutubeId(desktopVideo) && (
               <div className={`absolute inset-0 w-full h-full ${mobileVideo && getYoutubeId(mobileVideo) ? 'hidden md:block' : 'block'}`}>
                 <iframe
                   src={`https://www.youtube.com/embed/${getYoutubeId(desktopVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(desktopVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
                   className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none border-0"
                   style={{ minWidth: '100%', minHeight: '100%', aspectRatio: '16/9', objectFit: 'cover' }}
                   allow="autoplay; encrypted-media"
+                  loading="lazy"
                 />
               </div>
             )}
-            {/* Mobile YouTube Embed */}
-            {mobileVideo && getYoutubeId(mobileVideo) && (
+            {/* Mobile YouTube Embed — deferred until browser idle */}
+            {iframeReady && mobileVideo && getYoutubeId(mobileVideo) && (
               <div className="absolute inset-0 w-full h-full block md:hidden">
                 <iframe
                   src={`https://www.youtube.com/embed/${getYoutubeId(mobileVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(mobileVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
                   className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none border-0"
                   style={{ minWidth: '100%', minHeight: '100%', aspectRatio: '9/16', objectFit: 'cover' }}
                   allow="autoplay; encrypted-media"
+                  loading="lazy"
                 />
               </div>
             )}

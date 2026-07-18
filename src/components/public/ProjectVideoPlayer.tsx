@@ -43,9 +43,24 @@ export const ProjectVideoPlayer: React.FC<ProjectVideoPlayerProps> = ({
     embedUrl = `${rawUrl.replace(/\/$/, '')}/embed`;
   }
 
-  const poster =
-    posterImage ||
-    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
+  // Use actual YouTube thumbnail as poster if no custom poster is provided
+  let poster = posterImage || '';
+  if (!poster && isYouTube) {
+    let videoId = '';
+    if (rawUrl.includes('watch?v=')) {
+      videoId = rawUrl.split('watch?v=')[1]?.split('&')[0] || '';
+    } else if (rawUrl.includes('youtu.be/')) {
+      videoId = rawUrl.split('youtu.be/')[1]?.split('?')[0] || '';
+    } else if (rawUrl.includes('embed/')) {
+      videoId = rawUrl.split('embed/')[1]?.split('?')[0] || '';
+    }
+    if (videoId) {
+      poster = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+    }
+  }
+  if (!poster) {
+    poster = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
+  }
 
   return (
     <div className="py-2 space-y-4">
