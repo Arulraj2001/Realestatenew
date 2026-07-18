@@ -110,7 +110,7 @@ export default async function ContactUsPage() {
       <div className="bg-slate-950 text-slate-100 min-h-screen">
         {/* Banner Header */}
         <section 
-          className="relative py-12 sm:py-16 bg-slate-900 border-b border-slate-800 overflow-hidden"
+          className="relative py-5 sm:py-6 bg-slate-900 border-b border-slate-800 overflow-hidden"
           style={contactBgImage ? {
             backgroundImage: `url(${contactBgImage})`,
             backgroundSize: 'cover',
