@@ -72,3 +72,21 @@ export async function getSocialLinks(): Promise<SocialLinks | null> {
     return null;
   }
 }
+
+export interface IntegrationsSettings {
+  google_search_console?: string;
+  google_analytics?: string;
+  google_tag_manager?: string;
+  facebook_pixel?: string;
+}
+
+/** Fetch third-party integrations (console search, analytics, pixels) from site_settings['integrations']. */
+export async function getIntegrationsSettings(): Promise<IntegrationsSettings | null> {
+  try {
+    const setting = await getSiteSetting('integrations');
+    if (!setting || typeof setting.value !== 'object' || setting.value === null) return null;
+    return setting.value as IntegrationsSettings;
+  } catch {
+    return null;
+  }
+}
