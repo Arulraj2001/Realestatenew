@@ -30,7 +30,6 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
     latitude: '',
     longitude: '',
     hero_image_path: '',
-    hero_video_path: '',
     display_order: 0,
     published: true,
     featured: false,
@@ -50,7 +49,6 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       latitude: '',
       longitude: '',
       hero_image_path: '',
-      hero_video_path: '',
       display_order: locations.length + 1,
       published: true,
       featured: false,
@@ -72,7 +70,6 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       latitude: loc.latitude ? String(loc.latitude) : '',
       longitude: loc.longitude ? String(loc.longitude) : '',
       hero_image_path: loc.hero_image_path || '',
-      hero_video_path: loc.hero_video_path || '',
       display_order: loc.display_order,
       published: loc.published,
       featured: loc.featured,
@@ -307,23 +304,13 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label>Hero Video URL</Label>
-              <Input
-                value={formData.hero_video_path}
-                onChange={(e) => setFormData({ ...formData, hero_video_path: e.target.value })}
-                placeholder="https://youtube.com/watch?v=..."
-              />
-            </div>
-            <div>
-              <Label>Map URL / Embed URL</Label>
-              <Input
-                value={formData.map_url}
-                onChange={(e) => setFormData({ ...formData, map_url: e.target.value })}
-                placeholder="https://www.google.com/maps/embed?pb=..."
-              />
-            </div>
+          <div>
+            <Label>Map URL / Embed URL</Label>
+            <Input
+              value={formData.map_url}
+              onChange={(e) => setFormData({ ...formData, map_url: e.target.value })}
+              placeholder="https://www.google.com/maps/embed?pb=..."
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">

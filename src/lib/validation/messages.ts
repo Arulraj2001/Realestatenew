@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const uuidSchema = (msg?: string) => z.string().regex(uuidRegex, msg || 'Invalid UUID');
+
 export const contactMessageSchema = z.object({
   name: z.string().min(2, 'Full name must be at least 2 characters').max(100),
   phone: z
@@ -7,9 +10,9 @@ export const contactMessageSchema = z.object({
     .min(10, 'Phone number must be at least 10 digits')
     .regex(/^[+0-9\s-]{10,18}$/, 'Invalid phone number format'),
   email: z.string().email('Invalid email address').optional().or(z.literal('')),
-  location_id: z.string().uuid().optional().or(z.literal('')),
-  project_id: z.string().uuid().optional().or(z.literal('')),
-  property_configuration_id: z.string().uuid().optional().or(z.literal('')),
+  location_id: uuidSchema().optional().or(z.literal('')),
+  project_id: uuidSchema().optional().or(z.literal('')),
+  property_configuration_id: uuidSchema().optional().or(z.literal('')),
   message: z.string().max(1000).optional().or(z.literal('')),
   consent: z.boolean().refine((val) => val === true, {
     message: 'You must consent to be contacted regarding property details',

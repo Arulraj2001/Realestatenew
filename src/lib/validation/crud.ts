@@ -1,12 +1,14 @@
 import { z } from 'zod';
 
+const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+const uuidSchema = (msg?: string) => z.string().regex(uuidRegex, msg || 'Invalid UUID');
+
 export const locationCrudSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
   slug: z.string().min(2, 'Slug must be at least 2 characters').max(100),
   short_description: z.string().max(300).optional().or(z.literal('')),
   full_description: z.string().optional().or(z.literal('')),
   hero_image_path: z.string().optional().or(z.literal('')),
-  hero_video_path: z.string().optional().or(z.literal('')),
   address: z.string().optional().or(z.literal('')),
   latitude: z.number().optional().nullable(),
   longitude: z.number().optional().nullable(),
@@ -19,7 +21,7 @@ export const locationCrudSchema = z.object({
 });
 
 export const projectCrudSchema = z.object({
-  location_id: z.string().uuid('Please select a valid location'),
+  location_id: uuidSchema('Please select a valid location'),
   name: z.string().min(2, 'Name must be at least 2 characters').max(150),
   slug: z.string().min(2, 'Slug must be at least 2 characters').max(150),
   short_description: z.string().max(500).optional().or(z.literal('')),
@@ -43,7 +45,7 @@ export const projectCrudSchema = z.object({
 });
 
 export const propertyConfigCrudSchema = z.object({
-  project_id: z.string().uuid('Please select a valid project'),
+  project_id: uuidSchema('Please select a valid project'),
   name: z.string().min(2, 'Name is required'),
   slug: z.string().min(2, 'Slug is required'),
   property_type: z.enum(['Plot', 'Villa', 'Apartment', 'Commercial']),
@@ -77,7 +79,7 @@ export const amenityCrudSchema = z.object({
 
 
 export const landmarkCrudSchema = z.object({
-  project_id: z.string().uuid('Project is required'),
+  project_id: uuidSchema('Project is required'),
   name: z.string().min(2, 'Landmark name is required'),
   distance_label: z.string().min(1, 'Distance label required (e.g. 5 Mins)'),
   travel_time_label: z.string().optional().or(z.literal('')),
@@ -93,8 +95,8 @@ export const galleryCrudSchema = z.object({
   thumbnail_path: z.string().optional().or(z.literal('')),
   alt_text: z.string().optional().or(z.literal('')),
   caption: z.string().optional().or(z.literal('')),
-  project_id: z.string().uuid().optional().or(z.literal('')),
-  location_id: z.string().uuid().optional().or(z.literal('')),
+  project_id: uuidSchema().optional().or(z.literal('')),
+  location_id: uuidSchema().optional().or(z.literal('')),
   category: z.string().default('Overview'),
   video_url: z.string().optional().or(z.literal('')),
   embed_type: z.enum(['supabase', 'youtube', 'instagram']).optional().nullable(),
@@ -105,7 +107,7 @@ export const galleryCrudSchema = z.object({
 
 export const seoMetadataCrudSchema = z.object({
   entity_type: z.string().min(2),
-  entity_id: z.string().uuid().optional().or(z.literal('')).nullable(),
+  entity_id: uuidSchema().optional().or(z.literal('')).nullable(),
   meta_title: z.string().min(5, 'Meta title required'),
   meta_description: z.string().min(10, 'Meta description required'),
   meta_keywords: z.string().optional().or(z.literal('')),

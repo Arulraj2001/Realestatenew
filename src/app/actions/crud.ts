@@ -314,6 +314,10 @@ export async function saveGalleryItemAction(data: Record<string, unknown>, id?: 
       ...validated,
       project_id: validated.project_id || null,
       location_id: validated.location_id || null,
+      media_type: (validated.media_type === 'youtube' || validated.media_type === 'instagram') 
+        ? ('video' as const) 
+        : validated.media_type,
+      embed_type: validated.embed_type || 'supabase',
     };
 
     let query;
@@ -324,13 +328,19 @@ export async function saveGalleryItemAction(data: Record<string, unknown>, id?: 
     }
 
     const { error } = await query;
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      return { success: false, error: error.message };
+    }
 
     revalidatePath('/gallery');
     revalidatePath('/');
     return { success: true };
-  } catch {
-    return { success: false, error: 'Failed to save gallery media item.' };
+  } catch (err: any) {
+    if (err && err.errors && Array.isArray(err.errors)) {
+      const messages = err.errors.map((e: any) => `${e.path.join('.')}: ${e.message}`).join(', ');
+      return { success: false, error: `Validation error: ${messages}` };
+    }
+    return { success: false, error: err?.message || 'Failed to save gallery item.' };
   }
 }
 

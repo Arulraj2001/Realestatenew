@@ -32,7 +32,6 @@ export interface Location {
   short_description: string | null;
   full_description: string | null;
   hero_image_path: string | null;
-  hero_video_path: string | null;
   address: string | null;
   latitude: number | null;
   longitude: number | null;
