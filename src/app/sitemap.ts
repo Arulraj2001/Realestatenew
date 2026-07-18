@@ -35,16 +35,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static routes — always included, hardcoded priority
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${baseUrl}`,                        lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
-    { url: `${baseUrl}/locations`,              lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.9 },
-    { url: `${baseUrl}/projects`,               lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
-    { url: `${baseUrl}/properties`,             lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
-    { url: `${baseUrl}/about-us`,               lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/services`,               lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${baseUrl}/gallery`,                lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
-    { url: `${baseUrl}/contact-us`,             lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${baseUrl}/privacy-policy`,         lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
-    { url: `${baseUrl}/terms-and-conditions`,   lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${baseUrl}`,                                        lastModified: new Date(), changeFrequency: 'daily',   priority: 1.0 },
+    { url: `${baseUrl}/locations`,                              lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.9 },
+    { url: `${baseUrl}/projects`,                               lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${baseUrl}/properties`,                             lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${baseUrl}/plots-for-sale-in-namakkal`,             lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${baseUrl}/dtcp-approved-plots-in-paramathi-velur`, lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${baseUrl}/villas-for-sale-in-namakkal`,            lastModified: new Date(), changeFrequency: 'daily',   priority: 0.9 },
+    { url: `${baseUrl}/about-us`,                               lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/services`,                               lastModified: new Date(), changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${baseUrl}/gallery`,                                lastModified: new Date(), changeFrequency: 'weekly',  priority: 0.7 },
+    { url: `${baseUrl}/contact-us`,                             lastModified: new Date(), changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${baseUrl}/privacy-policy`,                         lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${baseUrl}/terms-and-conditions`,                   lastModified: new Date(), changeFrequency: 'yearly',  priority: 0.3 },
   ];
 
   const [locations, projects, properties, overrides] = await Promise.all([
@@ -94,6 +97,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     )
     .filter(Boolean) as MetadataRoute.Sitemap;
 
+  const hierarchicalProjectRoutes: MetadataRoute.Sitemap = [];
+  for (const proj of projects) {
+    const loc = locations.find((l) => l.id === proj.location_id);
+    if (loc) {
+      const route = applyOverride(
+        proj.id,
+        { changeFrequency: 'daily', priority: 0.9 },
+        new Date(proj.updated_at || proj.created_at),
+        `${baseUrl}/locations/${loc.slug}/${proj.slug}`,
+      );
+      if (route) hierarchicalProjectRoutes.push(route);
+    }
+  }
+
   const propertyRoutes: MetadataRoute.Sitemap = properties
     .map((prop) =>
       applyOverride(
@@ -105,5 +122,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     )
     .filter(Boolean) as MetadataRoute.Sitemap;
 
-  return [...staticRoutes, ...locationRoutes, ...projectRoutes, ...propertyRoutes];
+  return [...staticRoutes, ...locationRoutes, ...projectRoutes, ...hierarchicalProjectRoutes, ...propertyRoutes];
 }
