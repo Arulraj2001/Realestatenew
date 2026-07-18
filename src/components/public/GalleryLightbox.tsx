@@ -39,16 +39,25 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({ items }) => {
         {items.map((item, idx) => {
           const isYouTube = item.media_type === 'youtube' || item.embed_type === 'youtube' || (item.video_url && item.video_url.includes('youtube'));
           const isInstagram = item.media_type === 'instagram' || item.embed_type === 'instagram' || (item.video_url && item.video_url.includes('instagram'));
-          const isVideo = item.media_type === 'video' || item.embed_type === 'supabase';
+          const isVideo = item.media_type === 'video' && !isYouTube && !isInstagram;
 
           const imageSrc = item.thumbnail_path || (isYouTube || isInstagram ? 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80' : item.storage_path_or_url);
 
+          const CardTag = (isInstagram ? 'a' : 'div') as any;
+          const cardProps = isInstagram
+            ? {
+                href: item.video_url || item.storage_path_or_url,
+                target: '_blank',
+                rel: 'noopener noreferrer',
+                className: 'group relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl cursor-pointer hover:border-amber-500/50 transition-all duration-300 block',
+              }
+            : {
+                onClick: () => setSelectedIndex(idx),
+                className: 'group relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl cursor-pointer hover:border-amber-500/50 transition-all duration-300',
+              };
+
           return (
-            <div
-              key={item.id}
-              onClick={() => setSelectedIndex(idx)}
-              className="group relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-xl cursor-pointer hover:border-amber-500/50 transition-all duration-300"
-            >
+            <CardTag key={item.id} {...cardProps}>
               <Image
                 src={imageSrc}
                 alt={item.alt_text || item.title || 'Gallery item'}
@@ -83,7 +92,7 @@ export const GalleryLightbox: React.FC<GalleryLightboxProps> = ({ items }) => {
                   {item.title || 'Township Showcase'}
                 </h3>
               </div>
-            </div>
+            </CardTag>
           );
         })}
       </div>
