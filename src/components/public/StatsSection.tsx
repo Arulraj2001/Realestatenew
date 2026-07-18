@@ -94,11 +94,11 @@ export const StatsSection: React.FC<StatsSectionProps> = ({ stats, isVisible = t
       <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-emerald-500/5 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6">
+        <div className="flex flex-wrap justify-center gap-4 sm:gap-6">
           {list.map((stat, idx) => (
             <div
               key={idx}
-              className="group p-5 bg-slate-950 border border-slate-800 rounded-2xl shadow-lg hover:border-amber-500/40 transition-all duration-300 flex flex-col items-center text-center space-y-2 hover:-translate-y-1"
+              className="group p-5 bg-slate-950 border border-slate-800 rounded-2xl shadow-lg hover:border-amber-500/40 transition-all duration-300 flex flex-col items-center text-center space-y-2 hover:-translate-y-1 w-[calc(50%-0.5rem)] sm:w-44 lg:w-48"
             >
               <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
                 {iconMap[stat.icon || 'Award'] || <Award className="w-5 h-5 text-amber-400" />}
