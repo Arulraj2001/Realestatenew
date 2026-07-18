@@ -136,7 +136,7 @@ export const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testim
 
           <h2 className="font-serif text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
             Stories That{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 underline decoration-amber-500/30 underline-offset-8">
+            <span className="testimonials-title-gradient text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 underline decoration-amber-500/30 underline-offset-8">
               Inspire Confidence
             </span>
           </h2>

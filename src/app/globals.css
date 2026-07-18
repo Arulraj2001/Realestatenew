@@ -271,6 +271,14 @@ body:has(.light-theme) {
 .light-theme :not(footer) [class*="text-amber-300"] {
   color: #1d7b9d !important;
 }
+
+.light-theme .testimonials-title-gradient {
+  background-image: none !important;
+  background-clip: unset !important;
+  -webkit-background-clip: unset !important;
+  color: #33ccff !important;
+  text-decoration-color: rgba(51, 204, 255, 0.3) !important;
+}
 /* Vibrant Emerald Accents */
 .light-theme .text-emerald-400,
 .light-theme .text-emerald-500 {
