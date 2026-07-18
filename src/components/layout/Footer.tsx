@@ -57,9 +57,9 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
   };
 
   return (
-    <footer className="bg-[#091b13] text-slate-300 border-t border-emerald-950 pt-16 pb-24 md:pb-12">
+    <footer className="bg-[#091b13] text-slate-300 border-t border-emerald-950 pt-10 pb-16 md:pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-12 border-b border-emerald-900/40">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 pb-8 border-b border-emerald-900/40">
           {/* Col 1: Brand & Social Links */}
           <div className="space-y-4 lg:col-span-1">
             <div className="flex items-center gap-3">
@@ -79,13 +79,13 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
                 </span>
               </div>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-sm text-slate-400 leading-relaxed">
               Premier real estate developer in Tamil Nadu specializing in DTCP approved villa plots and high-appreciation residential gated layouts.
             </p>
 
             {/* Social Media Links */}
             <div className="pt-2">
-              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Connect With Us</p>
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Connect With Us</p>
               <div className="flex items-center gap-3">
                 {instaUrl && (
                   <a
@@ -126,10 +126,10 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
 
           {/* Col 2: Quick Navigation */}
           <div>
-            <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
+            <h4 className="font-serif text-base font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
               Quick Navigation
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
+            <ul className="space-y-2.5 text-sm text-slate-400">
               {[
                 { name: 'Home', path: '/' },
                 { name: 'Locations', path: '/locations' },
@@ -154,10 +154,10 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
 
           {/* Col 3: Prime Locations */}
           <div>
-            <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
+            <h4 className="font-serif text-base font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
               Prime Locations
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400">
+            <ul className="space-y-2.5 text-sm text-slate-400">
               {primeLocations.map((loc) => (
                 <li key={loc.slug}>
                   {loc.status === 'current' ? (
@@ -174,10 +174,10 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
 
           {/* Col 4: Get in Touch */}
           <div>
-            <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
+            <h4 className="font-serif text-base font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
               Get in Touch
             </h4>
-            <div className="space-y-3 text-xs text-slate-400">
+            <div className="space-y-3 text-sm text-slate-400">
               <p className="flex items-start gap-2">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <span className="break-all">{siteConfig.contact.email}</span>
@@ -195,18 +195,18 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
 
           {/* Col 5: Next to Get in Touch — Quick Contact Form */}
           <div>
-            <h4 className="font-serif text-sm font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
+            <h4 className="font-serif text-base font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-amber-500 pl-3">
               Contact Us
             </h4>
 
             {isSubmitted ? (
               <div className="p-3 bg-emerald-950/60 border border-emerald-700/60 rounded-xl text-center space-y-1">
                 <CheckCircle2 className="w-5 h-5 text-emerald-400 mx-auto" />
-                <p className="text-xs font-bold text-white">Message Received!</p>
-                <p className="text-[10px] text-slate-300">We will call you back shortly.</p>
+                <p className="text-sm font-bold text-white">Message Received!</p>
+                <p className="text-xs text-slate-300">We will call you back shortly.</p>
                 <button
                   onClick={() => setIsSubmitted(false)}
-                  className="text-[10px] text-amber-400 hover:underline pt-1 block mx-auto font-semibold"
+                  className="text-xs text-amber-400 hover:underline pt-1 block mx-auto font-semibold"
                 >
                   Send Another
                 </button>
@@ -220,7 +220,7 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
                     placeholder="Full Name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-3 py-2 text-xs footer-input-l-shape"
+                    className="w-full px-3 py-2 text-sm footer-input-l-shape"
                   />
                 </div>
                 <div>
@@ -230,13 +230,13 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
                     placeholder="Mobile No"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full px-3 py-2 text-xs footer-input-l-shape"
+                    className="w-full px-3 py-2 text-sm footer-input-l-shape"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-2 px-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-sm rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-98 disabled:opacity-50 cursor-pointer"
                 >
                   <Send className="w-3 h-3" />
                   <span>{isSubmitting ? 'Sending...' : 'Submit'}</span>
@@ -247,7 +247,7 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
         </div>
 
         {/* Legal Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
           <div className="flex gap-4">
             <Link href="/privacy-policy" className="hover:text-slate-300">Privacy Policy</Link>
