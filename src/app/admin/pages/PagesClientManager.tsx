@@ -111,12 +111,37 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       { label: 'Villas Sold', value: '15+', icon: 'Home' }
     ];
 
+    const defaultWhyChooseUs = [
+      {
+        title: 'Clear Documentation',
+        description: 'We explain the available property documents clearly before booking.',
+      },
+      {
+        title: 'Good Locations',
+        description: 'Our projects are placed near useful roads, schools, hospitals and growing areas.',
+      },
+      {
+        title: 'Site-Visit Support',
+        description: 'Our team helps you visit and compare the projects before deciding.',
+      },
+      {
+        title: 'Loan Guidance',
+        description: 'We guide eligible buyers in understanding available home-loan options.',
+      }
+    ];
+
     const resolvedStatsList = (Array.isArray(c.stats_list) && c.stats_list.length > 0)
       ? c.stats_list
       : key === 'home'
       ? defaultHomeStats
       : key === 'about'
       ? defaultAboutStats
+      : [];
+
+    const resolvedWhyChooseUs = (Array.isArray(c.why_choose_us_items) && c.why_choose_us_items.length > 0)
+      ? c.why_choose_us_items
+      : key === 'home'
+      ? defaultWhyChooseUs
       : [];
 
     setSelectedKey(key);
@@ -143,7 +168,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       intro_content: String(c.intro_content || ''),
       stats_visible: c.stats_visible !== false,
       stats_list: resolvedStatsList,
-      why_choose_us_items: (Array.isArray(c.why_choose_us_items) && c.why_choose_us_items.length > 0) ? c.why_choose_us_items : [],
+      why_choose_us_items: resolvedWhyChooseUs,
       gallery_heading: String(c.gallery_heading || 'See Our Projects'),
       gallery_description: String(c.gallery_description || 'View real site photos, villa designs, roads, layouts and construction updates from our projects.'),
       gallery_cta: String(c.gallery_cta || 'View Gallery'),
