@@ -188,6 +188,11 @@ export interface SEOMetadata {
   json_ld_override: Json | null;
   sitemap_priority: number | null;
   sitemap_change_frequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never' | null;
+  meta_keywords?: string | null;
+  robots_directives?: string | null;
+  og_type?: string | null;
+  twitter_card?: string | null;
+  focus_keyword?: string | null;
   created_at: string;
   updated_at: string;
 }

@@ -121,5 +121,10 @@ export const seoMetadataCrudSchema = z.object({
     .enum(['always', 'hourly', 'daily', 'weekly', 'monthly', 'yearly', 'never'])
     .nullable()
     .optional(),
+  json_ld_override: z.any().optional().nullable(),
+  robots_directives: z.string().optional().nullable(),
+  og_type: z.string().optional().nullable(),
+  twitter_card: z.string().optional().nullable(),
+  focus_keyword: z.string().optional().nullable(),
 });
 

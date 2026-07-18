@@ -281,7 +281,12 @@ CREATE TABLE IF NOT EXISTS public.seo_metadata (
 
 ALTER TABLE public.seo_metadata
   ADD COLUMN IF NOT EXISTS sitemap_priority DECIMAL(3,1) DEFAULT NULL CHECK (sitemap_priority IS NULL OR (sitemap_priority >= 0.0 AND sitemap_priority <= 1.0)),
-  ADD COLUMN IF NOT EXISTS sitemap_change_frequency VARCHAR(10) DEFAULT NULL CHECK (sitemap_change_frequency IS NULL OR sitemap_change_frequency IN ('always','hourly','daily','weekly','monthly','yearly','never'));
+  ADD COLUMN IF NOT EXISTS sitemap_change_frequency VARCHAR(10) DEFAULT NULL CHECK (sitemap_change_frequency IS NULL OR sitemap_change_frequency IN ('always','hourly','daily','weekly','monthly','yearly','never')),
+  ADD COLUMN IF NOT EXISTS meta_keywords TEXT,
+  ADD COLUMN IF NOT EXISTS robots_directives TEXT DEFAULT 'index, follow',
+  ADD COLUMN IF NOT EXISTS og_type TEXT DEFAULT 'website',
+  ADD COLUMN IF NOT EXISTS twitter_card TEXT DEFAULT 'summary_large_image',
+  ADD COLUMN IF NOT EXISTS focus_keyword TEXT;
 
 DROP TRIGGER IF EXISTS update_seo_metadata_updated_at ON public.seo_metadata;
 CREATE TRIGGER update_seo_metadata_updated_at

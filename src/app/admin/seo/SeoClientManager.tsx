@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Search, Plus, Edit3, Trash2, Eye, EyeOff, Globe, ExternalLink, Link2,
-  Map, Bot, BarChart3,
+  Map, Bot, BarChart3, CheckCircle2, AlertTriangle, Info,
 } from 'lucide-react';
 import { SEOMetadata } from '@/types/database';
 import { Button } from '@/components/ui/button';
@@ -95,10 +95,181 @@ const defaultForm = {
   open_graph_title: '', open_graph_description: '', open_graph_image_path: '',
   index_enabled: true, json_ld_override: '',
   sitemap_priority: '', sitemap_change_frequency: '',
+  meta_keywords: '',
+  robots_directives: 'index, follow',
+  og_type: 'website',
+  twitter_card: 'summary_large_image',
+  focus_keyword: '',
 };
 
 // ─── Tab type ─────────────────────────────────────────────────────────────────
 type Tab = 'seo' | 'sitemap' | 'robots';
+
+const SCHEMA_TEMPLATES = [
+  {
+    name: '🏢 Real Estate Agency / Agent',
+    template: {
+      "@context": "https://schema.org",
+      "@type": "RealEstateAgent",
+      "name": "Your Choice Properties",
+      "image": "https://yourchoiceproperties.in/logo.png",
+      "telephone": "+91 98427 22123",
+      "email": "info@yourchoiceproperties.in",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Main Road",
+        "addressLocality": "Namakkal",
+        "addressRegion": "TN",
+        "postalCode": "637001",
+        "addressCountry": "IN"
+      }
+    }
+  },
+  {
+    name: '🏘️ Residential Community (Gated Community)',
+    template: {
+      "@context": "https://schema.org",
+      "@type": "ResidencesConsideration",
+      "name": "Kongu Garden Gated Community",
+      "description": "Premium residential gated layout plots in Paramathi Velur",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Paramathi Velur",
+        "addressCountry": "IN"
+      }
+    }
+  },
+  {
+    name: '❓ FAQ Page Structured Data',
+    template: {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Are your plots DTCP approved?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, all our residential layouts are DTCP-approved gated communities with clear title documents."
+          }
+        }
+      ]
+    }
+  },
+  {
+    name: '🍞 Breadcrumb navigation list',
+    template: {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://yourchoiceproperties.in/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Properties",
+          "item": "https://yourchoiceproperties.in/properties"
+        }
+      ]
+    }
+  }
+];
+
+interface SeoCheckResult {
+  label: string;
+  passed: boolean;
+  message: string;
+  severity: 'error' | 'warning' | 'info' | 'success';
+}
+
+function auditSeoState(formData: any): { score: number; checks: SeoCheckResult[] } {
+  let score = 100;
+  const checks: SeoCheckResult[] = [];
+  const focus = formData.focus_keyword.trim().toLowerCase();
+
+  // 1. Title Check
+  const titleLen = formData.meta_title.length;
+  if (titleLen === 0) {
+    score -= 25;
+    checks.push({ label: 'Meta Title', passed: false, message: 'Meta title is required.', severity: 'error' });
+  } else if (titleLen > 60) {
+    score -= 10;
+    checks.push({ label: 'Meta Title Length', passed: false, message: 'Too long (over 60 chars) - will truncate.', severity: 'warning' });
+  } else if (titleLen < 35) {
+    score -= 8;
+    checks.push({ label: 'Meta Title Length', passed: false, message: 'Too short (under 35 chars) - under-optimized.', severity: 'warning' });
+  } else {
+    checks.push({ label: 'Meta Title Length', passed: true, message: 'Optimal title length (35-60 chars).', severity: 'success' });
+  }
+
+  // 2. Description Check
+  const descLen = formData.meta_description.length;
+  if (descLen === 0) {
+    score -= 25;
+    checks.push({ label: 'Meta Description', passed: false, message: 'Meta description is required.', severity: 'error' });
+  } else if (descLen > 160) {
+    score -= 10;
+    checks.push({ label: 'Meta Description Length', passed: false, message: 'Too long (over 160 chars) - will truncate.', severity: 'warning' });
+  } else if (descLen < 100) {
+    score -= 8;
+    checks.push({ label: 'Meta Description Length', passed: false, message: 'Too short (under 100 chars) - under-optimized.', severity: 'warning' });
+  } else {
+    checks.push({ label: 'Meta Description Length', passed: true, message: 'Optimal description length (100-160 chars).', severity: 'success' });
+  }
+
+  // 3. Focus Keyword checks
+  if (!focus) {
+    score -= 10;
+    checks.push({ label: 'Focus Keyword', passed: false, message: 'Enter a target keyword to audit content density.', severity: 'info' });
+  } else {
+    // Focus Keyword in Title
+    const hasInTitle = formData.meta_title.toLowerCase().includes(focus);
+    if (!hasInTitle) {
+      score -= 15;
+      checks.push({ label: 'Keyword in Title', passed: false, message: `Focus keyword "${formData.focus_keyword}" not found in title.`, severity: 'warning' });
+    } else {
+      checks.push({ label: 'Keyword in Title', passed: true, message: 'Focus keyword found in Meta Title!', severity: 'success' });
+    }
+
+    // Focus Keyword in Description
+    const hasInDesc = formData.meta_description.toLowerCase().includes(focus);
+    if (!hasInDesc) {
+      score -= 15;
+      checks.push({ label: 'Keyword in Description', passed: false, message: `Focus keyword "${formData.focus_keyword}" not found in description.`, severity: 'warning' });
+    } else {
+      checks.push({ label: 'Keyword in Description', passed: true, message: 'Focus keyword found in Meta Description!', severity: 'success' });
+    }
+  }
+
+  // 4. Canonical URL
+  if (!formData.canonical_url.trim()) {
+    score -= 5;
+    checks.push({ label: 'Canonical URL', passed: false, message: 'Missing canonical URL link.', severity: 'warning' });
+  } else {
+    checks.push({ label: 'Canonical URL', passed: true, message: 'Canonical link defined.', severity: 'success' });
+  }
+
+  // 5. Open Graph Image
+  if (!formData.open_graph_image_path.trim()) {
+    score -= 10;
+    checks.push({ label: 'Social OG Image', passed: false, message: 'Missing OG sharing image. Default fallback will be used.', severity: 'warning' });
+  } else {
+    checks.push({ label: 'Social OG Image', passed: true, message: 'Custom OG sharing image configured.', severity: 'success' });
+  }
+
+  // 6. JSON-LD Structured Data
+  if (!formData.json_ld_override.trim()) {
+    checks.push({ label: 'Structured Data', passed: true, message: 'No custom JSON-LD override (fallback page schema used).', severity: 'info' });
+  } else {
+    checks.push({ label: 'Structured Data', passed: true, message: 'Custom JSON-LD schema defined.', severity: 'success' });
+  }
+
+  return { score: Math.max(0, score), checks };
+}
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
@@ -172,6 +343,11 @@ export const SeoClientManager: React.FC<Props> = ({
       json_ld_override: rec.json_ld_override ? JSON.stringify(rec.json_ld_override, null, 2) : '',
       sitemap_priority: rec.sitemap_priority != null ? String(rec.sitemap_priority) : '',
       sitemap_change_frequency: rec.sitemap_change_frequency || '',
+      meta_keywords: rec.meta_keywords || '',
+      robots_directives: rec.robots_directives || 'index, follow',
+      og_type: rec.og_type || 'website',
+      twitter_card: rec.twitter_card || 'summary_large_image',
+      focus_keyword: rec.focus_keyword || '',
     });
     setJsonError('');
     setIsDialogOpen(true);
@@ -228,6 +404,8 @@ export const SeoClientManager: React.FC<Props> = ({
 
   const previewUrl = formData.canonical_url ||
     (selectedEntity ? `${siteConfig.domain}${entityTypeConfig.urlPrefix}${selectedEntity.slug}` : siteConfig.domain);
+
+  const { score, checks } = auditSeoState(formData);
 
   // ─── Tab bar ───────────────────────────────────────────────────────────────
 
@@ -537,138 +715,292 @@ export const SeoClientManager: React.FC<Props> = ({
       {/* ── Create / Edit Dialog ── */}
       <Dialog isOpen={isDialogOpen} onClose={() => setIsDialogOpen(false)}
         title={editingRecord ? 'Edit SEO Entry' : 'Add SEO Entry'}
-        className="max-w-3xl"
+        className="max-w-5xl"
       >
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <GooglePreview
-            title={formData.open_graph_title || formData.meta_title}
-            description={formData.open_graph_description || formData.meta_description}
-            url={previewUrl}
-          />
-
-          {/* Step 1: Entity */}
-          <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 space-y-3">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">1 · Target Entity</p>
-            <div className="grid grid-cols-2 gap-2">
-              {ENTITY_TYPES.map((et) => (
-                <button key={et.value} type="button" onClick={() => handleEntityTypeChange(et.value)}
-                  className={`text-left text-xs px-3 py-2 rounded-lg border transition-all cursor-pointer ${
-                    formData.entity_type === et.value
-                      ? 'border-amber-500 bg-amber-500/10 text-amber-300'
-                      : 'border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-500'
-                  }`}>{et.label}</button>
-              ))}
-            </div>
-            {entityTypeConfig.hasEntities && (
-              <div>
-                <Label>
-                  {formData.entity_type === 'location' ? 'Select Location'
-                    : formData.entity_type === 'project' ? 'Select Project'
-                    : 'Select Property'}
-                </Label>
-                <select value={formData.entity_id} onChange={(e) => patch('entity_id', e.target.value)} required
-                  className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-colors">
-                  <option value="" disabled>— pick one —</option>
-                  {entityOptions.map((opt) => (
-                    <option key={opt.id} value={opt.id} className="bg-slate-900">
-                      {opt.name}{opt.projectName ? ` — ${opt.projectName}` : ''}
-                    </option>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Left Column: Input Forms */}
+            <div className="lg:col-span-7 space-y-4 overflow-y-auto max-h-[70vh] pr-3">
+              {/* Step 1: Target Entity */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-3">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">1 · Target Entity</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {ENTITY_TYPES.map((et) => (
+                    <button key={et.value} type="button" onClick={() => handleEntityTypeChange(et.value)}
+                      className={`text-left text-xs px-3 py-2 rounded-lg border transition-all cursor-pointer ${
+                        formData.entity_type === et.value
+                          ? 'border-amber-500 bg-amber-500/10 text-amber-300'
+                          : 'border-slate-700 bg-slate-900 text-slate-400 hover:border-slate-500'
+                      }`}>{et.label}</button>
                   ))}
-                </select>
-                {selectedEntity && (
-                  <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-blue-400">
-                    <ExternalLink className="w-3 h-3 shrink-0" />
-                    {siteConfig.domain}{entityTypeConfig.urlPrefix}{selectedEntity.slug}
-                  </p>
+                </div>
+                {entityTypeConfig.hasEntities && (
+                  <div>
+                    <Label required>
+                      {formData.entity_type === 'location' ? 'Select Location'
+                        : formData.entity_type === 'project' ? 'Select Project'
+                        : 'Select Property'}
+                    </Label>
+                    <select value={formData.entity_id} onChange={(e) => patch('entity_id', e.target.value)} required
+                      className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors">
+                      <option value="" disabled>— pick one —</option>
+                      {entityOptions.map((opt) => (
+                        <option key={opt.id} value={opt.id} className="bg-slate-900">
+                          {opt.name}{opt.projectName ? ` — ${opt.projectName}` : ''}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedEntity && (
+                      <p className="mt-1.5 flex items-center gap-1.5 text-[11px] text-blue-400">
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                        {siteConfig.domain}{entityTypeConfig.urlPrefix}{selectedEntity.slug}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
 
-          {/* Step 2: Meta */}
-          <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 space-y-4">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">2 · Meta Tags</p>
-            <div>
-              <div className="flex items-center mb-1"><Label required>Meta Title</Label><CharCounter value={formData.meta_title} max={60} /></div>
-              <Input required value={formData.meta_title} onChange={(e) => patch('meta_title', e.target.value)} placeholder="Page Title | Your Choice Properties" />
-              {formData.meta_title.length > 60 && <p className="text-xs text-red-400 mt-1">⚠ Exceeds 60 chars — will be truncated</p>}
-            </div>
-            <div>
-              <div className="flex items-center mb-1"><Label required>Meta Description</Label><CharCounter value={formData.meta_description} max={160} /></div>
-              <Textarea required rows={3} value={formData.meta_description} onChange={(e) => patch('meta_description', e.target.value)} placeholder="Enter page meta description…" />
-              {formData.meta_description.length > 160 && <p className="text-xs text-red-400 mt-1">⚠ Exceeds 160 chars — will be truncated</p>}
-            </div>
-            <div>
-              <Label>Canonical URL</Label>
-              <Input value={formData.canonical_url} onChange={(e) => patch('canonical_url', e.target.value)} placeholder="https://yoursite.com/page" />
-            </div>
-          </div>
+              {/* Step 2: Target Keywords */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-4">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">2 · Target Focus Keywords</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <Label>Primary Focus Keyword</Label>
+                    <Input
+                      value={formData.focus_keyword}
+                      onChange={(e) => patch('focus_keyword', e.target.value)}
+                      placeholder="e.g., plots in namakkal"
+                    />
+                  </div>
+                  <div>
+                    <Label>Meta Keywords (comma-separated)</Label>
+                    <Input
+                      value={formData.meta_keywords}
+                      onChange={(e) => patch('meta_keywords', e.target.value)}
+                      placeholder="plots, villas, namakkal, properties"
+                    />
+                  </div>
+                </div>
+              </div>
 
-          {/* Step 3: OG */}
-          <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 space-y-4">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">3 · OpenGraph / Social Sharing</p>
-            <div>
-              <div className="flex items-center mb-1"><Label>OG Title</Label><CharCounter value={formData.open_graph_title} max={60} /></div>
-              <Input value={formData.open_graph_title} onChange={(e) => patch('open_graph_title', e.target.value)} placeholder="Defaults to meta title" />
-            </div>
-            <div>
-              <div className="flex items-center mb-1"><Label>OG Description</Label><CharCounter value={formData.open_graph_description} max={160} /></div>
-              <Textarea rows={2} value={formData.open_graph_description} onChange={(e) => patch('open_graph_description', e.target.value)} placeholder="Defaults to meta description" />
-            </div>
-            <div>
-              <Label>OG Image Path / URL</Label>
-              <Input value={formData.open_graph_image_path} onChange={(e) => patch('open_graph_image_path', e.target.value)} placeholder="/og-image.jpg or full URL" />
-              <p className="text-[11px] text-slate-500 mt-1">Recommended: 1200×630 px</p>
-            </div>
-          </div>
+              {/* Step 3: Meta Tags */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-4">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">3 · HTML Meta Tags</p>
+                <div>
+                  <div className="flex items-center mb-1"><Label required>Meta Title</Label><CharCounter value={formData.meta_title} max={60} /></div>
+                  <Input required value={formData.meta_title} onChange={(e) => patch('meta_title', e.target.value)} placeholder="Page Title | Your Choice Properties" />
+                  {formData.meta_title.length > 60 && <p className="text-xs text-red-400 mt-1">Meta title exceeds 60 characters (truncates in SERPs)</p>}
+                </div>
+                <div>
+                  <div className="flex items-center mb-1"><Label required>Meta Description</Label><CharCounter value={formData.meta_description} max={160} /></div>
+                  <Textarea required rows={3} value={formData.meta_description} onChange={(e) => patch('meta_description', e.target.value)} placeholder="Enter page meta description…" />
+                  {formData.meta_description.length > 160 && <p className="text-xs text-red-400 mt-1">Meta description exceeds 160 characters (truncates in SERPs)</p>}
+                </div>
+                <div>
+                  <Label>Canonical URL</Label>
+                  <Input value={formData.canonical_url} onChange={(e) => patch('canonical_url', e.target.value)} placeholder="https://yoursite.com/page" />
+                </div>
+              </div>
 
-          {/* Step 4: Sitemap */}
-          <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 space-y-4">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">4 · Sitemap Settings</p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Priority Override</Label>
-                <select value={formData.sitemap_priority} onChange={(e) => patch('sitemap_priority', e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-sm focus:outline-none focus:border-amber-500 transition-colors">
-                  <option value="">Use default</option>
-                  {PRIORITY_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value} className="bg-slate-900">{o.label}</option>
+              {/* Step 4: OpenGraph / Social Sharing */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-4">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">4 · Social Graphs (OG & Twitter)</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <Label>OG Share Card Type</Label>
+                    <select value={formData.og_type} onChange={(e) => patch('og_type', e.target.value)}
+                      className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors">
+                      <option value="website">website (standard pages)</option>
+                      <option value="article">article (blogs, updates)</option>
+                      <option value="product">product (configs, plots)</option>
+                      <option value="realestate.property">realestate.property (villas)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Twitter Card Layout</Label>
+                    <select value={formData.twitter_card} onChange={(e) => patch('twitter_card', e.target.value)}
+                      className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors">
+                      <option value="summary">Summary Card (small thumbnail)</option>
+                      <option value="summary_large_image">Summary Large Image (rich banner)</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center mb-1"><Label>OG Title</Label><CharCounter value={formData.open_graph_title} max={60} /></div>
+                  <Input value={formData.open_graph_title} onChange={(e) => patch('open_graph_title', e.target.value)} placeholder="Defaults to meta title" />
+                </div>
+                <div>
+                  <div className="flex items-center mb-1"><Label>OG Description</Label><CharCounter value={formData.open_graph_description} max={160} /></div>
+                  <Textarea rows={2} value={formData.open_graph_description} onChange={(e) => patch('open_graph_description', e.target.value)} placeholder="Defaults to meta description" />
+                </div>
+                <div>
+                  <Label>OG Image Path / URL</Label>
+                  <Input value={formData.open_graph_image_path} onChange={(e) => patch('open_graph_image_path', e.target.value)} placeholder="/og-image.jpg or full URL" />
+                  <p className="text-[11px] text-slate-500 mt-1">Recommended: 1200×630 pixels</p>
+                </div>
+              </div>
+
+              {/* Step 5: Sitemap Settings */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-4">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">5 · XML Sitemap Settings</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Priority Override</Label>
+                    <select value={formData.sitemap_priority} onChange={(e) => patch('sitemap_priority', e.target.value)}
+                      className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors">
+                      <option value="">Use default</option>
+                      {PRIORITY_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value} className="bg-slate-900">{o.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <Label>Change Frequency Override</Label>
+                    <select value={formData.sitemap_change_frequency} onChange={(e) => patch('sitemap_change_frequency', e.target.value)}
+                      className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors">
+                      <option value="">Use default</option>
+                      {CHANGE_FREQ_OPTIONS.map((f) => (
+                        <option key={f} value={f} className="bg-slate-900 capitalize">{f}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 6: Advanced Robots Rules */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-3">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">6 · Search Engine Robots Meta Rules</p>
+                <div className="grid grid-cols-2 gap-3 p-3 bg-slate-900 rounded-lg border border-slate-800">
+                  {[
+                    { value: 'noindex', label: 'No-Index (Hide from Google Search)' },
+                    { value: 'nofollow', label: 'No-Follow (Do not trace links)' },
+                    { value: 'noarchive', label: 'No-Archive (Prevent cached pages)' },
+                    { value: 'nosnippet', label: 'No-Snippet (Hide search preview description)' },
+                  ].map((directive) => {
+                    const isChecked = formData.robots_directives.includes(directive.value);
+                    return (
+                      <label key={directive.value} className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) => {
+                            const directivesArray = formData.robots_directives
+                              .split(',')
+                              .map((s) => s.trim())
+                              .filter(Boolean);
+                            let updated;
+                            if (e.target.checked) {
+                              updated = [...directivesArray, directive.value];
+                            } else {
+                              updated = directivesArray.filter((d) => d !== directive.value);
+                            }
+                            if (e.target.checked && directive.value === 'noindex') {
+                              updated = updated.filter((d) => d !== 'index');
+                            }
+                            if (e.target.checked && directive.value === 'nofollow') {
+                              updated = updated.filter((d) => d !== 'follow');
+                            }
+                            if (updated.length === 0) updated = ['index', 'follow'];
+                            patch('robots_directives', updated.join(', '));
+                          }}
+                          className="rounded border-slate-800 bg-slate-950 text-amber-500 focus:ring-amber-500"
+                        />
+                        <span>{directive.label}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Step 7: Structured Data (JSON-LD) with templates selector */}
+              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 space-y-4">
+                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">7 · Structured Schema (JSON-LD)</p>
+                <div>
+                  <Label>Schema Boilerplate Templates</Label>
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      const selected = SCHEMA_TEMPLATES.find((t) => t.name === e.target.value);
+                      if (selected) {
+                        patch('json_ld_override', JSON.stringify(selected.template, null, 2));
+                      }
+                    }}
+                    className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-xs focus:outline-none focus:border-amber-500 transition-colors"
+                  >
+                    <option value="">— pick schema layout to auto-fill —</option>
+                    {SCHEMA_TEMPLATES.map((t) => (
+                      <option key={t.name} value={t.name}>{t.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label>JSON-LD Structured Data Code (optional)</Label>
+                  <Textarea rows={5} value={formData.json_ld_override}
+                    onChange={(e) => { patch('json_ld_override', e.target.value); setJsonError(''); }}
+                    placeholder={'{\n  "@context": "https://schema.org",\n  "@type": "WebPage"\n}'} className="font-mono text-xs" />
+                  {jsonError && <p className="text-xs text-red-400 mt-1">⚠ {jsonError}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: SEO Previews & Live Score Checks */}
+            <div className="lg:col-span-5 space-y-4">
+              <GooglePreview
+                title={formData.open_graph_title || formData.meta_title}
+                description={formData.open_graph_description || formData.meta_description}
+                url={previewUrl}
+              />
+
+              <div className="rounded-xl border border-slate-800 bg-slate-950 p-4 space-y-4 shadow-lg">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                  <span className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <BarChart3 className="w-3.5 h-3.5 text-amber-500" /> Live SEO Audit Score
+                  </span>
+                  <span className={`text-sm font-extrabold font-mono px-2 py-0.5 rounded-full ${
+                    score >= 80 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                    : score >= 50 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                    : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                  }`}>
+                    {score}/100
+                  </span>
+                </div>
+
+                {/* Score progress bar */}
+                <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                  <div className={`h-full transition-all duration-300 ${
+                    score >= 80 ? 'bg-emerald-500'
+                    : score >= 50 ? 'bg-amber-500'
+                    : 'bg-red-500'
+                  }`} style={{ width: `${score}%` }}></div>
+                </div>
+
+                {/* Checks Checklist */}
+                <div className="space-y-3 max-h-[35vh] overflow-y-auto pr-1">
+                  {checks.map((c, i) => (
+                    <div key={i} className="flex items-start gap-2 text-xs">
+                      <span className="mt-0.5 shrink-0">
+                        {c.passed ? (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                        ) : c.severity === 'error' ? (
+                          <AlertTriangle className="w-4 h-4 text-red-500" />
+                        ) : c.severity === 'info' ? (
+                          <Info className="w-4 h-4 text-blue-400" />
+                        ) : (
+                          <AlertTriangle className="w-4 h-4 text-amber-500" />
+                        )}
+                      </span>
+                      <div>
+                        <span className="font-semibold text-slate-200 block leading-tight">{c.label}</span>
+                        <span className="text-[10px] text-slate-400 leading-normal">{c.message}</span>
+                      </div>
+                    </div>
                   ))}
-                </select>
-              </div>
-              <div>
-                <Label>Change Frequency Override</Label>
-                <select value={formData.sitemap_change_frequency} onChange={(e) => patch('sitemap_change_frequency', e.target.value)}
-                  className="w-full mt-1 px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-lg text-slate-100 text-sm focus:outline-none focus:border-amber-500 transition-colors">
-                  <option value="">Use default</option>
-                  {CHANGE_FREQ_OPTIONS.map((f) => (
-                    <option key={f} value={f} className="bg-slate-900 capitalize">{f}</option>
-                  ))}
-                </select>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Step 5: Advanced */}
-          <div className="rounded-xl border border-slate-700 bg-slate-950/60 p-4 space-y-4">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">5 · Advanced</p>
-            <div>
-              <Label>JSON-LD Structured Data (optional)</Label>
-              <Textarea rows={5} value={formData.json_ld_override}
-                onChange={(e) => { patch('json_ld_override', e.target.value); setJsonError(''); }}
-                placeholder={'{\n  "@context": "https://schema.org",\n  "@type": "WebPage"\n}'} className="font-mono text-xs" />
-              {jsonError && <p className="text-xs text-red-400 mt-1">⚠ {jsonError}</p>}
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-200">Search Engine Indexing</p>
-                <p className="text-xs text-slate-500">Off = noindex/nofollow + excluded from sitemap</p>
-              </div>
-              <Toggle checked={formData.index_enabled} onChange={(v) => patch('index_enabled', v)} />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-3 pt-2 border-t border-slate-800">
+          <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
             <Button type="button" variant="outline" size="sm" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
             <Button type="submit" variant="gold" size="md" isLoading={isSaving}>
               {editingRecord ? 'Update SEO Record' : 'Create SEO Record'}
