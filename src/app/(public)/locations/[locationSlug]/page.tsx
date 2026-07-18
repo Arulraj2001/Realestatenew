@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, ChevronRight, Compass, ShieldCheck } from 'lucide-react';
-import { getLocationBySlug, getPublishedProjects, getPublishedConfigurations, getPublishedLocations } from '@/lib/data';
+import { getLocationBySlug, getPublishedProjects, getPublishedConfigurations, getPublishedLocations, getLocationLandmarks } from '@/lib/data';
 import { getActiveAmenities } from '@/lib/data/amenities';
 import { siteConfig } from '@/config/site';
 import { getSeoOverride, buildMetadataFromOverride, getLocationJsonLd, resolveJsonLd } from '@/lib/seo/metadata';
@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { FeaturedProjectsSection } from '@/components/public/FeaturedProjectsSection';
 import { SiteVisitCTASection } from '@/components/public/SiteVisitCTASection';
 import { LocationAmenities } from '@/components/public/LocationAmenities';
+import { ProjectLandmarksPopup } from '@/components/public/ProjectLandmarksPopup';
 
 export interface LocationDetailPageProps {
   params: Promise<{
@@ -54,12 +55,15 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
     notFound();
   }
 
-  // Fetch projects, configurations, amenities, and SEO override for this location
-  const [projects, configurations, seoOverride, allAmenities] = await Promise.all([
-    getPublishedProjects({ locationId: location.id }),
+  const projects = await getPublishedProjects({ locationId: location.id });
+  const projectIds = projects.map((p) => p.id);
+
+  // Fetch projects, configurations, amenities, landmarks, and SEO override for this location
+  const [configurations, seoOverride, allAmenities, landmarks] = await Promise.all([
     getPublishedConfigurations({ locationId: location.id }),
     getSeoOverride('location', location.id),
     getActiveAmenities(),
+    getLocationLandmarks(projectIds),
   ]);
 
   const fallbackImage =
@@ -123,6 +127,13 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
         {/* Township & Villa Amenities Section */}
         <LocationAmenities amenities={allAmenities} />
 
+        {/* Landmarks Section */}
+        {landmarks.length > 0 && (
+          <div className="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ProjectLandmarksPopup landmarks={landmarks} projectName={location.name} />
+          </div>
+        )}
+
         {/* Configurations Breakdown */}
         {configurations.length > 0 && (
           <section className="py-10 bg-slate-950 border-t border-slate-800">
@@ -163,7 +174,7 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
               <h2 className="font-serif text-2xl font-bold text-white flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-amber-400" />
-                Location & Map Accessibility
+                Location &amp; Map Accessibility
               </h2>
               <div className="w-full aspect-[21/9] rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
                 <iframe

@@ -1771,3 +1771,73 @@ body:has(.light-theme) {
   color: #F8F0E5 !important; /* Cream icon */
 }
 
+/* ==============================================================
+   ADMIN & DIALOG FORM CONTROLS & DROPDOWN SELECT STYLING
+   ============================================================== */
+
+/* Native Select & Option High Contrast Dropdowns */
+select {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%94a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+  background-position: right 0.75rem center !important;
+  background-repeat: no-repeat !important;
+  background-size: 1.25em 1.25em !important;
+  padding-right: 2.5rem !important;
+}
+
+select option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  padding: 8px 12px !important;
+}
+
+select option:hover,
+select option:focus,
+select option:checked {
+  background-color: #1e293b !important;
+  color: #fbbf24 !important;
+}
+
+/* Light theme select overrides */
+.light-theme select {
+  background-color: #ffffff !important;
+  color: #0f1e2e !important;
+  border-color: #cbd5e1 !important;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+}
+
+.light-theme select option {
+  background-color: #ffffff !important;
+  color: #0f1e2e !important;
+}
+
+.light-theme select option:hover,
+.light-theme select option:focus,
+.light-theme select option:checked {
+  background-color: #f1f5f9 !important;
+  color: #b0881e !important;
+}
+
+/* Admin Dialog Form Inputs & Textareas */
+.dialog-modal input,
+.dialog-modal textarea,
+.dialog-modal select {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+  color: #f8fafc !important;
+}
+
+.dialog-modal label {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+  font-size: 0.75rem !important;
+  margin-bottom: 0.35rem !important;
+  display: block !important;
+}
+
+.dialog-modal .text-slate-400 {
+  color: #94a3b8 !important;
+}
+

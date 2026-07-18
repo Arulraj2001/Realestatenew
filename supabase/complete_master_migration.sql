@@ -192,13 +192,16 @@ CREATE TABLE IF NOT EXISTS public.landmarks (
     name TEXT NOT NULL,
     distance_label TEXT NOT NULL,
     travel_time_label TEXT,
+    category TEXT,
     image_url TEXT,
     display_order INT NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_project_landmark_name UNIQUE (project_id, name)
 );
 
 ALTER TABLE public.landmarks ADD COLUMN IF NOT EXISTS image_url TEXT;
+ALTER TABLE public.landmarks ADD COLUMN IF NOT EXISTS category TEXT;
 
 DROP TRIGGER IF EXISTS update_landmarks_updated_at ON public.landmarks;
 CREATE TRIGGER update_landmarks_updated_at
@@ -551,3 +554,53 @@ WHERE NOT EXISTS (
 -- Update existing amenities categories if they exist under different names
 UPDATE public.amenities SET category = 'land' WHERE name ILIKE '%road%' OR name ILIKE '%security%' OR name ILIKE '%water%' OR name ILIKE '%drainage%' OR name ILIKE '%park%';
 UPDATE public.amenities SET category = 'house' WHERE name ILIKE '%villa%' OR name ILIKE '%kitchen%' OR name ILIKE '%woodwork%' OR name ILIKE '%car%' OR name ILIKE '%vaastu%';
+
+-- 3. Seed Key Nearby Landmarks for Rasi Garden, Kongu Nagar & Kongu Garden (with deduplication)
+DELETE FROM public.landmarks a
+USING public.landmarks b
+WHERE a.project_id = b.project_id
+  AND LOWER(TRIM(a.name)) = LOWER(TRIM(b.name))
+  AND a.id > b.id;
+
+ALTER TABLE public.landmarks DROP CONSTRAINT IF EXISTS unique_project_landmark_name;
+ALTER TABLE public.landmarks ADD CONSTRAINT unique_project_landmark_name UNIQUE (project_id, name);
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Greenwood Matriculation Higher Secondary School', '1.0 KM', '3 Mins Drive', 'education', 1 FROM public.projects WHERE slug = 'rasi-garden'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Namakkal Central Bus Stand', '1.8 KM', '5 Mins Drive', 'transit', 2 FROM public.projects WHERE slug = 'rasi-garden'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Namakkal Government Medical College Hospital', '2.5 KM', '7 Mins Drive', 'medical', 3 FROM public.projects WHERE slug = 'rasi-garden'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Salem - Trichy National Highway (NH-44)', '500 M', '2 Mins Drive', 'transport', 4 FROM public.projects WHERE slug = 'rasi-garden'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Spectrum Matriculation Higher Secondary School', '1.2 KM', '4 Mins Drive', 'education', 1 FROM public.projects WHERE slug = 'kongu-nagar'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'SPK Multi-Specialty Hospital', '2.1 KM', '6 Mins Drive', 'medical', 2 FROM public.projects WHERE slug = 'kongu-nagar'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Namakkal Railway Station', '3.5 KM', '10 Mins Drive', 'transit', 3 FROM public.projects WHERE slug = 'kongu-nagar'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Kandaswami Kandar College', '2.0 KM', '5 Mins Drive', 'education', 1 FROM public.projects WHERE slug = 'kongu-garden'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Paramathi Velur Bus Stand', '1.5 KM', '4 Mins Drive', 'transit', 2 FROM public.projects WHERE slug = 'kongu-garden'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;
+
+INSERT INTO public.landmarks (project_id, name, distance_label, travel_time_label, category, display_order)
+SELECT id, 'Paramathi Government Hospital', '1.8 KM', '5 Mins Drive', 'medical', 3 FROM public.projects WHERE slug = 'kongu-garden'
+ON CONFLICT (project_id, name) DO UPDATE SET distance_label = EXCLUDED.distance_label, travel_time_label = EXCLUDED.travel_time_label, category = EXCLUDED.category;

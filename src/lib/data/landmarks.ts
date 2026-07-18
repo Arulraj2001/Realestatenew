@@ -52,3 +52,23 @@ export async function getProjectLandmarks(projectId: string): Promise<Landmark[]
     return FALLBACK_LANDMARKS.map((lm) => ({ ...lm, project_id: projectId }));
   }
 }
+
+export async function getLocationLandmarks(projectIds: string[]): Promise<Landmark[]> {
+  if (!projectIds || projectIds.length === 0) return FALLBACK_LANDMARKS;
+  try {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from('landmarks')
+      .select('*')
+      .in('project_id', projectIds)
+      .order('display_order', { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      return FALLBACK_LANDMARKS;
+    }
+
+    return data;
+  } catch {
+    return FALLBACK_LANDMARKS;
+  }
+}

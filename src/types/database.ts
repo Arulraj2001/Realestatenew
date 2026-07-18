@@ -135,10 +135,12 @@ export interface Landmark {
   name: string;
   distance_label: string;
   travel_time_label: string | null;
+  category?: string | null;
   image_url?: string | null;
   display_order: number;
   created_at: string;
   updated_at: string;
+  project?: { name: string };
 }
 
 export interface GalleryItem {

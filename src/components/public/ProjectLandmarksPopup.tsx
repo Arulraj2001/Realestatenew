@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Compass, GraduationCap, Hospital, Car, Bus, Maximize2 } from 'lucide-react';
+import { Compass, GraduationCap, Hospital, Car, Bus, ShoppingBag, MapPin, Maximize2 } from 'lucide-react';
 import { Landmark } from '@/types/database';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
@@ -19,7 +19,14 @@ export const ProjectLandmarksPopup: React.FC<ProjectLandmarksPopupProps> = ({
 
   if (!landmarks || landmarks.length === 0) return null;
 
-  const getLandmarkIcon = (name?: string) => {
+  const getLandmarkIcon = (name?: string, category?: string | null) => {
+    const cat = (category || '').toLowerCase();
+    if (cat === 'education') return <GraduationCap className="w-4 h-4 text-amber-400" />;
+    if (cat === 'medical') return <Hospital className="w-4 h-4 text-emerald-400" />;
+    if (cat === 'transit') return <Bus className="w-4 h-4 text-blue-400" />;
+    if (cat === 'shopping') return <ShoppingBag className="w-4 h-4 text-purple-400" />;
+    if (cat === 'transport') return <Car className="w-4 h-4 text-amber-500" />;
+
     const text = (name || '').toLowerCase();
     if (text.includes('school') || text.includes('college') || text.includes('university') || text.includes('education')) {
       return <GraduationCap className="w-4 h-4 text-amber-400" />;
@@ -30,7 +37,10 @@ export const ProjectLandmarksPopup: React.FC<ProjectLandmarksPopupProps> = ({
     if (text.includes('bus') || text.includes('rail') || text.includes('station') || text.includes('transit')) {
       return <Bus className="w-4 h-4 text-blue-400" />;
     }
-    return <Car className="w-4 h-4 text-amber-500" />;
+    if (text.includes('market') || text.includes('shop') || text.includes('mall')) {
+      return <ShoppingBag className="w-4 h-4 text-purple-400" />;
+    }
+    return <MapPin className="w-4 h-4 text-amber-500" />;
   };
 
   return (
@@ -58,7 +68,7 @@ export const ProjectLandmarksPopup: React.FC<ProjectLandmarksPopupProps> = ({
                 key={lm.id}
                 className="px-3 py-1 bg-slate-950/80 border border-slate-800 text-slate-200 text-xs font-semibold rounded-full flex items-center gap-2"
               >
-                {getLandmarkIcon(lm.name)}
+                {getLandmarkIcon(lm.name, lm.category)}
                 <span>{lm.name}</span>
                 <span className="text-[10px] text-amber-400 font-extrabold font-mono uppercase bg-amber-500/10 px-1.5 py-0.5 rounded">
                   {lm.distance_label}
@@ -91,14 +101,22 @@ export const ProjectLandmarksPopup: React.FC<ProjectLandmarksPopupProps> = ({
           {landmarks.map((lm) => (
             <div
               key={lm.id}
-              className="p-4 bg-slate-950 border border-slate-800 rounded-2xl flex items-start gap-3 text-left"
+              className="p-4 bg-slate-950 border border-slate-800 rounded-2xl flex items-start gap-3.5 text-left shadow-lg hover:border-slate-700 transition-colors"
             >
-              <div className="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0 mt-0.5">
-                {getLandmarkIcon(lm.name)}
-              </div>
+              {lm.image_url ? (
+                <img
+                  src={lm.image_url}
+                  alt={lm.name}
+                  className="w-14 h-14 rounded-xl object-cover border border-slate-800 shrink-0 shadow-sm"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                  {getLandmarkIcon(lm.name, lm.category)}
+                </div>
+              )}
               <div className="flex-1 space-y-1">
-                <h4 className="font-bold text-white text-sm">{lm.name}</h4>
-                <div className="flex items-center gap-2 pt-0.5">
+                <h4 className="font-bold text-white text-sm leading-snug">{lm.name}</h4>
+                <div className="flex flex-wrap items-center gap-2 pt-0.5">
                   <span className="px-2 py-0.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-extrabold rounded uppercase font-mono">
                     {lm.distance_label}
                   </span>

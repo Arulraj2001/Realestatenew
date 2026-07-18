@@ -80,6 +80,8 @@ export const landmarkCrudSchema = z.object({
   project_id: z.string().uuid('Project is required'),
   name: z.string().min(2, 'Landmark name is required'),
   distance_label: z.string().min(1, 'Distance label required (e.g. 5 Mins)'),
+  travel_time_label: z.string().optional().or(z.literal('')),
+  category: z.string().optional().or(z.literal('')),
   image_url: z.string().optional().or(z.literal('')),
   display_order: z.number().int().default(0),
 });
