@@ -341,6 +341,7 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
               label="Hero Cover Image / Photo"
               value={formData.hero_image_path}
               folder="locations"
+              cropAspectRatio={16 / 10}
               onChange={(url) => setFormData({ ...formData, hero_image_path: url })}
             />
           </div>

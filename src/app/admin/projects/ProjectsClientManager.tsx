@@ -498,6 +498,7 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
               label="Hero Layout Cover Image"
               value={formData.hero_image_path}
               folder="projects"
+              cropAspectRatio={21 / 9}
               onChange={(url) => setFormData({ ...formData, hero_image_path: url })}
             />
           </div>

@@ -407,6 +407,7 @@ export const PropertyConfigsClientManager: React.FC<{
                 label="Layout Media Image (Hero)"
                 value={formData.hero_image_path}
                 folder="properties"
+                cropAspectRatio={16 / 10}
                 onChange={(url) => setFormData({ ...formData, hero_image_path: url })}
               />
             </div>
