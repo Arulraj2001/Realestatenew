@@ -21,6 +21,7 @@ import {
   HelpCircle,
   Star,
   Link2,
+  CornerDownRight,
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { AdminProfile } from '@/types/database';
@@ -56,6 +57,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ admin }) => {
         { href: '/admin/seo', label: 'SEO Management', icon: <Search className="w-4 h-4" /> },
         { href: '/admin/integrations', label: 'Third-Party Keys', icon: <Link2 className="w-4 h-4" /> },
         { href: '/admin/settings', label: 'Website Settings', icon: <Settings className="w-4 h-4" /> },
+        { href: '/admin/redirects', label: 'URL Redirects', icon: <CornerDownRight className="w-4 h-4" /> },
         ...(admin?.role === 'super_admin'
           ? [{ href: '/admin/users', label: 'Admin Users', icon: <ShieldCheck className="w-4 h-4" /> }]
           : []),
