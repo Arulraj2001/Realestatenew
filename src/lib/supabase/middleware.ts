@@ -38,6 +38,44 @@ export async function updateSession(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isAdminRoute = pathname.startsWith('/admin');
 
+  // Check custom URL redirects for public pages before auth routing
+  if (
+    !isAdminRoute &&
+    !pathname.startsWith('/_next') &&
+    !pathname.startsWith('/api') &&
+    !pathname.includes('.')
+  ) {
+    try {
+      const { data: redirectSetting } = await (supabase as any)
+        .from('site_settings')
+        .select('*')
+        .eq('key', 'url_redirects')
+        .maybeSingle();
+
+      if (redirectSetting && Array.isArray(redirectSetting.value)) {
+        const redirects = (redirectSetting.value as unknown) as Array<{
+          source: string;
+          destination: string;
+          permanent?: boolean;
+        }>;
+        const normalizedPath = pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname;
+        
+        const matchingRedirect = redirects.find((r) => {
+          if (!r.source) return false;
+          const rSourceNorm = r.source.endsWith('/') && r.source !== '/' ? r.source.slice(0, -1) : r.source;
+          return rSourceNorm.toLowerCase() === normalizedPath.toLowerCase();
+        });
+
+        if (matchingRedirect && matchingRedirect.destination) {
+          const status = matchingRedirect.permanent !== false ? 301 : 302;
+          return NextResponse.redirect(new URL(matchingRedirect.destination, request.url), status);
+        }
+      }
+    } catch (e) {
+      console.error('Dynamic redirect error:', e);
+    }
+  }
+
   // Skip auth check entirely for public routes — saves 50-150ms per request
   if (!isAdminRoute) {
     return supabaseResponse;
