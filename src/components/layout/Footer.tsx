@@ -247,40 +247,15 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
         </div>
 
         {/* Legal Bar */}
-        <div className="pt-4 grid grid-cols-1 md:grid-cols-3 items-center text-center md:text-left text-xs text-slate-500 gap-4 border-t border-emerald-950/40">
-          {/* Left Column: Copyright */}
-          <div className="md:text-left">
-            <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
-          </div>
-
-          {/* Center Column: Privacy Policy & Terms */}
-          <div className="flex items-center justify-center">
-            <div className="flex items-center gap-3">
-              <Link href="/privacy-policy" className="hover:text-slate-300">Privacy Policy</Link>
-              <Link href="/terms-and-conditions" className="hover:text-slate-300">Terms & Conditions</Link>
-              <span className="h-3 w-px bg-slate-700 self-center" aria-hidden="true" />
-              <Link href="/admin/login" className="hover:text-amber-500 transition-colors flex items-center justify-center opacity-60 hover:opacity-100" title="Admin Login">
-                <Lock className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Column: Developer Info */}
-          <div className="flex items-center justify-center md:justify-end gap-2 text-slate-400">
-            <span>Developed by <span className="text-slate-300 font-medium">Arulraj</span></span>
-            <span className="text-slate-700">•</span>
-            <a
-              href="https://wa.me/918637474067?text=Hi%20Arulraj,%20I%20saw%20your%20work%20on%20Your%20Choice%20Properties%20and%20would%20like%20to%20hire%20you%20for%20a%20website."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold text-emerald-400 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/30 rounded-full transition-all hover:scale-105 active:scale-95 cursor-pointer animate-pulse hover:animate-none"
-            >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
-              </span>
-              <span>Contact me for websites</span>
-            </a>
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4 border-t border-emerald-950/40">
+          <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
+          <div className="flex items-center gap-3">
+            <Link href="/privacy-policy" className="hover:text-slate-300">Privacy Policy</Link>
+            <Link href="/terms-and-conditions" className="hover:text-slate-300">Terms & Conditions</Link>
+            <span className="h-3 w-px bg-slate-700 self-center" aria-hidden="true" />
+            <Link href="/admin/login" className="hover:text-amber-500 transition-colors flex items-center justify-center opacity-60 hover:opacity-100" title="Admin Login">
+              <Lock className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </div>

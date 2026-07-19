@@ -17,7 +17,7 @@ export const AutoContactPopup: React.FC = () => {
     requestAnimationFrame(() => setMounted(true));
   }, []);
 
-  // Auto-trigger after 4 seconds (once per session)
+  // Auto-trigger after 10 seconds (once per session)
   useEffect(() => {
     if (!mounted) return;
     const alreadyShown = sessionStorage.getItem('auto_contact_popup_dismissed');
@@ -30,7 +30,7 @@ export const AutoContactPopup: React.FC = () => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setIsVisible(true));
       });
-    }, 5000);
+    }, 10000);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);

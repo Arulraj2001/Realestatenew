@@ -501,6 +501,7 @@ export const IntegrationsClientManager: React.FC<{ initialSettings: SiteSettingR
     google_analytics: String(integrationsRec.google_analytics || ''),
     google_tag_manager: String(integrationsRec.google_tag_manager || ''),
     facebook_pixel: String(integrationsRec.facebook_pixel || ''),
+    microsoft_clarity: String(integrationsRec.microsoft_clarity || ''),
   });
 
   const handleSave = async (e: React.FormEvent) => {
@@ -523,7 +524,7 @@ export const IntegrationsClientManager: React.FC<{ initialSettings: SiteSettingR
           <Settings className="w-6 h-6 text-amber-400" /> SEO & Third-Party Integrations
         </h1>
         <p className="text-xs text-slate-400 mt-1">
-          Manage Google Search Console, Google Analytics, Google Tag Manager, and Meta/Facebook Pixel.
+          Manage Google Search Console, Google Analytics, Google Tag Manager, Meta/Facebook Pixel, and Microsoft Clarity.
         </p>
       </div>
 
@@ -586,6 +587,18 @@ export const IntegrationsClientManager: React.FC<{ initialSettings: SiteSettingR
                 Paste the numeric Meta/Facebook Pixel identifier.
               </p>
             </div>
+
+            <div>
+              <Label>Microsoft Clarity Project ID</Label>
+              <Input
+                value={integrationsData.microsoft_clarity}
+                onChange={(e) => setIntegrationsData({ ...integrationsData, microsoft_clarity: e.target.value })}
+                placeholder="e.g., abcdefghij"
+              />
+              <p className="text-[10px] text-slate-500 mt-1 leading-normal font-normal">
+                Paste your Microsoft Clarity project key/ID.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -598,3 +611,4 @@ export const IntegrationsClientManager: React.FC<{ initialSettings: SiteSettingR
     </div>
   );
 };
+

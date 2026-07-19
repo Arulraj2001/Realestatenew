@@ -78,6 +78,7 @@ export interface IntegrationsSettings {
   google_analytics?: string;
   google_tag_manager?: string;
   facebook_pixel?: string;
+  microsoft_clarity?: string;
 }
 
 /** Fetch third-party integrations (console search, analytics, pixels) from site_settings['integrations']. */
