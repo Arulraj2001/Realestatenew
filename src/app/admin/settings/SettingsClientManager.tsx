@@ -105,6 +105,7 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
 
   const [announcementData, setAnnouncementData] = useState({
     enabled: announcementRec.enabled !== false,
+    running: announcementRec.running !== false,
     message: String(
       announcementRec.message ||
         '✨ DTCP & RERA Approved Residential Plots & Luxury Villas in Namakkal & Paramathi Velur'
@@ -209,6 +210,17 @@ export const SettingsClientManager: React.FC<{ initialSettings: SiteSettingRecor
                 >
                   <option value="true">Enabled (Visible in top bar)</option>
                   <option value="false">Disabled (Hidden)</option>
+                </select>
+              </div>
+              <div>
+                <Label>Scrolling (Running) Text</Label>
+                <select
+                  value={announcementData.running ? 'true' : 'false'}
+                  onChange={(e) => setAnnouncementData({ ...announcementData, running: e.target.value === 'true' })}
+                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-xs text-white"
+                >
+                  <option value="true">Scrolling (Running News Ticker)</option>
+                  <option value="false">Static Text (No Scrolling)</option>
                 </select>
               </div>
               <div>

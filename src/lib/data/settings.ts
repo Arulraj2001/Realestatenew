@@ -90,3 +90,20 @@ export async function getIntegrationsSettings(): Promise<IntegrationsSettings | 
     return null;
   }
 }
+
+export interface GlobalAnnouncement {
+  enabled?: boolean;
+  message?: string;
+  running?: boolean;
+}
+
+/** Fetch global announcement settings from site_settings['global_announcement']. */
+export async function getGlobalAnnouncement(): Promise<GlobalAnnouncement | null> {
+  try {
+    const setting = await getSiteSetting('global_announcement');
+    if (!setting || typeof setting.value !== 'object' || setting.value === null) return null;
+    return setting.value as GlobalAnnouncement;
+  } catch {
+    return null;
+  }
+}

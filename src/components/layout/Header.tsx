@@ -26,7 +26,7 @@ import { Drawer } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/layout/ThemeProvider';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
-import { SocialLinks } from '@/lib/data/settings';
+import { SocialLinks, GlobalAnnouncement } from '@/lib/data/settings';
 
 export interface HeaderNavLocation {
   id: string;
@@ -49,9 +49,14 @@ const DEFAULT_NAV_LOCATIONS: { current: HeaderNavLocation[]; upcoming: HeaderNav
 export interface HeaderProps {
   navLocations?: { current: HeaderNavLocation[]; upcoming: HeaderNavLocation[] };
   socialLinks?: SocialLinks | null;
+  announcement?: GlobalAnnouncement | null;
 }
 
-export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp, socialLinks }) => {
+export const Header: React.FC<HeaderProps> = ({
+  navLocations: navLocationsProp,
+  socialLinks,
+  announcement,
+}) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLocationsDropdownOpen, setIsLocationsDropdownOpen] = useState(false);
   const [isMobileLocationsAccordionOpen, setIsMobileLocationsAccordionOpen] = useState(true);
@@ -63,42 +68,56 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp, 
   const instaUrl = socialLinks?.instagram || 'https://instagram.com/yourchoiceproperties';
   const ytUrl = socialLinks?.youtube || 'https://youtube.com/@yourchoiceproperties';
 
+  const showAnnouncement = announcement?.enabled !== false;
+  const announcementMessage = announcement?.message || '✨ DTCP & RERA Approved Residential Plots & Luxury Villas in Namakkal & Paramathi Velur';
+  const isRunning = announcement?.running ?? true;
+
   return (
     <header className="sticky top-0 z-40 bg-[#0f2e21]/95 backdrop-blur-md border-b border-emerald-900/60 shadow-md">
       {/* Top Notification Bar */}
-      <div className="header-top-bar text-xs py-1.5 border-b border-emerald-900/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <p className="header-top-text truncate font-medium">
-            ✨ DTCP &amp; RERA Approved Residential Plots &amp; Luxury Villas in Namakkal &amp; Paramathi Velur
-          </p>
-          <div className="header-top-phone hidden md:flex items-center gap-4">
-            <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-amber-400 transition-colors flex items-center gap-1 font-semibold">
-              <Phone className="w-3 h-3 text-amber-400" /> {siteConfig.contact.phone}
-            </a>
+      {showAnnouncement && (
+        <div className="header-top-bar text-xs py-1.5 border-b border-emerald-900/40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            {isRunning ? (
+              <div className="overflow-hidden flex-1 relative mr-4 h-4">
+                <p className="header-top-text font-medium absolute whitespace-nowrap animate-marquee">
+                  {announcementMessage}
+                </p>
+              </div>
+            ) : (
+              <p className="header-top-text truncate font-medium flex-1 mr-4">
+                {announcementMessage}
+              </p>
+            )}
+            <div className="header-top-phone hidden md:flex items-center gap-4">
+              <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-amber-400 transition-colors flex items-center gap-1 font-semibold">
+                <Phone className="w-3 h-3 text-amber-400" /> {siteConfig.contact.phone}
+              </a>
 
-            <div className="h-3 w-px bg-emerald-800/80" />
+              <div className="h-3 w-px bg-emerald-800/80" />
 
-            {/* Social Icons Header */}
-            <div className="flex items-center gap-3">
-              {instaUrl && (
-                <a href={instaUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-[#E4405F] hover:opacity-80 transition-opacity">
-                  <InstagramIcon className="w-4 h-4" />
-                </a>
-              )}
-              {fbUrl && (
-                <a href={fbUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-[#1877F2] hover:opacity-80 transition-opacity">
-                  <FacebookIcon className="w-4 h-4" />
-                </a>
-              )}
-              {ytUrl && (
-                <a href={ytUrl} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-[#FF0000] hover:opacity-80 transition-opacity">
-                  <YoutubeIcon className="w-4 h-4" />
-                </a>
-              )}
+              {/* Social Icons Header */}
+              <div className="flex items-center gap-3">
+                {instaUrl && (
+                  <a href={instaUrl} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-[#E4405F] hover:opacity-80 transition-opacity">
+                    <InstagramIcon className="w-4 h-4" />
+                  </a>
+                )}
+                {fbUrl && (
+                  <a href={fbUrl} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-[#1877F2] hover:opacity-80 transition-opacity">
+                    <FacebookIcon className="w-4 h-4" />
+                  </a>
+                )}
+                {ytUrl && (
+                  <a href={ytUrl} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="text-[#FF0000] hover:opacity-80 transition-opacity">
+                    <YoutubeIcon className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Main Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
