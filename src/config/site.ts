@@ -16,12 +16,31 @@ export interface SiteConfig {
   };
 }
 
+const getSiteUrl = (): string => {
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL;
+  }
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    return `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`;
+  }
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  return 'https://yourchoiceproperties.in';
+};
+
 export const siteConfig: SiteConfig = {
   name: 'Your Choice Properties',
   title: 'Your Choice Properties | Premium Residential Plots & Villas in Tamil Nadu',
   description:
     'Discover premium plots, villas, and commercial real-estate properties in Namakkal, Paramathi Velur, Salem, Erode, and nearby locations. Trusted real-estate developer.',
-  domain: process.env.NEXT_PUBLIC_SITE_URL || 'https://yourchoiceproperties.in',
+  domain: getSiteUrl(),
   contact: {
     phone: '+91 98765 43210',
     whatsapp: '+919876543210',
