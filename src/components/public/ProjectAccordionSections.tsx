@@ -335,7 +335,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                                 : 'border-slate-800 opacity-60 hover:opacity-100'
                             }`}
                           >
-                            <Image src={imgUrl} alt="Villa thumbnail" fill className="object-cover" />
+                            <Image src={imgUrl} alt="Villa thumbnail" fill sizes="64px" className="object-cover" />
                           </button>
                         ))}
                       </div>
@@ -560,7 +560,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                                 : 'border-slate-800 opacity-60 hover:opacity-100'
                             }`}
                           >
-                            <Image src={imgUrl} alt="Plot thumbnail" fill className="object-cover" />
+                            <Image src={imgUrl} alt="Plot thumbnail" fill sizes="64px" className="object-cover" />
                           </button>
                         ))}
                       </div>

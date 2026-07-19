@@ -55,7 +55,7 @@ export const ProjectVideoPlayer: React.FC<ProjectVideoPlayerProps> = ({
       videoId = rawUrl.split('embed/')[1]?.split('?')[0] || '';
     }
     if (videoId) {
-      poster = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+      poster = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
     }
   }
   if (!poster) {

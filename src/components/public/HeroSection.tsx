@@ -88,7 +88,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const videoPosterUrl = (() => {
     if (posterImage) return posterImage;
     const ytId = getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo);
-    if (ytId) return `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`;
+    if (ytId) return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
     return safePosterImage || safeDesktopImage;
   })();
 

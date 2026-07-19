@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Lock, KeyRound } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 import { Button } from '@/components/ui/button';
@@ -38,8 +39,7 @@ export default function AdminLoginPage() {
           {/* Logo with blue curved border ring */}
           <div className="relative w-14 h-14 rounded-full p-[3px] bg-gradient-to-br from-[#1da1f2] via-[#0e87d4] to-[#1da1f2] shadow-lg shadow-blue-500/30 mx-auto">
             <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Your Choice Properties Logo" className="w-10 h-10 object-contain" />
+              <Image src="/logo.png" alt="Your Choice Properties Logo" width={40} height={40} className="w-10 h-10 object-contain" />
             </div>
           </div>
           <h1 className="font-serif text-2xl font-bold text-white tracking-tight">

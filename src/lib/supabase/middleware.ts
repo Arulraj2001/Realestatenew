@@ -35,12 +35,17 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  const pathname = request.nextUrl.pathname;
+  const isAdminRoute = pathname.startsWith('/admin');
+
+  // Skip auth check entirely for public routes — saves 50-150ms per request
+  if (!isAdminRoute) {
+    return supabaseResponse;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const pathname = request.nextUrl.pathname;
-  const isAdminRoute = pathname.startsWith('/admin');
   const isPublicAuthRoute =
     pathname === '/admin/login' ||
     pathname === '/admin/forgot-password' ||

@@ -1,13 +1,20 @@
 import React from 'react';
 import Script from 'next/script';
+import dynamic from 'next/dynamic';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { StickyActionBar } from '@/components/layout/StickyActionBar';
-import { AutoContactPopup } from '@/components/public/AutoContactPopup';
 import { ToastProvider } from '@/components/ui/toast';
 import { getNavLocations, getSocialLinks, getIntegrationsSettings } from '@/lib/data';
 
-export const dynamic = 'force-dynamic';
+// Lazy-load interactive below-the-fold components to reduce initial JS bundle
+const StickyActionBar = dynamic(
+  () => import('@/components/layout/StickyActionBar').then(m => ({ default: m.StickyActionBar }))
+);
+const AutoContactPopup = dynamic(
+  () => import('@/components/public/AutoContactPopup').then(m => ({ default: m.AutoContactPopup }))
+);
+
+export const revalidate = 300; // Revalidate every 5 minutes (ISR)
 
 export default async function PublicLayout({
   children,

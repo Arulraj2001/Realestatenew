@@ -8,7 +8,7 @@ import { siteConfig } from '@/config/site';
 import { getFAQs, getContentPage, getSocialLinks } from '@/lib/data';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { FAQSection } from '@/components/public/FAQSection';
-import { createAdminClient } from '@/lib/supabase/server';
+import { createPublicClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
   title: 'Contact Your Choice Properties | Villas & Plots in Namakkal & Paramathi velur',
@@ -38,8 +38,8 @@ export default async function ContactUsPage() {
   const bannerSubtitle = contentJson.subtitle || 'Looking for your dream home or the perfect investment?';
   const bannerBody = contentJson.body || 'Our property experts are here to guide you through every step—from selecting the right plot or villa to documentation and loan assistance. Schedule your site visit today and explore our premium projects.';
 
-  // Load live contact info (map_url) from DB
-  const supabase = await createAdminClient();
+  // Load live contact info (map_url) from DB — using public client (no service role needed)
+  const supabase = createPublicClient();
   const { data: settingsData } = await supabase
     .from('site_settings')
     .select('key, value')

@@ -61,6 +61,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${inter.variable} antialiased h-full`}>
+      <head>
+        <link rel="preconnect" href="https://img.youtube.com" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://maps.google.com" />
+      </head>
       <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 font-sans selection:bg-amber-500 selection:text-slate-950">
         <ThemeProvider>
           {children}

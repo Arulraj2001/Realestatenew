@@ -7,12 +7,9 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    unoptimized: true,
+    // Allow local IP resolution in development (Supabase DNS resolves to NAT64 IPv6)
+    dangerouslyAllowLocalIP: process.env.NODE_ENV === 'development',
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-      },
       {
         protocol: 'https',
         hostname: '**.supabase.co',
@@ -54,6 +51,12 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+    ];
+  },
+  async redirects() {
+    return [
+      { source: '/about', destination: '/about-us', permanent: true },
+      { source: '/contact', destination: '/contact-us', permanent: true },
     ];
   },
 };

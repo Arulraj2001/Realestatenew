@@ -247,8 +247,7 @@ export default async function AboutUsPage() {
                 {/* Logo with blue curved border ring */}
                 <div className="relative w-16 h-16 rounded-full p-[3.5px] bg-gradient-to-br from-[#1da1f2] via-[#0e87d4] to-[#1da1f2] shadow-lg shadow-blue-500/30">
                   <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src="/logo.png" alt="Your Choice Properties Logo" className="w-11 h-11 object-contain" />
+                    <Image src="/logo.png" alt="Your Choice Properties Logo" width={44} height={44} className="w-11 h-11 object-contain" />
                   </div>
                 </div>
                 <div>

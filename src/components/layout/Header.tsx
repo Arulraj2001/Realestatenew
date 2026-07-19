@@ -3,6 +3,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Phone,
   Menu,
@@ -106,8 +107,7 @@ export const Header: React.FC<HeaderProps> = ({ navLocations: navLocationsProp, 
           {/* Logo with blue curved border ring */}
           <div className="relative w-11 h-11 rounded-full p-[2.5px] bg-gradient-to-br from-[#1da1f2] via-[#0e87d4] to-[#1da1f2] shadow-lg shadow-blue-500/30 group-hover:shadow-blue-400/50 transition-shadow">
             <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Your Choice Properties Logo" className="w-8 h-8 object-contain" />
+              <Image src="/logo.png" alt="Your Choice Properties Logo" width={32} height={32} className="w-8 h-8 object-contain" />
             </div>
           </div>
           <div>

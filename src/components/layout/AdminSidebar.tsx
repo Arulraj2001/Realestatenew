@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -70,8 +71,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({ admin }) => {
             {/* Logo with blue curved border ring */}
             <div className="relative w-9 h-9 rounded-full p-[2px] bg-gradient-to-br from-[#1da1f2] via-[#0e87d4] to-[#1da1f2] shadow-lg shadow-blue-500/20">
               <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/logo.png" alt="Logo" className="w-6 h-6 object-contain" />
+                <Image src="/logo.png" alt="Logo" width={24} height={24} className="w-6 h-6 object-contain" />
               </div>
             </div>
             <div>
