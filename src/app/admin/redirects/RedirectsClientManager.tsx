@@ -15,9 +15,15 @@ export interface RedirectRecord {
   permanent: boolean;
 }
 
-export const RedirectsClientManager: React.FC<{ initialSettings: SiteSettingRecord[] }> = ({
-  initialSettings,
-}) => {
+export interface ActiveRouteItem {
+  path: string;
+  label: string;
+}
+
+export const RedirectsClientManager: React.FC<{
+  initialSettings: SiteSettingRecord[];
+  activeRoutes: ActiveRouteItem[];
+}> = ({ initialSettings, activeRoutes }) => {
   const { toast } = useToast();
 
   const [redirectsList, setRedirectsList] = useState<RedirectRecord[]>(() => {
@@ -132,25 +138,53 @@ export const RedirectsClientManager: React.FC<{ initialSettings: SiteSettingReco
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <Label>Source Path (Old URL)</Label>
-                <Input
-                  value={newRedirect.source}
-                  onChange={(e) => setNewRedirect({ ...newRedirect, source: e.target.value })}
-                  placeholder="/projects/old-slug"
-                  className="text-xs"
-                />
+                <div className="space-y-1.5">
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) setNewRedirect({ ...newRedirect, source: e.target.value });
+                    }}
+                    className="w-full px-3 py-1.5 bg-slate-950 border border-slate-850 rounded-lg text-[10px] text-slate-300 select-none cursor-pointer focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="">-- Quick Select Active Route --</option>
+                    {activeRoutes.map((route, rIdx) => (
+                      <option key={rIdx} value={route.path}>{route.label}</option>
+                    ))}
+                  </select>
+                  <Input
+                    value={newRedirect.source}
+                    onChange={(e) => setNewRedirect({ ...newRedirect, source: e.target.value })}
+                    placeholder="/projects/old-slug"
+                    className="text-xs"
+                  />
+                </div>
               </div>
               <div>
                 <Label>Destination Path (New URL)</Label>
-                <Input
-                  value={newRedirect.destination}
-                  onChange={(e) => setNewRedirect({ ...newRedirect, destination: e.target.value })}
-                  placeholder="/projects/new-slug"
-                  className="text-xs"
-                />
+                <div className="space-y-1.5">
+                  <select
+                    value=""
+                    onChange={(e) => {
+                      if (e.target.value) setNewRedirect({ ...newRedirect, destination: e.target.value });
+                    }}
+                    className="w-full px-3 py-1.5 bg-slate-950 border border-slate-850 rounded-lg text-[10px] text-slate-300 select-none cursor-pointer focus:outline-none focus:border-amber-400"
+                  >
+                    <option value="">-- Quick Select Active Route --</option>
+                    {activeRoutes.map((route, rIdx) => (
+                      <option key={rIdx} value={route.path}>{route.label}</option>
+                    ))}
+                  </select>
+                  <Input
+                    value={newRedirect.destination}
+                    onChange={(e) => setNewRedirect({ ...newRedirect, destination: e.target.value })}
+                    placeholder="/projects/new-slug"
+                    className="text-xs"
+                  />
+                </div>
               </div>
               <div>
                 <Label>Redirect Type</Label>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-end pt-5.5">
                   <select
                     value={newRedirect.permanent ? 'true' : 'false'}
                     onChange={(e) => setNewRedirect({ ...newRedirect, permanent: e.target.value === 'true' })}
