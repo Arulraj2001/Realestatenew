@@ -20,14 +20,14 @@ export async function generateHomePageMetadata(): Promise<Metadata> {
       title: siteConfig.title,
       description: siteConfig.description,
       canonicalUrl: siteConfig.domain,
-      ogImage: `${siteConfig.domain}/og-image.jpg`,
+      ogImage: `${siteConfig.domain}/logo.png`,
     });
   } catch {
     return buildMetadataFromOverride(null, {
       title: siteConfig.title,
       description: siteConfig.description,
       canonicalUrl: siteConfig.domain,
-      ogImage: `${siteConfig.domain}/og-image.jpg`,
+      ogImage: `${siteConfig.domain}/logo.png`,
     });
   }
 }
@@ -79,7 +79,7 @@ export function buildMetadataFromOverride(
   const canonical = override?.canonical_url || fallback.canonicalUrl;
   const ogTitle = override?.open_graph_title || title;
   const ogDescription = override?.open_graph_description || description;
-  const ogImage = override?.open_graph_image_path || fallback.ogImage || `${siteConfig.domain}/og-image.jpg`;
+  const ogImage = override?.open_graph_image_path || fallback.ogImage || `${siteConfig.domain}/logo.png`;
   const indexed = override?.index_enabled ?? true;
 
   const keywords = override?.meta_keywords
