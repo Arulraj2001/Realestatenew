@@ -34,7 +34,7 @@ export const PropertyConfigsClientManager: React.FC<{
     built_up_area: '',
     bedrooms: 2,
     bathrooms: 2,
-    starting_price: 1800000,
+    starting_price: 1800000 as number | null,
     availability_status: 'Available' as PropertyConfiguration['availability_status'],
     short_description: '',
     full_description: '',
@@ -58,7 +58,7 @@ export const PropertyConfigsClientManager: React.FC<{
       built_up_area: '',
       bedrooms: 2,
       bathrooms: 2,
-      starting_price: 1800000,
+      starting_price: 1800000 as number | null,
       availability_status: 'Available',
       short_description: '',
       full_description: '',
@@ -96,7 +96,7 @@ export const PropertyConfigsClientManager: React.FC<{
       built_up_area: config.built_up_area || '',
       bedrooms: config.bedrooms || 2,
       bathrooms: config.bathrooms || 2,
-      starting_price: config.starting_price || 1800000,
+      starting_price: config.starting_price,
       availability_status: config.availability_status,
       short_description: config.short_description || '',
       full_description: config.full_description || '',
@@ -294,6 +294,90 @@ export const PropertyConfigsClientManager: React.FC<{
               />
             </div>
           </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <Label>Starting Price (₹)</Label>
+              <Input
+                type="number"
+                value={formData.starting_price || ''}
+                onChange={(e) => setFormData({ ...formData, starting_price: e.target.value ? Number(e.target.value) : null })}
+                placeholder="1800000"
+              />
+            </div>
+
+            <div>
+              <Label>Availability Status</Label>
+              <select
+                value={formData.availability_status}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    availability_status: e.target.value as PropertyConfiguration['availability_status'],
+                  })
+                }
+                className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
+              >
+                <option value="Available">Available</option>
+                <option value="Fast Filling">Fast Filling</option>
+                <option value="Sold Out">Sold Out</option>
+              </select>
+            </div>
+
+            <div className="flex items-center pt-5">
+              <label className="text-xs text-slate-300 flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                />
+                <span>Featured Option</span>
+              </label>
+            </div>
+          </div>
+
+          {(formData.property_type === 'Villa' || formData.property_type === 'Apartment') && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-950/40 p-3 rounded-xl border border-slate-850">
+              <div>
+                <Label>BHK</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={formData.bhk}
+                  onChange={(e) => setFormData({ ...formData, bhk: Number(e.target.value) })}
+                />
+              </div>
+
+              <div>
+                <Label>Bedrooms</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={formData.bedrooms}
+                  onChange={(e) => setFormData({ ...formData, bedrooms: Number(e.target.value) })}
+                />
+              </div>
+
+              <div>
+                <Label>Bathrooms</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={formData.bathrooms}
+                  onChange={(e) => setFormData({ ...formData, bathrooms: Number(e.target.value) })}
+                />
+              </div>
+
+              <div>
+                <Label>Built-Up Area</Label>
+                <Input
+                  value={formData.built_up_area}
+                  onChange={(e) => setFormData({ ...formData, built_up_area: e.target.value })}
+                  placeholder="e.g. 1500 Sq.Ft"
+                />
+              </div>
+            </div>
+          )}
 
           <div>
             <Label>Key Highlights & Features (One item per line)</Label>

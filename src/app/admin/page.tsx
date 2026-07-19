@@ -99,7 +99,7 @@ export default async function AdminDashboardPage() {
 
         <div className="p-6 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-between shadow-xl">
           <div>
-            <span className="block text-xs font-bold uppercase text-slate-500 tracking-wider">Published Townships</span>
+            <span className="block text-xs font-bold uppercase text-slate-500 tracking-wider">Published Projects</span>
             <span className="text-3xl font-extrabold text-blue-400 font-serif mt-1 block">{projectCount || 0}</span>
           </div>
           <div className="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center">
