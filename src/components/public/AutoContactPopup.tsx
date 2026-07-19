@@ -30,7 +30,7 @@ export const AutoContactPopup: React.FC = () => {
       requestAnimationFrame(() => {
         requestAnimationFrame(() => setIsVisible(true));
       });
-    }, 4000);
+    }, 5000);
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
