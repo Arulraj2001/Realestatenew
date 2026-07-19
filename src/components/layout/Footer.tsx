@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Phone, Mail, Clock, ArrowUpRight, Send, CheckCircle2 } from 'lucide-react';
+import { Phone, Mail, Clock, ArrowUpRight, Send, CheckCircle2, Lock } from 'lucide-react';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from '@/components/ui/icons';
 import { siteConfig } from '@/config/site';
 import { submitContactEnquiryAction } from '@/app/actions/enquiries';
@@ -249,9 +249,13 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
         {/* Legal Bar */}
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
-          <div className="flex gap-4">
+          <div className="flex items-center gap-4">
             <Link href="/privacy-policy" className="hover:text-slate-300">Privacy Policy</Link>
             <Link href="/terms-and-conditions" className="hover:text-slate-300">Terms & Conditions</Link>
+            <span className="text-slate-700">|</span>
+            <Link href="/admin/login" className="hover:text-amber-500 transition-colors flex items-center gap-1 opacity-60 hover:opacity-100" title="Admin Login">
+              <Lock className="w-3.5 h-3.5" />
+            </Link>
           </div>
         </div>
       </div>
