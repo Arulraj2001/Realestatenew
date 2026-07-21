@@ -54,27 +54,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
   const { theme } = useTheme();
 
-  // Defer YouTube iframe loading until browser is idle to avoid blocking LCP
-  const [iframeReady, setIframeReady] = useState(false);
-  useEffect(() => {
-    if (mediaType !== 'video') return;
-    const hasYoutube = getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo);
-    if (!hasYoutube) return;
-
-    // Use requestIdleCallback for browsers that support it, otherwise setTimeout
-    let timeoutId: ReturnType<typeof setTimeout>;
-    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-      const idleId = (window as unknown as { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number }).requestIdleCallback(
-        () => setIframeReady(true),
-        { timeout: 2500 }
-      );
-      return () => (window as unknown as { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(idleId);
-    } else {
-      timeoutId = setTimeout(() => setIframeReady(true), 1500);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [mediaType, desktopVideo, mobileVideo]);
-
   const secondaryLabel = secondaryCtaLabel || 'Schedule a Site Visit';
   const isContactAction = secondaryLabel.toLowerCase().includes('contact');
 
@@ -84,12 +63,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const safeDesktopImage = desktopImage || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80';
   const safePosterImage = posterImage || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
 
-  // Derive YouTube thumbnail for video poster when no explicit poster image is configured
+  // Derive YouTube thumbnail for video poster when explicit poster image is not configured
   const videoPosterUrl = (() => {
     if (posterImage) return posterImage;
     const ytId = getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo);
     if (ytId) return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
-    return safePosterImage || safeDesktopImage;
+    return undefined;
   })();
 
   // Safe clamping of opacity 0-100 & blur (0-100% maps to 0-25px blur)
@@ -112,18 +91,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="w-full h-full overflow-hidden" style={blurStyle}>
           {mediaType === 'video' && (getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo)) ? (
             <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
-              {/* Poster image shown instantly while YouTube iframe loads */}
-              <Image
-                src={videoPosterUrl}
-                alt="Your Choice Properties Banner"
-                fill
-                priority
-                sizes="100vw"
-                className={`object-cover transition-opacity duration-1000 ${iframeReady ? 'opacity-0' : 'opacity-100'}`}
-              />
-              {/* Desktop YouTube Embed — deferred until browser idle */}
-              {iframeReady && getYoutubeId(desktopVideo) && (
-                <div className={`absolute inset-0 w-full h-full overflow-hidden ${mobileVideo && getYoutubeId(mobileVideo) ? 'hidden md:block' : 'block'}`}>
+              {/* Optional Poster image shown while YouTube iframe initializes */}
+              {videoPosterUrl && (
+                <Image
+                  src={videoPosterUrl}
+                  alt="Your Choice Properties Banner"
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-cover pointer-events-none z-0"
+                />
+              )}
+              {/* Desktop YouTube Embed — immediate loading */}
+              {getYoutubeId(desktopVideo) && (
+                <div className={`absolute inset-0 w-full h-full overflow-hidden z-10 ${mobileVideo && getYoutubeId(mobileVideo) ? 'hidden md:block' : 'block'}`}>
                   <iframe
                     src={`https://www.youtube.com/embed/${getYoutubeId(desktopVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(desktopVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
                     className="absolute top-1/2 left-1/2 pointer-events-none border-0"
@@ -132,16 +113,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       height: '56.25vw',
                       minWidth: '177.78vh',
                       minHeight: '100vh',
-                      transform: 'translate(-50%, -50%) scale(1.35)'
+                      transform: 'translate(-50%, -50%) scale(1.5)'
                     }}
                     allow="autoplay; encrypted-media"
-                    loading="lazy"
                   />
                 </div>
               )}
-              {/* Mobile YouTube Embed — deferred until browser idle */}
-              {iframeReady && mobileVideo && getYoutubeId(mobileVideo) && (
-                <div className="absolute inset-0 w-full h-full overflow-hidden block md:hidden">
+              {/* Mobile YouTube Embed — immediate loading */}
+              {mobileVideo && getYoutubeId(mobileVideo) && (
+                <div className="absolute inset-0 w-full h-full overflow-hidden z-10 block md:hidden">
                   <iframe
                     src={`https://www.youtube.com/embed/${getYoutubeId(mobileVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(mobileVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
                     className="absolute top-1/2 left-1/2 pointer-events-none border-0"
@@ -150,10 +130,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       height: '177.78vw',
                       minWidth: '56.25vh',
                       minHeight: '100vh',
-                      transform: 'translate(-50%, -50%) scale(1.35)'
+                      transform: 'translate(-50%, -50%) scale(1.5)'
                     }}
                     allow="autoplay; encrypted-media"
-                    loading="lazy"
                   />
                 </div>
               )}
@@ -164,14 +143,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               muted
               loop
               playsInline
-              poster={safePosterImage || safeDesktopImage}
-              className="w-full h-full object-cover"
+              preload="auto"
+              poster={posterImage || undefined}
+              className="w-full h-full object-cover origin-center"
               style={{
-                transform: 'scale(1.15)'
+                transform: 'scale(1.35)'
               }}
             >
               <source src={desktopVideo} type="video/mp4" />
-              {mobileVideo && <source src={mobileVideo} type="video/mp4" />}
+              {mobileVideo && mobileVideo !== desktopVideo && <source src={mobileVideo} type="video/mp4" />}
             </video>
           ) : (
             <picture className="relative block w-full h-full">

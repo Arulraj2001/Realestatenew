@@ -61,7 +61,9 @@ export async function updateSession(request: NextRequest) {
         const normalizedPath = pathname.endsWith('/') && pathname !== '/' ? pathname.slice(0, -1) : pathname;
         
         const matchingRedirect = redirects.find((r) => {
-          if (!r.source) return false;
+          if (!r.source || !r.destination) return false;
+          // Protect homepage and prevent self-redirect loops
+          if (r.source === '/' || r.source === '' || r.source === r.destination) return false;
           const rSourceNorm = r.source.endsWith('/') && r.source !== '/' ? r.source.slice(0, -1) : r.source;
           return rSourceNorm.toLowerCase() === normalizedPath.toLowerCase();
         });

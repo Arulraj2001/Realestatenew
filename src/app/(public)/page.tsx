@@ -75,9 +75,9 @@ export default async function HomePage() {
           primaryCtaLabel={contentJson.primary_cta_label}
           primaryCtaLink={contentJson.primary_cta_link}
           secondaryCtaLabel={contentJson.secondary_cta_label}
-          mediaType={localVideo ? 'video' : (contentJson.hero_media_type || 'image')}
-          desktopVideo={localVideo || contentJson.desktop_video}
-          mobileVideo={localVideo || contentJson.mobile_video}
+          mediaType={contentJson.hero_media_type || (localVideo ? 'video' : 'image')}
+          desktopVideo={contentJson.desktop_video || localVideo}
+          mobileVideo={contentJson.mobile_video || localVideo}
           desktopImage={contentJson.desktop_image}
           mobileImage={contentJson.mobile_image}
           posterImage={contentJson.poster_image}
