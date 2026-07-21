@@ -94,7 +94,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   // Safe clamping of opacity 0-100 & blur (0-100% maps to 0-25px blur)
   const safeOpacity = Math.max(0, Math.min(100, overlayOpacity)) / 100;
-  const blurPx = (Math.max(0, Math.min(100, heroBlur)) / 100) * 20;
+  const blurPx = mediaType === 'video' ? 0 : (Math.max(0, Math.min(100, heroBlur)) / 100) * 20;
   const blurStyle: React.CSSProperties = blurPx > 0 ? { filter: `blur(${blurPx.toFixed(1)}px)`, transform: 'scale(1.05)' } : {};
 
   const alignClasses =
@@ -106,76 +106,98 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
   return (
     <section className="relative min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-between overflow-hidden bg-slate-950 text-slate-100 pb-28 sm:pb-36">
-      {/* Media Background Layer */}
-      <div className="absolute inset-0 z-0 overflow-hidden" style={blurStyle}>
-        {mediaType === 'video' && (getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo)) ? (
-          <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
-            {/* Poster image shown instantly while YouTube iframe loads */}
-            <Image
-              src={videoPosterUrl}
-              alt="Your Choice Properties Banner"
-              fill
-              priority
-              sizes="100vw"
-              className={`object-cover transition-opacity duration-1000 ${iframeReady ? 'opacity-0' : 'opacity-100'}`}
-            />
-            {/* Desktop YouTube Embed — deferred until browser idle */}
-            {iframeReady && getYoutubeId(desktopVideo) && (
-              <div className={`absolute inset-0 w-full h-full ${mobileVideo && getYoutubeId(mobileVideo) ? 'hidden md:block' : 'block'}`}>
-                <iframe
-                  src={`https://www.youtube.com/embed/${getYoutubeId(desktopVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(desktopVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
-                  className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none border-0"
-                  style={{ minWidth: '100%', minHeight: '100%', aspectRatio: '16/9', objectFit: 'cover' }}
-                  allow="autoplay; encrypted-media"
-                  loading="lazy"
-                />
-              </div>
-            )}
-            {/* Mobile YouTube Embed — deferred until browser idle */}
-            {iframeReady && mobileVideo && getYoutubeId(mobileVideo) && (
-              <div className="absolute inset-0 w-full h-full block md:hidden">
-                <iframe
-                  src={`https://www.youtube.com/embed/${getYoutubeId(mobileVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(mobileVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
-                  className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none border-0"
-                  style={{ minWidth: '100%', minHeight: '100%', aspectRatio: '9/16', objectFit: 'cover' }}
-                  allow="autoplay; encrypted-media"
-                  loading="lazy"
-                />
-              </div>
-            )}
-          </div>
-        ) : mediaType === 'video' && desktopVideo ? (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            poster={safePosterImage || safeDesktopImage}
-            className="w-full h-full object-cover"
-          >
-            <source src={desktopVideo} type="video/mp4" />
-            {mobileVideo && <source src={mobileVideo} type="video/mp4" />}
-          </video>
-        ) : (
-          <picture className="relative block w-full h-full">
-            {mobileImage && <source media="(max-width: 640px)" srcSet={mobileImage} />}
-            <Image
-              src={safeDesktopImage || safePosterImage}
-              alt="Your Choice Properties Banner"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-          </picture>
-        )}
+      {/* Media Background Layer (Pure container, clips all rendering issues) */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Blur/Scale Wrapper */}
+        <div className="w-full h-full overflow-hidden" style={blurStyle}>
+          {mediaType === 'video' && (getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo)) ? (
+            <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
+              {/* Poster image shown instantly while YouTube iframe loads */}
+              <Image
+                src={videoPosterUrl}
+                alt="Your Choice Properties Banner"
+                fill
+                priority
+                sizes="100vw"
+                className={`object-cover transition-opacity duration-1000 ${iframeReady ? 'opacity-0' : 'opacity-100'}`}
+              />
+              {/* Desktop YouTube Embed — deferred until browser idle */}
+              {iframeReady && getYoutubeId(desktopVideo) && (
+                <div className={`absolute inset-0 w-full h-full overflow-hidden ${mobileVideo && getYoutubeId(mobileVideo) ? 'hidden md:block' : 'block'}`}>
+                  <iframe
+                    src={`https://www.youtube.com/embed/${getYoutubeId(desktopVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(desktopVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
+                    className="absolute top-1/2 left-1/2 pointer-events-none border-0"
+                    style={{
+                      width: '100vw',
+                      height: '56.25vw',
+                      minWidth: '177.78vh',
+                      minHeight: '100vh',
+                      transform: 'translate(-50%, -50%) scale(1.35)'
+                    }}
+                    allow="autoplay; encrypted-media"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              {/* Mobile YouTube Embed — deferred until browser idle */}
+              {iframeReady && mobileVideo && getYoutubeId(mobileVideo) && (
+                <div className="absolute inset-0 w-full h-full overflow-hidden block md:hidden">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${getYoutubeId(mobileVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(mobileVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
+                    className="absolute top-1/2 left-1/2 pointer-events-none border-0"
+                    style={{
+                      width: '100vw',
+                      height: '177.78vw',
+                      minWidth: '56.25vh',
+                      minHeight: '100vh',
+                      transform: 'translate(-50%, -50%) scale(1.35)'
+                    }}
+                    allow="autoplay; encrypted-media"
+                    loading="lazy"
+                  />
+                </div>
+              )}
+            </div>
+          ) : mediaType === 'video' && desktopVideo ? (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={safePosterImage || safeDesktopImage}
+              className="w-full h-full object-cover"
+              style={{
+                transform: 'scale(1.15)'
+              }}
+            >
+              <source src={desktopVideo} type="video/mp4" />
+              {mobileVideo && <source src={mobileVideo} type="video/mp4" />}
+            </video>
+          ) : (
+            <picture className="relative block w-full h-full">
+              {mobileImage && <source media="(max-width: 640px)" srcSet={mobileImage} />}
+              <Image
+                src={safeDesktopImage || safePosterImage}
+                alt="Your Choice Properties Banner"
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover"
+              />
+            </picture>
+          )}
+        </div>
 
-        {/* Dynamic Admin Controlled Dark Overlay Opacity */}
-        <div
-          className="absolute inset-0 bg-slate-950"
-          style={{ opacity: safeOpacity }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40" />
+        {/* Dynamic Admin Controlled Dark Overlay Opacity (Unblurred, perfectly aligned, only shown for static images) */}
+        {mediaType !== 'video' && (
+          <>
+            <div
+              className="absolute inset-0 bg-slate-950"
+              style={{ opacity: safeOpacity }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40" />
+          </>
+        )}
       </div>
 
       {/* Hero Content Section */}

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
+import fs from 'fs';
+import path from 'path';
 import {
   getPublishedLocations,
   getPublishedProjects,
@@ -41,6 +43,21 @@ export default async function HomePage() {
   // Render stats strictly from the page content's stats_list
   const resolvedStats = Array.isArray(contentJson.stats_list) ? contentJson.stats_list : [];
 
+  // Check if there is a local video file inside the public folder (priority 1)
+  let localVideo: string | undefined = undefined;
+  try {
+    const publicDir = path.join(process.cwd(), 'public');
+    const files = fs.readdirSync(publicDir);
+    const videoFile = files.find(
+      (file) => file.toLowerCase().endsWith('.mp4') || file.toLowerCase().endsWith('.webm')
+    );
+    if (videoFile) {
+      localVideo = `/${videoFile}`;
+    }
+  } catch (error) {
+    console.error('Error scanning public directory for video assets:', error);
+  }
+
   return (
     <>
       {/* Organization / WebSite Schema.org JSON-LD */}
@@ -58,9 +75,9 @@ export default async function HomePage() {
           primaryCtaLabel={contentJson.primary_cta_label}
           primaryCtaLink={contentJson.primary_cta_link}
           secondaryCtaLabel={contentJson.secondary_cta_label}
-          mediaType={contentJson.hero_media_type || 'image'}
-          desktopVideo={contentJson.desktop_video}
-          mobileVideo={contentJson.mobile_video}
+          mediaType={localVideo ? 'video' : (contentJson.hero_media_type || 'image')}
+          desktopVideo={localVideo || contentJson.desktop_video}
+          mobileVideo={localVideo || contentJson.mobile_video}
           desktopImage={contentJson.desktop_image}
           mobileImage={contentJson.mobile_image}
           posterImage={contentJson.poster_image}
