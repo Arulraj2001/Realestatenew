@@ -184,22 +184,38 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-12 flex-1 flex flex-col justify-center">
         <div className={`flex flex-col ${alignClasses} space-y-5`}>
           {/* Badge Tag */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-xl">
+          <div className="hero-animate-badge inline-flex items-center gap-2 px-3.5 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-400 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-xl">
             <Sparkles className="w-3.5 h-3.5" /> DTCP & RERA Approved Layouts
           </div>
 
           {/* H1 Heading */}
-          <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl drop-shadow-md">
-            {heroTitle}
+          <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl drop-shadow-md flex flex-wrap justify-center gap-x-[0.25em] gap-y-1">
+            {heroTitle.split(' ').map((word, idx) => (
+              <span
+                key={idx}
+                className="hero-word-left inline-block"
+                style={{ animationDelay: `${0.5 + idx * 0.045}s` }}
+              >
+                {word}
+              </span>
+            ))}
           </h1>
 
           {/* Description */}
-          <p className="text-slate-200 text-sm sm:text-lg max-w-3xl leading-relaxed font-normal drop-shadow-sm">
-            {heroDescription}
+          <p className="text-slate-200 text-sm sm:text-lg max-w-3xl leading-relaxed font-normal drop-shadow-sm flex flex-wrap justify-center gap-x-[0.22em] gap-y-1">
+            {heroDescription.split(' ').map((word, idx) => (
+              <span
+                key={idx}
+                className="hero-word-right inline-block"
+                style={{ animationDelay: `${0.9 + idx * 0.035}s` }}
+              >
+                {word}
+              </span>
+            ))}
           </p>
 
           {/* Compact Designed CTA Buttons with Mouse Hover Animations */}
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-3">
+          <div className="hero-animate-cta flex flex-wrap items-center justify-center gap-4 pt-3">
             {theme === 'light' ? (
               <>
                 <Link href={primaryCtaLink} className="group">

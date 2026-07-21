@@ -2109,3 +2109,73 @@ html:not(.light-theme) .contact-banner-bg-container {
   border-top: 1px solid rgba(8, 32, 82, 0.14) !important;
   border-bottom: 1px solid rgba(8, 32, 82, 0.14) !important;
 }
+
+/* ==============================================================
+   HERO HEADER ENTRANCE ANIMATIONS
+   ============================================================== */
+@keyframes heroFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes wordSplitRejoinLeft {
+  0% {
+    opacity: 0;
+    transform: translate(-70px, -35px) scale(1.18);
+    filter: blur(10px);
+    letter-spacing: 0.12em;
+  }
+  60% {
+    opacity: 0.8;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+    filter: blur(0px);
+    letter-spacing: normal;
+  }
+}
+
+@keyframes wordSplitRejoinRight {
+  0% {
+    opacity: 0;
+    transform: translate(70px, -35px) scale(1.18);
+    filter: blur(10px);
+    letter-spacing: 0.12em;
+  }
+  60% {
+    opacity: 0.8;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+    filter: blur(0px);
+    letter-spacing: normal;
+  }
+}
+
+.hero-word-left {
+  animation: wordSplitRejoinLeft 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-word-right {
+  animation: wordSplitRejoinRight 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-animate-badge {
+  animation: heroFadeInUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.35s;
+}
+
+.hero-animate-cta {
+  animation: heroFadeInUp 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 1.35s;
+}
