@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Camera, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { GalleryItem } from '@/types/database';
 import { Dialog } from '@/components/ui/dialog';
+import { getMediaUrl } from '@/lib/utils/media';
 
 export interface PropertyMediaGalleryProps {
   propertyName: string;
@@ -53,6 +54,7 @@ export const PropertyMediaGallery: React.FC<PropertyMediaGalleryProps> = ({
   };
 
   const currentMedia = images[activeImageIndex] || images[0];
+  const currentMediaUrl = getMediaUrl(currentMedia?.storage_path_or_url);
 
   return (
     <div className="space-y-4">
@@ -62,7 +64,7 @@ export const PropertyMediaGallery: React.FC<PropertyMediaGalleryProps> = ({
         className="group relative aspect-[16/10] rounded-3xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl cursor-pointer"
       >
         <Image
-          src={currentMedia.storage_path_or_url}
+          src={currentMediaUrl}
           alt={currentMedia.alt_text || currentMedia.title || propertyName}
           fill
           priority
@@ -81,6 +83,7 @@ export const PropertyMediaGallery: React.FC<PropertyMediaGalleryProps> = ({
         <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 pt-1">
           {images.map((img, idx) => {
             const isSelected = idx === activeImageIndex;
+            const imgUrl = getMediaUrl(img.storage_path_or_url);
             return (
               <button
                 key={img.id}
@@ -92,7 +95,7 @@ export const PropertyMediaGallery: React.FC<PropertyMediaGalleryProps> = ({
                 }`}
               >
                 <Image
-                  src={img.storage_path_or_url}
+                  src={imgUrl}
                   alt={img.title || `Thumbnail ${idx + 1}`}
                   fill
                   sizes="120px"
@@ -117,14 +120,14 @@ export const PropertyMediaGallery: React.FC<PropertyMediaGalleryProps> = ({
             <div className="absolute inset-0 w-full h-full z-0">
               {currentMedia.media_type === 'video' ? (
                 <video
-                  src={currentMedia.storage_path_or_url}
+                  src={currentMediaUrl}
                   controls
                   autoPlay
                   className="w-full h-full object-cover"
                 />
               ) : (
                 <Image
-                  src={currentMedia.storage_path_or_url}
+                  src={currentMediaUrl}
                   alt={currentMedia.alt_text || currentMedia.title || propertyName}
                   fill
                   sizes="(max-width: 1200px) 100vw, 1200px"

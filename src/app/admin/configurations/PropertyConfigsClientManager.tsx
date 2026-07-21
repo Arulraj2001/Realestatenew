@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog } from '@/components/ui/dialog';
 import { MediaUploader } from '@/components/admin/MediaUploader';
 import { generateSlug } from '@/lib/utils/slug';
+import { parseGalleryImages, getMediaUrl } from '@/lib/utils/media';
 import { savePropertyConfigAction, deletePropertyConfigAction } from '@/app/actions/crud';
 import { useToast } from '@/components/ui/toast';
 
@@ -80,11 +81,7 @@ export const PropertyConfigsClientManager: React.FC<{
       ? JSON.parse(config.feature_list || '[]')
       : [];
 
-    const parsedGallery = Array.isArray(config.gallery_images)
-      ? (config.gallery_images as string[])
-      : typeof config.gallery_images === 'string'
-      ? JSON.parse(config.gallery_images || '[]')
-      : [];
+    const parsedGallery = parseGalleryImages(config.gallery_images);
 
     setFormData({
       project_id: config.project_id,
@@ -416,6 +413,15 @@ export const PropertyConfigsClientManager: React.FC<{
               <MediaUploader
                 label="Add Photo to Gallery (Multiple)"
                 folder="properties"
+                multiple={true}
+                onMultipleChange={(urls) => {
+                  if (urls && urls.length > 0) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      gallery_images: [...prev.gallery_images, ...urls],
+                    }));
+                  }
+                }}
                 onChange={(url) => {
                   if (url) {
                     setFormData((prev) => ({
@@ -433,30 +439,33 @@ export const PropertyConfigsClientManager: React.FC<{
             <div className="space-y-2">
               <Label>Current Gallery Preview ({formData.gallery_images.length} images)</Label>
               <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 p-3 bg-slate-900 border border-slate-800 rounded-xl">
-                {formData.gallery_images.map((imgUrl, index) => (
-                  <div key={index} className="relative aspect-video rounded-lg overflow-hidden bg-slate-950 border border-slate-800 group/img">
-                    <Image
-                      unoptimized
-                      src={imgUrl}
-                      alt={`Gallery item ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFormData((prev) => ({
-                          ...prev,
-                          gallery_images: prev.gallery_images.filter((_, idx) => idx !== index),
-                        }));
-                      }}
-                      className="absolute top-1 right-1 p-1 bg-red-600/90 text-white rounded-full opacity-0 group-hover/img:opacity-100 transition-opacity hover:bg-red-700 cursor-pointer shadow-md"
-                      title="Remove image"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
+                {formData.gallery_images.map((imgUrl, index) => {
+                  const resolvedUrl = getMediaUrl(imgUrl);
+                  return (
+                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden bg-slate-950 border border-slate-800 group/img">
+                      <Image
+                        unoptimized
+                        src={resolvedUrl}
+                        alt={`Gallery item ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            gallery_images: prev.gallery_images.filter((_, idx) => idx !== index),
+                          }));
+                        }}
+                        className="absolute top-1 right-1 p-1 bg-red-600/90 text-white rounded-full opacity-0 group-hover/img:opacity-100 transition-opacity hover:bg-red-700 cursor-pointer shadow-md"
+                        title="Remove image"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

@@ -57,6 +57,8 @@ export interface ProjectAccordionSectionsProps {
   projectVideoUrl: string;
 }
 
+import { parseGalleryImages, getMediaUrl } from '@/lib/utils/media';
+
 function parseFeatures(featureList: unknown): string[] {
   if (Array.isArray(featureList)) {
     return featureList.filter((f): f is string => typeof f === 'string' && f.trim().length > 0);
@@ -69,23 +71,6 @@ function parseFeatures(featureList: unknown): string[] {
       }
     } catch {
       return [featureList];
-    }
-  }
-  return [];
-}
-
-function parseGalleryImages(galleryImages: unknown): string[] {
-  if (Array.isArray(galleryImages)) {
-    return galleryImages.filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
-  }
-  if (typeof galleryImages === 'string') {
-    try {
-      const parsed = JSON.parse(galleryImages);
-      if (Array.isArray(parsed)) {
-        return parsed.filter((img): img is string => typeof img === 'string' && img.trim().length > 0);
-      }
-    } catch {
-      return [galleryImages];
     }
   }
   return [];
@@ -249,7 +234,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
               const extraImages = parseGalleryImages(villa.gallery_images);
 
               const defaultMainImg =
-                villa.hero_image_path ||
+                getMediaUrl(villa.hero_image_path) ||
                 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
 
               const allVillaImages = Array.from(
@@ -475,7 +460,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
               const extraPlotImages = parseGalleryImages(plot.gallery_images);
 
               const defaultPlotImg =
-                plot.hero_image_path ||
+                getMediaUrl(plot.hero_image_path) ||
                 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80';
 
               const allPlotImages = Array.from(

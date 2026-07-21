@@ -6,11 +6,15 @@ import { UploadCloud, CheckCircle, Trash2, Crop, X } from 'lucide-react';
 import { uploadMediaAction, deleteMediaFileAction } from '@/app/actions/media';
 import { Button } from '@/components/ui/button';
 
+import { getMediaUrl } from '@/lib/utils/media';
+
 export interface MediaUploaderProps {
   value?: string;
   folder?: string;
   label?: string;
   onChange: (url: string) => void;
+  onMultipleChange?: (urls: string[]) => void;
+  multiple?: boolean;
   cropAspectRatio?: number; // kept as option, but we now support free aspect ratio adjustments
 }
 
@@ -19,6 +23,8 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   folder = 'general',
   label = 'Upload Media Asset',
   onChange,
+  onMultipleChange,
+  multiple = false,
   cropAspectRatio,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
@@ -36,11 +42,14 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   const imageRef = useRef<HTMLImageElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const fileList = e.target.files;
+    if (!fileList || fileList.length === 0) return;
 
-    // We now enable cropper for any crop request
-    if (cropAspectRatio && file.type.startsWith('image/')) {
+    const files = Array.from(fileList);
+
+    // If single file and cropper is requested
+    if (!multiple && files.length === 1 && cropAspectRatio && files[0].type.startsWith('image/')) {
+      const file = files[0];
       const reader = new FileReader();
       reader.onload = () => {
         setRawImageSrc(reader.result as string);
@@ -52,7 +61,39 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       return;
     }
 
-    await uploadFile(file);
+    setIsUploading(true);
+    setErrorMessage(null);
+
+    const uploadedUrls: string[] = [];
+    let uploadErrors = 0;
+
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', folder);
+
+      const res = await uploadMediaAction(formData);
+      if (res.success && res.publicUrl) {
+        uploadedUrls.push(res.publicUrl);
+      } else {
+        uploadErrors++;
+      }
+    }
+
+    setIsUploading(false);
+    e.target.value = '';
+
+    if (uploadedUrls.length > 0) {
+      if (onMultipleChange) {
+        onMultipleChange(uploadedUrls);
+      } else {
+        uploadedUrls.forEach((url) => onChange(url));
+      }
+    }
+
+    if (uploadErrors > 0) {
+      setErrorMessage(`Failed to upload ${uploadErrors} file(s).`);
+    }
   };
 
   const uploadFile = async (file: File) => {
@@ -269,9 +310,9 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-3">
           <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-slate-950">
             {value.endsWith('.mp4') ? (
-              <video src={value} controls className="w-full h-full object-cover" />
+              <video src={getMediaUrl(value)} controls className="w-full h-full object-cover" />
             ) : (
-              <Image unoptimized src={value} alt="Uploaded preview" fill className="object-contain" />
+              <Image unoptimized src={getMediaUrl(value)} alt="Uploaded preview" fill className="object-contain" />
             )}
           </div>
           <div className="flex items-center justify-between gap-2">
@@ -290,13 +331,16 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       ) : (
         <label className="border-2 border-dashed border-slate-800 hover:border-amber-500/50 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-900/40">
           <UploadCloud className="w-8 h-8 text-amber-400 mb-2" />
-          <span className="text-xs font-semibold text-slate-200">Click to Select Media File</span>
+          <span className="text-xs font-semibold text-slate-200">
+            {multiple ? 'Click to Select Multiple Media Files' : 'Click to Select Media File'}
+          </span>
           <span className="text-[10px] text-slate-500 mt-1">
             {cropAspectRatio ? 'Adjust crop area freely after selection' : 'Images < 5MB | Videos/PDFs < 20MB'}
           </span>
           <input
             type="file"
             className="hidden"
+            multiple={multiple}
             accept={cropAspectRatio ? "image/*" : "image/*,video/mp4,application/pdf"}
             onChange={handleFileChange}
             disabled={isUploading}
