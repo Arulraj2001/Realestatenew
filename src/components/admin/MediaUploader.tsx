@@ -329,12 +329,12 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
           </div>
         </div>
       ) : (
-        <label className="border-2 border-dashed border-slate-800 hover:border-amber-500/50 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-900/40">
-          <UploadCloud className="w-8 h-8 text-amber-400 mb-2" />
-          <span className="text-xs font-semibold text-slate-200">
+        <label className="media-dropzone border-2 border-dashed border-slate-700/60 hover:border-amber-500 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-900/60">
+          <UploadCloud className="w-7 h-7 text-amber-400 mb-2 pointer-events-none" />
+          <span className="text-xs font-bold text-slate-200 block text-center">
             {multiple ? 'Click to Select Multiple Media Files' : 'Click to Select Media File'}
           </span>
-          <span className="text-[10px] text-slate-500 mt-1">
+          <span className="text-[11px] text-slate-400 block text-center mt-1.5 font-medium">
             {cropAspectRatio ? 'Adjust crop area freely after selection' : 'Images < 5MB | Videos/PDFs < 20MB'}
           </span>
           <input

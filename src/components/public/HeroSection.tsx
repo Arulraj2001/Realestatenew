@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Sparkles, Calendar, ArrowRight } from 'lucide-react';
@@ -25,6 +25,7 @@ export interface HeroSectionProps {
   heroBlur?: number;
   textAlignment?: 'left' | 'center' | 'right';
   heroEnabled?: boolean;
+  videoSpeed?: number;
 }
 
 const getYoutubeId = (url?: string | null) => {
@@ -50,9 +51,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   heroBlur = 0,
   textAlignment = 'center',
   heroEnabled = true,
+  videoSpeed = 0.75,
 }) => {
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
   const { theme } = useTheme();
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current && typeof videoSpeed === 'number') {
+      videoRef.current.playbackRate = videoSpeed;
+    }
+  }, [videoSpeed]);
 
   const secondaryLabel = secondaryCtaLabel || 'Schedule a Site Visit';
   const isContactAction = secondaryLabel.toLowerCase().includes('contact');
@@ -139,6 +148,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             </div>
           ) : mediaType === 'video' && desktopVideo ? (
             <video
+              ref={videoRef}
               autoPlay
               muted
               loop

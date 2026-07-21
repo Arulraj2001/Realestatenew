@@ -39,6 +39,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     poster_image: '',
     overlay_opacity: 70,
     hero_blur: 0,
+    video_speed: 0.75,
     hero_h1: '',
     hero_description: '',
     primary_cta_label: '',
@@ -158,6 +159,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       poster_image: String(c.poster_image || ''),
       overlay_opacity: c.overlay_opacity !== undefined ? Number(c.overlay_opacity) : 70,
       hero_blur: c.hero_blur !== undefined ? Number(c.hero_blur) : 0,
+      video_speed: c.video_speed !== undefined ? Number(c.video_speed) : 0.75,
       hero_h1: String(c.hero_h1 || c.hero_title || 'Your Choice Properties – Trusted Plots, Villas and Houses in Namakkal and Paramathi Velur'),
       hero_description: String(c.hero_description || c.hero_subtitle || 'Explore residential plots, gated-community villas and independent houses across our projects in Namakkal and Paramathi Velur.'),
       primary_cta_label: String(c.primary_cta_label || 'Explore Projects'),
@@ -259,6 +261,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         poster_image: formData.poster_image,
         overlay_opacity: Math.max(0, Math.min(100, Number(formData.overlay_opacity))),
         hero_blur: Math.max(0, Math.min(100, Number(formData.hero_blur))),
+        video_speed: Number(formData.video_speed),
         hero_h1: formData.hero_h1,
         hero_description: formData.hero_description,
         primary_cta_label: formData.primary_cta_label,
@@ -414,111 +417,146 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
           </div>
 
           {selectedKey === 'home' ? (
-            <div className="space-y-4 pt-2 border-t border-slate-800">
-              <h3 className="text-xs font-bold uppercase text-amber-400 tracking-wider">Hero Section Controls</h3>
+            <div className="space-y-5 pt-2">
+              {/* Card 1: Hero Media & Display Settings */}
+              <div className="admin-form-card bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-800/80">
+                  <span className="w-2 h-2 rounded-full bg-amber-400" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400">Hero Media &amp; Display Settings</h3>
+                </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>Hero Enabled</Label>
-                  <select
-                    value={formData.hero_enabled ? 'true' : 'false'}
-                    onChange={(e) => setFormData({ ...formData, hero_enabled: e.target.value === 'true' })}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
-                  >
-                    <option value="true">Enabled</option>
-                    <option value="false">Disabled</option>
-                  </select>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Hero Enabled</Label>
+                    <select
+                      value={formData.hero_enabled ? 'true' : 'false'}
+                      onChange={(e) => setFormData({ ...formData, hero_enabled: e.target.value === 'true' })}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                    >
+                      <option value="true">Enabled</option>
+                      <option value="false">Disabled</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <Label>Media Type</Label>
+                    <select
+                      value={formData.hero_media_type}
+                      onChange={(e) => setFormData({ ...formData, hero_media_type: e.target.value as 'video' | 'image' })}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                    >
+                      <option value="image">Image Background</option>
+                      <option value="video">Video Background</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs">
+                      <Label>Overlay Opacity</Label>
+                      <span className="text-amber-400 font-mono font-bold text-xs">{formData.overlay_opacity}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={formData.overlay_opacity}
+                      onChange={(e) => setFormData({ ...formData, overlay_opacity: Number(e.target.value) })}
+                      className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs">
+                      <Label>Media Background Blur</Label>
+                      <span className="text-amber-400 font-mono font-bold text-xs">{formData.hero_blur}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="1"
+                      value={formData.hero_blur}
+                      onChange={(e) => setFormData({ ...formData, hero_blur: Number(e.target.value) })}
+                      className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <Label>Media Type</Label>
-                  <select
-                    value={formData.hero_media_type}
-                    onChange={(e) => setFormData({ ...formData, hero_media_type: e.target.value as 'video' | 'image' })}
-                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white"
-                  >
-                    <option value="image">Image Background</option>
-                    <option value="video">Video Background</option>
-                  </select>
+                  <MediaUploader
+                    label="Desktop Hero Image"
+                    value={formData.desktop_image}
+                    folder="content"
+                    onChange={(url) => setFormData({ ...formData, desktop_image: url })}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Desktop Video URL (.mp4)</Label>
+                    <Input
+                      value={formData.desktop_video}
+                      onChange={(e) => setFormData({ ...formData, desktop_video: e.target.value })}
+                      placeholder="https://your-storage/video.mp4"
+                    />
+                  </div>
+
+                  <div>
+                    <Label>Video Playback Speed</Label>
+                    <select
+                      value={formData.video_speed}
+                      onChange={(e) => setFormData({ ...formData, video_speed: Number(e.target.value) })}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                    >
+                      <option value={1.0}>1.00x - Normal Speed</option>
+                      <option value={0.75}>0.75x - Slightly Slower (Recommended)</option>
+                      <option value={0.5}>0.50x - Half Speed (Slow Motion)</option>
+                      <option value={0.25}>0.25x - Quarter Speed (Extra Slow Motion)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <div className="flex justify-between items-center text-xs">
-                  <Label>Overlay Opacity ({formData.overlay_opacity}%)</Label>
+              {/* Card 2: Hero Content & Typography */}
+              <div className="admin-form-card bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-800/80">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">Hero Headlines &amp; Call to Action</h3>
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={formData.overlay_opacity}
-                  onChange={(e) => setFormData({ ...formData, overlay_opacity: Number(e.target.value) })}
-                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                />
-              </div>
 
-              <div className="space-y-1">
-                <div className="flex justify-between items-center text-xs">
-                  <Label>Media Background Blur (0 - 100%)</Label>
-                  <span className="text-amber-400 font-mono font-bold text-xs">{formData.hero_blur}%</span>
+                <div>
+                  <Label>Hero H1 Title</Label>
+                  <Textarea rows={2} value={formData.hero_h1} onChange={(e) => setFormData({ ...formData, hero_h1: e.target.value })} />
                 </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="1"
-                  value={formData.hero_blur}
-                  onChange={(e) => setFormData({ ...formData, hero_blur: Number(e.target.value) })}
-                  className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
-                />
-                <span className="text-[10px] text-slate-500 block">Drag left to clear (0%), drag right to blur background image or video (up to 100%)</span>
-              </div>
 
-              <div>
-                <MediaUploader
-                  label="Desktop Hero Image"
-                  value={formData.desktop_image}
-                  folder="content"
-                  onChange={(url) => setFormData({ ...formData, desktop_image: url })}
-                />
-              </div>
+                <div>
+                  <Label>Hero Subtitle / Description</Label>
+                  <Textarea rows={3} value={formData.hero_description} onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })} />
+                </div>
 
-              <div>
-                <Label>Desktop Video URL (.mp4)</Label>
-                <Input
-                  value={formData.desktop_video}
-                  onChange={(e) => setFormData({ ...formData, desktop_video: e.target.value })}
-                  placeholder="https://your-storage/video.mp4"
-                />
-              </div>
-
-              <div>
-                <Label>Hero H1 Title</Label>
-                <Textarea rows={2} value={formData.hero_h1} onChange={(e) => setFormData({ ...formData, hero_h1: e.target.value })} />
-              </div>
-
-              <div>
-                <Label>Hero Subtitle / Description</Label>
-                <Textarea rows={3} value={formData.hero_description} onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })} />
-              </div>
-
-              {/* #### MISSING FIELDS ADDED #### */}
-              <div className="pt-4 border-t border-slate-800 space-y-4">
-                <h3 className="text-xs font-bold uppercase text-amber-400 tracking-wider">Additional Hero & Section Controls</h3>
-
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label>Secondary CTA Label</Label>
                     <Input value={formData.secondary_cta_label} onChange={(e) => setFormData({ ...formData, secondary_cta_label: e.target.value })} placeholder="Contact Us" />
                   </div>
                   <div>
                     <Label>Text Alignment</Label>
-                    <select value={formData.text_alignment} onChange={(e) => setFormData({ ...formData, text_alignment: e.target.value as 'left' | 'center' | 'right' })} className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white">
+                    <select value={formData.text_alignment} onChange={(e) => setFormData({ ...formData, text_alignment: e.target.value as 'left' | 'center' | 'right' })} className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white">
                       <option value="center">Center</option>
                       <option value="left">Left</option>
                       <option value="right">Right</option>
                     </select>
                   </div>
+                </div>
+              </div>
+
+              {/* Card 3: Mobile Overrides */}
+              <div className="admin-form-card bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-800/80">
+                  <span className="w-2 h-2 rounded-full bg-sky-400" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-sky-400">Mobile Breakpoint Media Overrides</h3>
                 </div>
 
                 <div>
@@ -529,15 +567,25 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                   <Label>Mobile Video URL (.mp4)</Label>
                   <Input value={formData.mobile_video} onChange={(e) => setFormData({ ...formData, mobile_video: e.target.value })} placeholder="https://your-storage/mobile-video.mp4" />
                 </div>
+              </div>
 
-                <div>
-                  <Label>Gallery CTA Label</Label>
-                  <Input value={formData.gallery_cta} onChange={(e) => setFormData({ ...formData, gallery_cta: e.target.value })} placeholder="View Gallery" />
+                {/* Card 4: Additional Section & Stats Controls */}
+              <div className="admin-form-card bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-800/80">
+                  <span className="w-2 h-2 rounded-full bg-purple-400" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-purple-400">Additional Section &amp; Stats Controls</h3>
                 </div>
 
-                <div>
-                  <Label>Primary CTA Link</Label>
-                  <Input value={formData.primary_cta_link} onChange={(e) => setFormData({ ...formData, primary_cta_link: e.target.value })} placeholder="/projects" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label>Gallery CTA Label</Label>
+                    <Input value={formData.gallery_cta} onChange={(e) => setFormData({ ...formData, gallery_cta: e.target.value })} placeholder="View Gallery" />
+                  </div>
+
+                  <div>
+                    <Label>Primary CTA Link</Label>
+                    <Input value={formData.primary_cta_link} onChange={(e) => setFormData({ ...formData, primary_cta_link: e.target.value })} placeholder="/projects" />
+                  </div>
                 </div>
 
                 {/* Stats List Editor */}

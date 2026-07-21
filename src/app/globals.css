@@ -113,7 +113,8 @@ body:has(.light-theme) {
 
 /* ── LIGHT THEME MODAL & DIALOG OVERRIDES ───────────────── */
 
-.light-theme .dialog-modal {
+.light-theme .dialog-modal,
+.light-theme [role="dialog"] {
   background-color: #ffffff !important;
   background: #ffffff !important;
   border-color: #e2e8f0 !important;
@@ -121,15 +122,20 @@ body:has(.light-theme) {
   color: #0f172a !important;
 }
 
+.light-theme .dialog-modal h1,
+.light-theme [role="dialog"] h1,
+.light-theme .dialog-modal h2,
+.light-theme [role="dialog"] h2,
 .light-theme .dialog-modal h3,
 .light-theme [role="dialog"] h3,
 .light-theme .dialog-modal h4,
-.light-theme [role="dialog"] h4,
-.light-theme .dialog-modal label,
-.light-theme [role="dialog"] label,
-.light-theme .dialog-modal span,
-.light-theme [role="dialog"] span {
+.light-theme [role="dialog"] h4 {
   color: #0f172a !important;
+}
+
+.light-theme .dialog-modal label,
+.light-theme [role="dialog"] label {
+  color: #1e293b !important;
 }
 
 .light-theme .dialog-modal p,
@@ -139,19 +145,30 @@ body:has(.light-theme) {
 
 .light-theme .dialog-modal .text-slate-400,
 .light-theme [role="dialog"] .text-slate-400,
-.light-theme .dialog-modal .text-slate-300,
-.light-theme [role="dialog"] .text-slate-300,
-.light-theme .dialog-modal .text-slate-200,
-.light-theme [role="dialog"] .text-slate-200,
-.light-theme .dialog-modal .text-white,
-.light-theme [role="dialog"] .text-white {
-  color: #1e293b !important;
+.light-theme .dialog-modal .text-slate-500,
+.light-theme [role="dialog"] .text-slate-500 {
+  color: #64748b !important;
 }
 
-.light-theme .dialog-modal input,
+/* Modal Inner Card Containers */
+.light-theme .dialog-modal .bg-slate-900\/40,
+.light-theme [role="dialog"] .bg-slate-900\/40,
+.light-theme .dialog-modal .bg-slate-900\/60,
+.light-theme [role="dialog"] .bg-slate-900\/60,
+.light-theme .dialog-modal .bg-slate-950\/60,
+.light-theme [role="dialog"] .bg-slate-950\/60,
+.light-theme .dialog-modal .admin-form-card,
+.light-theme [role="dialog"] .admin-form-card {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+/* Modal Input & Dropdown Select Styling */
+.light-theme .dialog-modal input:not([type="checkbox"]):not([type="radio"]),
 .light-theme .dialog-modal textarea,
 .light-theme .dialog-modal select,
-.light-theme [role="dialog"] input,
+.light-theme [role="dialog"] input:not([type="checkbox"]):not([type="radio"]),
 .light-theme [role="dialog"] textarea,
 .light-theme [role="dialog"] select {
   background-color: #ffffff !important;
@@ -162,8 +179,11 @@ body:has(.light-theme) {
 
 .light-theme .dialog-modal input:focus,
 .light-theme .dialog-modal textarea:focus,
+.light-theme .dialog-modal select:focus,
 .light-theme [role="dialog"] input:focus,
-.light-theme [role="dialog"] textarea:focus {
+.light-theme [role="dialog"] textarea:focus,
+.light-theme [role="dialog"] select:focus {
+  background-color: #ffffff !important;
   border-color: #c59b27 !important;
   ring-color: #c59b27 !important;
 }
@@ -175,12 +195,31 @@ body:has(.light-theme) {
   color: #94a3b8 !important;
 }
 
+/* MediaUploader Dropzone in Light Theme */
+.light-theme .media-dropzone {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+.light-theme .media-dropzone:hover {
+  border-color: #c59b27 !important;
+  background-color: #fffdf7 !important;
+}
+
+.light-theme .media-dropzone span.text-slate-200 {
+  color: #0f172a !important;
+}
+
+.light-theme .media-dropzone span.text-slate-400 {
+  color: #64748b !important;
+}
+
 .light-theme .dialog-divider,
 .light-theme .dialog-modal .border-slate-800,
 .light-theme [role="dialog"] .border-slate-800,
 .light-theme .dialog-modal .bg-slate-800,
 .light-theme [role="dialog"] .bg-slate-800 {
-  background-color: #e2e8f0 !important;
+  background-color: #f1f5f9 !important;
   border-color: #e2e8f0 !important;
 }
 

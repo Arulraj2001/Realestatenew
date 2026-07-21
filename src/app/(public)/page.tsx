@@ -84,6 +84,7 @@ export default async function HomePage() {
           overlayOpacity={contentJson.overlay_opacity !== undefined ? Number(contentJson.overlay_opacity) : 70}
           heroBlur={contentJson.hero_blur !== undefined ? Number(contentJson.hero_blur) : 0}
           textAlignment={contentJson.text_alignment || 'center'}
+          videoSpeed={contentJson.video_speed !== undefined ? Number(contentJson.video_speed) : 0.75}
         />
 
         {/* 2. Two Central Location-Selection Cards (Overlapping Hero Lower Area) */}
