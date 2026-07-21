@@ -7,7 +7,8 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
-    // Allow local IP resolution in development (Supabase DNS resolves to NAT64 IPv6)
+    // Allow direct loading of remote CDNs to prevent Node.js proxy timeouts
+    unoptimized: true,
     dangerouslyAllowLocalIP: process.env.NODE_ENV === 'development',
     remotePatterns: [
       {

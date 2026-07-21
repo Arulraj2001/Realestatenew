@@ -332,6 +332,14 @@ body:has(.light-theme) {
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7) !important;
 }
 
+.light-theme [class*="aspect-"] .photo-expand-pill,
+.light-theme [class*="aspect-"] .photo-expand-pill *,
+.light-theme .photo-expand-pill,
+.light-theme .photo-expand-pill * {
+  color: #082052 !important;
+  text-shadow: none !important;
+}
+
 /* ── HOVER TEXT ─────────────────────────────────────────── */
 .light-theme .hover\:text-amber-400:hover {
   color: #92400e !important;
