@@ -121,7 +121,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     video: true,
     amenities: true,
-    gallery: false,
+    gallery: true,
     landmarks: true,
     location: true,
   });
