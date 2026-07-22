@@ -7,6 +7,32 @@ import { GalleryItem } from '@/types/database';
 import { Dialog } from '@/components/ui/dialog';
 import { getMediaUrl } from '@/lib/utils/media';
 
+function getPropertyMediaImageSrc(item?: GalleryItem, fallback = ''): string {
+  if (!item) return fallback;
+  if (item.thumbnail_path) return getMediaUrl(item.thumbnail_path);
+
+  const isYouTube =
+    item.media_type === 'youtube' ||
+    item.embed_type === 'youtube' ||
+    !!(item.video_url && (item.video_url.includes('youtube') || item.video_url.includes('youtu.be'))) ||
+    !!(item.storage_path_or_url && (item.storage_path_or_url.includes('youtube') || item.storage_path_or_url.includes('youtu.be')));
+
+  if (isYouTube) {
+    const url = item.video_url || item.storage_path_or_url;
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|watch\?.+&v=))([\w-]{11})/);
+    if (match && match[1]) {
+      return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+    }
+  }
+
+  const isVideoOrInstagram = item.media_type === 'video' || item.media_type === 'instagram' || item.embed_type === 'instagram' || item.embed_type === 'supabase';
+  if (isVideoOrInstagram) {
+    return fallback || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80';
+  }
+
+  return getMediaUrl(item.storage_path_or_url) || fallback;
+}
+
 export interface PropertyMediaGalleryProps {
   propertyName: string;
   fallbackImage: string;
@@ -54,7 +80,7 @@ export const PropertyMediaGallery: React.FC<PropertyMediaGalleryProps> = ({
   };
 
   const currentMedia = images[activeImageIndex] || images[0];
-  const currentMediaUrl = getMediaUrl(currentMedia?.storage_path_or_url);
+  const currentMediaUrl = getPropertyMediaImageSrc(currentMedia, fallbackImage);
 
   return (
     <div className="space-y-4">
@@ -83,7 +109,7 @@ export const PropertyMediaGallery: React.FC<PropertyMediaGalleryProps> = ({
         <div className="grid grid-cols-4 sm:grid-cols-6 gap-3 pt-1">
           {images.map((img, idx) => {
             const isSelected = idx === activeImageIndex;
-            const imgUrl = getMediaUrl(img.storage_path_or_url);
+            const imgUrl = getPropertyMediaImageSrc(img, fallbackImage);
             return (
               <button
                 key={img.id}

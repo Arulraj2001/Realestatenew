@@ -2218,3 +2218,88 @@ html:not(.light-theme) .contact-banner-bg-container {
   animation: heroFadeInUp 0.95s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: 1.35s;
 }
+
+/* ── HERO GRADIENT BANNER DUAL-THEME SYSTEM ────────────────────────── */
+
+/* DARK MODE (Default) */
+.hero-gradient-banner,
+.hero-dark-overlay {
+  background-color: #090d16;
+  background-image: linear-gradient(to right, #090d16 0%, #0f172a 50%, #1b1638 100%);
+  color: #ffffff;
+}
+
+.hero-gradient-banner h1,
+.hero-dark-overlay h1,
+.hero-gradient-banner h2,
+.hero-dark-overlay h2,
+.hero-gradient-banner h3,
+.hero-dark-overlay h3 {
+  color: #ffffff;
+}
+
+.hero-gradient-banner p,
+.hero-dark-overlay p {
+  color: #cbd5e1;
+}
+
+/* LIGHT MODE (.light-theme) */
+.light-theme .hero-gradient-banner,
+.light-theme .hero-dark-overlay {
+  background-color: #eef7fc !important;
+  background-image: linear-gradient(to right, #dbeafe 0%, #edf6fc 50%, #ffffff 100%) !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  color: #091e3a !important;
+}
+
+.light-theme .hero-gradient-banner h1,
+.light-theme .hero-dark-overlay h1,
+.light-theme .hero-gradient-banner h2,
+.light-theme .hero-dark-overlay h2,
+.light-theme .hero-gradient-banner h3,
+.light-theme .hero-dark-overlay h3 {
+  color: #091e3a !important; /* Rich Dark Navy */
+  text-shadow: none !important;
+}
+
+.light-theme .hero-gradient-banner p,
+.light-theme .hero-dark-overlay p {
+  color: #334155 !important;
+}
+
+.light-theme .hero-gradient-banner span,
+.light-theme .hero-dark-overlay span,
+.light-theme .hero-gradient-banner div,
+.light-theme .hero-dark-overlay div {
+  color: #1e293b;
+}
+
+.light-theme .hero-gradient-banner .text-slate-300,
+.light-theme .hero-dark-overlay .text-slate-300,
+.light-theme .hero-gradient-banner .text-slate-400,
+.light-theme .hero-dark-overlay .text-slate-400,
+.light-theme .hero-gradient-banner .text-slate-500,
+.light-theme .hero-dark-overlay .text-slate-500 {
+  color: #475569 !important;
+}
+
+.light-theme .hero-gradient-banner a:not([class*="bg-"]),
+.light-theme .hero-dark-overlay a:not([class*="bg-"]) {
+  color: #0284c7 !important;
+}
+
+.light-theme .hero-gradient-banner .text-amber-400,
+.light-theme .hero-dark-overlay .text-amber-400,
+.light-theme .hero-gradient-banner [class*="text-amber-400"],
+.light-theme .hero-dark-overlay [class*="text-amber-400"],
+.light-theme .hero-gradient-banner .text-amber-300,
+.light-theme .hero-dark-overlay .text-amber-300 {
+  color: #0284c7 !important; /* Crisp Blue Accent in Light Theme */
+}
+
+.light-theme .hero-gradient-banner .border-slate-800,
+.light-theme .hero-dark-overlay .border-slate-800,
+.light-theme .hero-gradient-banner .border-slate-900,
+.light-theme .hero-dark-overlay .border-slate-900 {
+  border-color: #cbd5e1 !important;
+}

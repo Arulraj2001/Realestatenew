@@ -94,16 +94,14 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
       )}
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
-        {/* Compact Location Hero Header */}
-        <section className="relative py-6 sm:py-8 bg-slate-950 border-b border-slate-900 overflow-hidden hero-dark-overlay">
-          <div className="absolute inset-0 z-0">
-            <Image src={fallbackImage} alt={location.name} fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/10" />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent" />
-          </div>
+        {/* Compact Gradient Location Hero Header */}
+        <section className="hero-gradient-banner relative py-6 sm:py-8 overflow-hidden border-b border-slate-800/80">
+          {/* Glowing gradient ambient circles */}
+          <div className="absolute -top-12 -left-12 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-12 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-white/5">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-800/60">
               {/* Breadcrumb */}
               <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
                 <Link href="/" className="hover:text-amber-400 transition-colors">
@@ -118,12 +116,12 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
               </div>
 
               {/* Address Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-amber-300 text-xs font-bold uppercase tracking-wider w-fit">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/15 border border-amber-500/30 rounded-full text-amber-300 text-xs font-bold uppercase tracking-wider w-fit">
                 <MapPin className="w-3 h-3 text-amber-400" /> {location.address || 'Tamil Nadu'}
               </div>
             </div>
 
-            <h1 className="font-serif text-2xl sm:text-4xl font-bold text-white tracking-tight">
+            <h1 className="font-serif text-xl sm:text-3xl font-extrabold text-white tracking-tight">
               Properties &amp; Townships in {location.name}
             </h1>
 

@@ -307,23 +307,70 @@ export async function deleteLandmarkAction(id: string) {
 export async function saveGalleryItemAction(data: Record<string, unknown>, id?: string) {
   try {
     await requireAdmin(['super_admin', 'content_admin']);
-    const validated = galleryCrudSchema.parse(data);
+    const schema = id ? galleryCrudSchema.partial() : galleryCrudSchema;
+    const validated = schema.parse(data);
     const supabase = await getSupabaseAdmin();
 
-    const payload = {
+    // Map input media_type ('youtube' | 'instagram' | 'video' | 'image') to DB column rules:
+    // Postgres check constraint requires media_type IN ('image', 'video').
+    let dbMediaType: 'image' | 'video' | undefined;
+    let dbEmbedType: 'supabase' | 'youtube' | 'instagram' | null | undefined;
+
+    if (validated.media_type) {
+      if (validated.media_type === 'youtube') {
+        dbMediaType = 'video';
+        dbEmbedType = 'youtube';
+      } else if (validated.media_type === 'instagram') {
+        dbMediaType = 'video';
+        dbEmbedType = 'instagram';
+      } else if (validated.media_type === 'video') {
+        dbMediaType = 'video';
+        dbEmbedType = 'supabase';
+      } else {
+        dbMediaType = 'image';
+        dbEmbedType = null;
+      }
+    } else if (validated.embed_type) {
+      dbEmbedType = validated.embed_type;
+      dbMediaType = (dbEmbedType === 'youtube' || dbEmbedType === 'instagram' || dbEmbedType === 'supabase') ? 'video' : 'image';
+    }
+
+    const storageUrl = validated.storage_path_or_url ?? validated.video_url;
+    const videoUrl = validated.video_url ?? validated.storage_path_or_url ?? null;
+
+    const payload: Record<string, unknown> = {
       ...validated,
-      project_id: validated.project_id || null,
-      location_id: validated.location_id || null,
-      media_type: (validated.media_type === 'youtube' || validated.media_type === 'instagram') 
-        ? ('video' as const) 
-        : validated.media_type,
-      embed_type: validated.embed_type || 'supabase',
     };
+
+    if (validated.project_id !== undefined) {
+      payload.project_id = validated.project_id || null;
+    }
+    if (validated.location_id !== undefined) {
+      payload.location_id = validated.location_id || null;
+    }
+    if (storageUrl !== undefined) {
+      payload.storage_path_or_url = storageUrl;
+    }
+    if (videoUrl !== undefined) {
+      payload.video_url = videoUrl;
+    }
+
+    if (dbMediaType !== undefined) {
+      payload.media_type = dbMediaType;
+      payload.embed_type = dbEmbedType;
+    }
 
     let query;
     if (id) {
       query = supabase.from('gallery_items').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', id);
     } else {
+      // For insert, ensure required DB columns are present
+      if (!payload.storage_path_or_url) {
+        return { success: false, error: 'Media URL or file path is required.' };
+      }
+      if (!payload.media_type) {
+        payload.media_type = 'image';
+      }
       query = supabase.from('gallery_items').insert(payload);
     }
 
@@ -581,7 +628,47 @@ export async function saveProjectAmenitiesAction(
     revalidatePath('/', 'layout');
     return { success: true };
   } catch {
-    return { success: false, error: 'Failed to update project amenities.' };
+    return { success: false, error: 'Failed to save project amenities.' };
   }
 }
 
+export async function getInstagramThumbnailAction(url: string): Promise<string | null> {
+  try {
+    if (!url) return null;
+    const match = url.match(/instagram\.com\/(?:p|reel|reels|tv)\/([\w-]+)/);
+    if (!match || !match[1]) return null;
+    const id = match[1];
+
+    // Attempt 1: Fetch Instagram oEmbed endpoint
+    try {
+      const oembedRes = await fetch(`https://api.instagram.com/oembed?url=https://www.instagram.com/p/${id}/`, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+        next: { revalidate: 86400 },
+      });
+      if (oembedRes.ok) {
+        const data = await oembedRes.json();
+        if (data.thumbnail_url) return data.thumbnail_url;
+      }
+    } catch {
+      // ignore and try fallback
+    }
+
+    // Attempt 2: Follow media redirect to CDN image URL
+    try {
+      const mediaRes = await fetch(`https://www.instagram.com/p/${id}/media/?size=l`, {
+        method: 'HEAD',
+        redirect: 'follow',
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' },
+      });
+      if (mediaRes.ok && mediaRes.url && mediaRes.url.includes('cdninstagram.com')) {
+        return mediaRes.url;
+      }
+    } catch {
+      // ignore
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}

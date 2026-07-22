@@ -45,6 +45,10 @@ import { ProjectLandmarksPopup } from '@/components/public/ProjectLandmarksPopup
 import { ProjectLocationMapPopup } from '@/components/public/ProjectLocationMapPopup';
 import { SiteVisitForm } from '@/components/forms/SiteVisitForm';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
+import {
+  groupByKind, getKindLabel, GalleryMediaKind,
+} from '@/lib/utils/gallery';
+import { Camera, Film, Tv2, Share2 } from 'lucide-react';
 
 export interface ProjectAccordionSectionsProps {
   project: Project;
@@ -58,6 +62,28 @@ export interface ProjectAccordionSectionsProps {
 }
 
 import { parseGalleryImages, getMediaUrl } from '@/lib/utils/media';
+
+// ─── AccordionGallery — direct orderly gallery for project/location pages ─────
+function AccordionGallery({
+  galleryItems,
+  floorPlans,
+}: {
+  galleryItems: GalleryItem[];
+  floorPlans: GalleryItem[];
+}) {
+  const allItems = [...galleryItems, ...floorPlans];
+
+  if (allItems.length === 0) {
+    return <p className="text-slate-600 text-sm text-center py-6">No gallery items yet.</p>;
+  }
+
+  return (
+    <div className="relative">
+      <GalleryLightbox items={allItems} activeKind="photo" />
+    </div>
+  );
+}
+
 
 function parseFeatures(featureList: unknown): string[] {
   if (Array.isArray(featureList)) {
@@ -815,7 +841,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
             {openSections.gallery && (
               <div className="p-6 bg-slate-950 space-y-4">
-                <GalleryLightbox items={[...galleryItems, ...floorPlans]} />
+                <AccordionGallery galleryItems={galleryItems} floorPlans={floorPlans} />
               </div>
             )}
           </div>

@@ -130,45 +130,34 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       <div className="bg-slate-950 text-slate-100 min-h-screen">
 
-      {/* ─── 1. CINEMATIC HERO ─────────────────────────────────────── */}
-      <section className="hero-dark-overlay relative py-5 sm:py-6 bg-slate-950 overflow-hidden border-b border-slate-800">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={fallbackHero}
-            alt={project.name}
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-          {/* Multi-layer gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/10" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-transparent to-transparent" />
-        </div>
+      {/* ─── 1. CINEMATIC GRADIENT HERO ─────────────────────────────────────── */}
+      <section className="hero-gradient-banner relative py-5 sm:py-6 overflow-hidden border-b border-slate-800/80">
+        {/* Glowing gradient ambient circles */}
+        <div className="absolute -top-12 -left-12 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-12 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Hero Content */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-3" style={{ color: '#cbd5e1' }}>
-            <Link href="/" className="hover:text-amber-400 transition-colors" style={{ color: '#e2e8f0' }}>Home</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400 pointer-events-none" style={{ color: '#94a3b8' }} />
-            <Link href="/projects" className="hover:text-amber-400 transition-colors" style={{ color: '#e2e8f0' }}>Projects</Link>
-            <ChevronRight className="w-3.5 h-3.5 text-slate-400 pointer-events-none" style={{ color: '#94a3b8' }} />
-            <span className="text-amber-400 font-bold" style={{ color: '#fbbf24' }}>{project.name}</span>
+          <div className="flex items-center gap-2 text-xs font-semibold text-slate-300 mb-2.5">
+            <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-500 pointer-events-none" />
+            <Link href="/projects" className="hover:text-amber-400 transition-colors">Projects</Link>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-500 pointer-events-none" />
+            <span className="text-amber-400 font-bold">{project.name}</span>
           </div>
 
-          <div className="max-w-3xl space-y-4">
+          <div className="max-w-3xl space-y-3">
             {/* Project Name */}
-            <h1 className="font-serif text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-none drop-shadow-2xl" style={{ color: '#ffffff', textShadow: '0 2px 12px rgba(0,0,0,0.9)' }}>
+            <h1 className="font-serif text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-snug">
               {project.name}
             </h1>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-3 pt-1">
+            <div className="flex flex-wrap gap-2.5 pt-0.5">
               <a href={`tel:${siteConfig.contact.phone}`}>
-                <Button variant="gold" size="md" className="font-bold shadow-xl">
-                  <Phone className="w-4 h-4 mr-2 pointer-events-none" /> Call Now for Site Visit
+                <Button variant="gold" size="sm" className="font-bold shadow-md text-xs">
+                  <Phone className="w-3.5 h-3.5 mr-1.5 pointer-events-none" /> Call Now for Site Visit
                 </Button>
               </a>
               <a
@@ -178,8 +167,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Button variant="outline" size="md" className="font-bold border-emerald-500/60 text-emerald-400 bg-slate-900/60 backdrop-blur-sm hover:bg-emerald-950">
-                  <WhatsAppIcon className="w-4 h-4 mr-2 pointer-events-none" /> WhatsApp Enquiry
+                <Button variant="outline" size="sm" className="font-bold border-emerald-500/60 text-emerald-400 bg-slate-900/60 backdrop-blur-sm hover:bg-emerald-950 text-xs">
+                  <WhatsAppIcon className="w-3.5 h-3.5 mr-1.5 pointer-events-none" /> WhatsApp Enquiry
                 </Button>
               </a>
             </div>

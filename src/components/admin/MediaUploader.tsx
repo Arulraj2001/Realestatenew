@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { getMediaUrl } from '@/lib/utils/media';
 
 export interface MediaUploaderProps {
+  id?: string;
   value?: string;
   folder?: string;
   label?: string;
@@ -19,6 +20,7 @@ export interface MediaUploaderProps {
 }
 
 export const MediaUploader: React.FC<MediaUploaderProps> = ({
+  id,
   value,
   folder = 'general',
   label = 'Upload Media Asset',
@@ -338,6 +340,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
             {cropAspectRatio ? 'Adjust crop area freely after selection' : 'Images < 5MB | Videos/PDFs < 20MB'}
           </span>
           <input
+            id={id}
             type="file"
             className="hidden"
             multiple={multiple}
