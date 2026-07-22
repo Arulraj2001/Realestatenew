@@ -894,7 +894,7 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
                             sizes="(max-width: 640px) 100vw, 25vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60" />
                           <div className="absolute top-2.5 right-2.5">
                             <Badge variant="amber" className="text-[10px]">
                               {lm.distance_label}

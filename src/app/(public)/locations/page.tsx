@@ -78,7 +78,7 @@ export default async function LocationsListingPage() {
                       sizes="(max-width: 768px) 100vw, 33vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent opacity-90" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
                     <div className="image-overlay-content absolute bottom-4 left-6 right-6 z-10 pointer-events-none">
                       <h3 className="font-serif text-2xl font-bold text-white group-hover:text-amber-400 transition-colors">
                         {loc.name}

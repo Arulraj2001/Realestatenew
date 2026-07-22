@@ -88,7 +88,7 @@ export const FeaturedProjectsSection: React.FC<FeaturedProjectsSectionProps> = (
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60" />
 
                       <div className="absolute top-3 left-3 flex gap-2">
                         <Badge variant="gold" className="text-[11px] px-2.5 py-0.5">{proj.project_status || 'Ongoing'}</Badge>

@@ -61,7 +61,7 @@ export const LocationCardsSection: React.FC<LocationCardsSectionProps> = ({ loca
                   sizes="(max-width: 768px) 100vw, 40vw"
                   className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-60" />
 
                 <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 whitespace-nowrap">
                   <span className="px-2 py-0.5 sm:px-3.5 sm:py-1 bg-amber-500 text-slate-950 text-[9px] sm:text-xs lg:text-sm font-extrabold rounded-full shadow-lg flex items-center gap-1 sm:gap-1.5 border border-amber-300">
