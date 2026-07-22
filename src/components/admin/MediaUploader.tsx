@@ -2,10 +2,9 @@
 
 import React, { useState, useRef } from 'react';
 import Image from 'next/image';
-import { UploadCloud, CheckCircle, Trash2, Crop, X } from 'lucide-react';
+import { UploadCloud, CheckCircle, Trash2, Crop, X, FastForward } from 'lucide-react';
 import { uploadMediaAction, deleteMediaFileAction } from '@/app/actions/media';
 import { Button } from '@/components/ui/button';
-
 import { getMediaUrl } from '@/lib/utils/media';
 
 export interface MediaUploaderProps {
@@ -16,7 +15,8 @@ export interface MediaUploaderProps {
   onChange: (url: string) => void;
   onMultipleChange?: (urls: string[]) => void;
   multiple?: boolean;
-  cropAspectRatio?: number; // kept as option, but we now support free aspect ratio adjustments
+  enableCrop?: boolean; // Defaults to true for image uploads
+  cropAspectRatio?: number; // Optional initial aspect ratio (e.g. 16/9, 4/3, 1/1, 9/16)
 }
 
 export const MediaUploader: React.FC<MediaUploaderProps> = ({
@@ -27,6 +27,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   onChange,
   onMultipleChange,
   multiple = false,
+  enableCrop = true,
   cropAspectRatio,
 }) => {
   const [isUploading, setIsUploading] = useState(false);
@@ -38,92 +39,125 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
   const [cropBox, setCropBox] = useState({ x: 20, y: 20, w: 200, h: 150 });
   const [activeHandle, setActiveHandle] = useState<string | null>(null);
   const [resizeStart, setResizeStart] = useState({ mouseX: 0, mouseY: 0, boxX: 0, boxY: 0, boxW: 0, boxH: 0 });
-  const [originalFile, setOriginalFile] = useState<File | null>(null);
+
+  // Batch queue states for cropping multiple images sequentially
+  const [cropQueue, setCropQueue] = useState<File[]>([]);
+  const [cropQueueIndex, setCropQueueIndex] = useState<number>(0);
+  const [accumulatedUrls, setAccumulatedUrls] = useState<string[]>([]);
 
   const viewportRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+
+  // Helper to load file into FileReader & open crop modal
+  const loadFileForCropping = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      setRawImageSrc(reader.result as string);
+      setCropOpen(true);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
     if (!fileList || fileList.length === 0) return;
 
     const files = Array.from(fileList);
+    e.target.value = '';
 
-    // If single file and cropper is requested
-    if (!multiple && files.length === 1 && cropAspectRatio && files[0].type.startsWith('image/')) {
-      const file = files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        setRawImageSrc(reader.result as string);
-        setOriginalFile(file);
-        setCropOpen(true);
-      };
-      reader.readAsDataURL(file);
-      e.target.value = '';
-      return;
-    }
+    const imageFiles = files.filter((f) => f.type.startsWith('image/'));
+    const nonImageFiles = files.filter((f) => !f.type.startsWith('image/'));
 
     setIsUploading(true);
     setErrorMessage(null);
 
     const uploadedUrls: string[] = [];
-    let uploadErrors = 0;
 
-    for (const file of files) {
+    // Directly upload non-image files (MP4, PDF, etc.)
+    for (const file of nonImageFiles) {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('folder', folder);
-
       const res = await uploadMediaAction(formData);
       if (res.success && res.publicUrl) {
         uploadedUrls.push(res.publicUrl);
-      } else {
-        uploadErrors++;
+      }
+    }
+
+    // If image files exist and enableCrop is true
+    if (imageFiles.length > 0 && enableCrop) {
+      setAccumulatedUrls(uploadedUrls);
+      setCropQueue(imageFiles);
+      setCropQueueIndex(0);
+      loadFileForCropping(imageFiles[0]);
+      setIsUploading(false);
+      return;
+    }
+
+    // Direct upload for images if crop disabled
+    for (const file of imageFiles) {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', folder);
+      const res = await uploadMediaAction(formData);
+      if (res.success && res.publicUrl) {
+        uploadedUrls.push(res.publicUrl);
       }
     }
 
     setIsUploading(false);
-    e.target.value = '';
 
     if (uploadedUrls.length > 0) {
-      if (onMultipleChange) {
+      if (multiple && onMultipleChange) {
         onMultipleChange(uploadedUrls);
       } else {
-        uploadedUrls.forEach((url) => onChange(url));
+        onChange(uploadedUrls[0]);
       }
-    }
-
-    if (uploadErrors > 0) {
-      setErrorMessage(`Failed to upload ${uploadErrors} file(s).`);
     }
   };
 
-  const uploadFile = async (file: File) => {
+  const uploadSingleFile = async (file: File): Promise<string | null> => {
     setIsUploading(true);
-    setErrorMessage(null);
-
     const formData = new FormData();
     formData.append('file', file);
     formData.append('folder', folder);
-
     const res = await uploadMediaAction(formData);
     setIsUploading(false);
+    return res.success && res.publicUrl ? res.publicUrl : null;
+  };
 
-    if (res.success && res.publicUrl) {
-      onChange(res.publicUrl);
+  // Process the current image in the queue (either cropped or original)
+  const processNextInQueue = async (fileToUpload: File) => {
+    const url = await uploadSingleFile(fileToUpload);
+    const updatedUrls = url ? [...accumulatedUrls, url] : [...accumulatedUrls];
+    setAccumulatedUrls(updatedUrls);
+
+    const nextIndex = cropQueueIndex + 1;
+    if (nextIndex < cropQueue.length) {
+      setCropQueueIndex(nextIndex);
+      loadFileForCropping(cropQueue[nextIndex]);
     } else {
-      setErrorMessage(res.error || 'Failed to upload media.');
+      // Done with all images in batch queue
+      setCropOpen(false);
+      setRawImageSrc(null);
+      setCropQueue([]);
+      setCropQueueIndex(0);
+
+      if (updatedUrls.length > 0) {
+        if (multiple && onMultipleChange) {
+          onMultipleChange(updatedUrls);
+        } else {
+          onChange(updatedUrls[0]);
+        }
+      }
     }
   };
 
-  const handleClear = async () => {
-    if (value && value.includes('public-media')) {
-      const storagePath = value.split('public-media/').pop();
-      if (storagePath) {
-        await deleteMediaFileAction(storagePath);
-      }
+  const handleSkipCrop = async () => {
+    const currentFile = cropQueue[cropQueueIndex];
+    if (currentFile) {
+      await processNextInQueue(currentFile);
     }
-    onChange('');
   };
 
   // Pointer-based Resize and Drag selection frame
@@ -154,7 +188,6 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
 
     const newBox = { ...cropBox };
 
-    // Get rendered bounds of the image to keep crop selection inside the photo itself
     const img = imageRef.current;
     const imgAspect = img.naturalWidth / img.naturalHeight;
     const containerAspect = maxW / maxH;
@@ -176,7 +209,6 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       newBox.x = Math.max(minX, Math.min(maxX - resizeStart.boxW, resizeStart.boxX + dx));
       newBox.y = Math.max(minY, Math.min(maxY - resizeStart.boxH, resizeStart.boxY + dy));
     } else {
-      // Handles: 'nw', 'ne', 'sw', 'se'
       if (activeHandle.includes('e')) {
         newBox.w = Math.max(50, Math.min(maxX - resizeStart.boxX, resizeStart.boxW + dx));
       }
@@ -215,8 +247,44 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
     }
   };
 
+  const applyPresetRatio = (aspectRatio: number | null) => {
+    if (!viewportRef.current || !imageRef.current) return;
+    const containerW = viewportRef.current.clientWidth;
+    const containerH = viewportRef.current.clientHeight;
+
+    const img = imageRef.current;
+    const imgAspect = img.naturalWidth / img.naturalHeight;
+    const containerAspect = containerW / containerH;
+
+    let rw = containerW;
+    let rh = containerH;
+    if (imgAspect > containerAspect) {
+      rh = containerW / imgAspect;
+    } else {
+      rw = containerH * imgAspect;
+    }
+
+    let targetW = rw * 0.8;
+    let targetH = rh * 0.8;
+
+    if (aspectRatio) {
+      if (targetW / targetH > aspectRatio) {
+        targetW = targetH * aspectRatio;
+      } else {
+        targetH = targetW / aspectRatio;
+      }
+    }
+
+    const startX = (containerW - targetW) / 2;
+    const startY = (containerH - targetH) / 2;
+
+    setCropBox({ x: startX, y: startY, w: targetW, h: targetH });
+  };
+
   const handleCropSave = async () => {
-    if (!imageRef.current || !viewportRef.current || !originalFile) return;
+    if (!imageRef.current || !viewportRef.current) return;
+    const currentFile = cropQueue[cropQueueIndex];
+    if (!currentFile) return;
 
     const image = imageRef.current;
     const maxW = viewportRef.current.clientWidth;
@@ -238,7 +306,6 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
     const offsetX = (maxW - rw) / 2;
     const offsetY = (maxH - rh) / 2;
 
-    // Calculate crop frame bounds relative to target image pixels
     const cx = cropBox.x - offsetX;
     const cy = cropBox.y - offsetY;
     const cw = cropBox.w;
@@ -250,7 +317,6 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
     const sh = Math.min(imgH - sy, ch * (imgH / rh));
 
     const canvas = document.createElement('canvas');
-    // Save high quality copy (capped to 1920px max resolution)
     const maxDimension = 1920;
     let targetW = sw;
     let targetH = sh;
@@ -264,38 +330,36 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
       }
     }
 
-    canvas.width = targetW;
-    canvas.height = targetH;
+    canvas.width = Math.max(1, targetW);
+    canvas.height = Math.max(1, targetH);
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    ctx.drawImage(
-      image,
-      sx,
-      sy,
-      sw,
-      sh,
-      0,
-      0,
-      targetW,
-      targetH
-    );
+    ctx.drawImage(image, sx, sy, sw, sh, 0, 0, targetW, targetH);
 
     canvas.toBlob(
       async (blob) => {
         if (!blob) return;
-        const croppedFile = new File([blob], originalFile.name, {
+        const croppedFile = new File([blob], currentFile.name, {
           type: 'image/jpeg',
           lastModified: Date.now(),
         });
-        setCropOpen(false);
-        setRawImageSrc(null);
-        await uploadFile(croppedFile);
+        await processNextInQueue(croppedFile);
       },
       'image/jpeg',
-      0.9
+      0.92
     );
+  };
+
+  const handleClear = async () => {
+    if (value && value.includes('public-media')) {
+      const storagePath = value.split('public-media/').pop();
+      if (storagePath) {
+        await deleteMediaFileAction(storagePath);
+      }
+    }
+    onChange('');
   };
 
   return (
@@ -331,20 +395,20 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
           </div>
         </div>
       ) : (
-        <label className="media-dropzone border-2 border-dashed border-slate-700/60 hover:border-amber-500 rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-900/60">
-          <UploadCloud className="w-7 h-7 text-amber-400 mb-2 pointer-events-none" />
+        <label className="media-dropzone border-2 border-dashed border-slate-700/60 hover:border-amber-500 rounded-xl p-5 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-900/60">
+          <UploadCloud className="w-6 h-6 text-amber-400 mb-1.5 pointer-events-none" />
           <span className="text-xs font-bold text-slate-200 block text-center">
-            {multiple ? 'Click to Select Multiple Media Files' : 'Click to Select Media File'}
+            {multiple ? 'Select Multiple Files (Interactive Cropper)' : 'Select Photo / Media File'}
           </span>
-          <span className="text-[11px] text-slate-400 block text-center mt-1.5 font-medium">
-            {cropAspectRatio ? 'Adjust crop area freely after selection' : 'Images < 5MB | Videos/PDFs < 20MB'}
+          <span className="text-[11px] text-slate-400 block text-center mt-1 font-medium">
+            Interactive photo cropper opens before upload
           </span>
           <input
             id={id}
             type="file"
             className="hidden"
             multiple={multiple}
-            accept={cropAspectRatio ? "image/*" : "image/*,video/mp4,application/pdf"}
+            accept="image/*,video/mp4,application/pdf"
             onChange={handleFileChange}
             disabled={isUploading}
           />
@@ -356,20 +420,23 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         </label>
       )}
 
-      {/* Dynamic Crop Overlay Dialog */}
+      {/* Interactive Crop Modal Overlay */}
       {cropOpen && rawImageSrc && (
-        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl p-6 shadow-2xl flex flex-col space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-850 pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-3xl rounded-2xl p-5 shadow-2xl flex flex-col space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div className="flex items-center gap-2">
                 <Crop className="w-4 h-4 text-amber-400" />
-                <h3 className="text-sm font-bold text-white">Adjust Hero Cover Image</h3>
+                <h3 className="text-sm font-bold text-white">
+                  Adjust &amp; Crop Photo {cropQueue.length > 1 ? `(${cropQueueIndex + 1} of ${cropQueue.length})` : ''}
+                </h3>
               </div>
               <button
                 type="button"
                 onClick={() => {
                   setCropOpen(false);
                   setRawImageSrc(null);
+                  setCropQueue([]);
                 }}
                 className="text-slate-400 hover:text-white transition-colors"
               >
@@ -377,15 +444,51 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
               </button>
             </div>
 
-            <p className="text-[11px] text-slate-400">
-              Drag the crop box edges and corners to adjust the aspect ratio freely. Drag the center of the box to move it.
-            </p>
+            {/* Quick Preset Aspect Ratio Selector */}
+            <div className="flex items-center gap-1.5 flex-wrap text-xs">
+              <span className="text-[11px] text-slate-400 font-semibold mr-1">Aspect Presets:</span>
+              <button
+                type="button"
+                onClick={() => applyPresetRatio(null)}
+                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold rounded-lg transition-colors border border-slate-700"
+              >
+                Free Form
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPresetRatio(16 / 9)}
+                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 text-[11px] font-bold rounded-lg transition-colors border border-slate-700"
+              >
+                16:9 Landscape
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPresetRatio(4 / 3)}
+                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold rounded-lg transition-colors border border-slate-700"
+              >
+                4:3 Standard
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPresetRatio(1)}
+                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-bold rounded-lg transition-colors border border-slate-700"
+              >
+                1:1 Square
+              </button>
+              <button
+                type="button"
+                onClick={() => applyPresetRatio(9 / 16)}
+                className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-pink-400 text-[11px] font-bold rounded-lg transition-colors border border-slate-700"
+              >
+                9:16 Reel
+              </button>
+            </div>
 
             {/* Viewport Crop Frame */}
-            <div className="bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-4 select-none relative">
+            <div className="bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-3 select-none relative">
               <div
                 ref={viewportRef}
-                className="w-full relative overflow-hidden bg-slate-900 aspect-video max-h-[50vh] flex items-center justify-center"
+                className="w-full relative overflow-hidden bg-slate-900 aspect-video max-h-[48vh] flex items-center justify-center"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -410,8 +513,18 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                       rw = containerH * imgAspect;
                     }
 
-                    const startW = rw * 0.85;
-                    const startH = rh * 0.85;
+                    const ratio = cropAspectRatio || null;
+                    let startW = rw * 0.85;
+                    let startH = rh * 0.85;
+
+                    if (ratio) {
+                      if (startW / startH > ratio) {
+                        startW = startH * ratio;
+                      } else {
+                        startH = startW / ratio;
+                      }
+                    }
+
                     const startX = (containerW - startW) / 2;
                     const startY = (containerH - startH) / 2;
 
@@ -439,7 +552,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
                   onPointerMove={handlePointerMove}
                   onPointerUp={handlePointerUp}
                 >
-                  {/* CSS Dimming Shadow */}
+                  {/* Dimming overlay outside crop box */}
                   <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: '0 0 0 9999px rgba(15, 23, 42, 0.75)' }} />
 
                   {/* Corner Handles */}
@@ -472,21 +585,34 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
             </div>
 
             {/* Actions */}
-            <div className="flex justify-end gap-3 pt-3 border-t border-slate-850">
+            <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-800">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setCropOpen(false);
-                  setRawImageSrc(null);
-                }}
+                onClick={handleSkipCrop}
+                className="text-slate-300 border-slate-700 hover:bg-slate-800 text-xs"
               >
-                Cancel
+                <FastForward className="w-3.5 h-3.5 mr-1" /> Skip &amp; Upload Original
               </Button>
-              <Button type="button" variant="gold" size="sm" onClick={handleCropSave} className="font-semibold">
-                <Crop className="w-3.5 h-3.5 mr-1" /> Crop &amp; Upload
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setCropOpen(false);
+                    setRawImageSrc(null);
+                    setCropQueue([]);
+                  }}
+                  className="text-xs"
+                >
+                  Cancel
+                </Button>
+                <Button type="button" variant="gold" size="sm" onClick={handleCropSave} className="font-semibold text-xs">
+                  <Crop className="w-3.5 h-3.5 mr-1" /> Crop &amp; Upload Photo
+                </Button>
+              </div>
             </div>
           </div>
         </div>
