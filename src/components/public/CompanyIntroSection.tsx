@@ -140,7 +140,7 @@ export const CompanyIntroSection: React.FC<CompanyIntroSectionProps> = ({
               </div>
 
               {/* Floating Decorative Stamp Badge */}
-              <div className="absolute -bottom-3 -right-2 bg-blue-600 dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 px-3.5 py-1.5 rounded-xl shadow-xl border border-blue-400 dark:border-amber-300/40 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider transform rotate-1 hover:rotate-0 transition-transform z-20">
+              <div className="absolute -bottom-3 -right-2 bg-[#2596be] dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 px-3.5 py-1.5 rounded-xl shadow-xl border border-[#1d7b9d] dark:border-amber-300/40 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider transform rotate-1 hover:rotate-0 transition-transform z-20">
                 <Sparkles className="w-3.5 h-3.5 fill-white dark:fill-slate-950 text-white dark:text-slate-950" />
                 <span className="text-white dark:text-slate-950">Verified Property Developer</span>
               </div>
