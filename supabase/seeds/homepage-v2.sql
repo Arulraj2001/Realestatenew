@@ -23,8 +23,8 @@ VALUES (
     "primary_cta_label": "Explore Projects",
     "primary_cta_link": "/projects",
     "secondary_cta_label": "Schedule a Site Visit",
-    "intro_h2": "Find Residential Plots and Dream Villas in Namakkal and Paramathi Velur",
-    "intro_content": "Looking for residential plots for sale in Namakkal or a dream villa in Namakkal or Paramathi Velur?\n\nYour Choice Properties is a trusted name for families looking to buy residential land, villas and independent houses at honest prices. Across our three main projects—Rasi Garden, Kongu Nagar and Kongu Garden—we offer investment-ready residential plots and thoughtfully planned 2BHK, 3BHK and 4BHK villas.\n\nWhether you are buying your first home, investing from abroad or looking for a larger family home, our team helps you understand the location, layout, documents and available property choices before you decide.",
+    "intro_h2": "Find Approved Residential Plots & Dream Villas in Prime Locations",
+    "intro_content": "Looking for premier DTCP & RERA approved residential plots or your dream villa? Your Choice Properties is a trusted developer offering 100% legally verified land, gated community layouts, and luxury independent villas at honest, transparent prices.\n\nOur signature township layouts feature 40ft wide blacktop roads, underground utilities, street lighting, 24/7 security, and lush park reserves—backed by 100% clear title deeds and fast bank loan assistance.",
     "why_choose_us_items": [
       {
         "title": "Clear Documentation",
