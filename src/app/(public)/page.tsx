@@ -76,20 +76,20 @@ export default async function HomePage() {
           primaryCtaLink={contentJson.primary_cta_link}
           secondaryCtaLabel={contentJson.secondary_cta_label}
           mediaType={contentJson.hero_media_type || (localVideo ? 'video' : 'image')}
-          desktopVideo={contentJson.desktop_video || localVideo}
-          mobileVideo={contentJson.mobile_video || localVideo}
+          desktopVideo={contentJson.hero_media_type === 'image' ? undefined : (contentJson.desktop_video || localVideo)}
+          mobileVideo={contentJson.hero_media_type === 'image' ? undefined : (contentJson.mobile_video || localVideo)}
           desktopImage={contentJson.desktop_image}
           mobileImage={contentJson.mobile_image}
           posterImage={contentJson.poster_image}
           overlayOpacity={contentJson.overlay_opacity !== undefined ? Number(contentJson.overlay_opacity) : 70}
           heroBlur={contentJson.hero_blur !== undefined ? Number(contentJson.hero_blur) : 0}
           textAlignment={contentJson.text_alignment || 'center'}
-          heroH1Alignment={contentJson.hero_h1_alignment || contentJson.text_alignment || 'center'}
+          heroH1Alignment={contentJson.hero_h1_alignment}
           heroH1ColorLight={contentJson.hero_h1_color_light}
           heroH1ColorDark={contentJson.hero_h1_color_dark}
           heroH1Size={contentJson.hero_h1_size}
           heroH1Transform={contentJson.hero_h1_transform}
-          heroSubtitleAlignment={contentJson.hero_subtitle_alignment || contentJson.text_alignment || 'center'}
+          heroSubtitleAlignment={contentJson.hero_subtitle_alignment}
           heroSubColorLight={contentJson.hero_sub_color_light}
           heroSubColorDark={contentJson.hero_sub_color_dark}
           heroSubSize={contentJson.hero_sub_size}
@@ -104,10 +104,11 @@ export default async function HomePage() {
           heroOffsetY={contentJson.hero_offset_y !== undefined ? Number(contentJson.hero_offset_y) : 0}
           heroBadgeText={contentJson.hero_badge_text}
           heroBadgeVisible={contentJson.hero_badge_visible !== false}
-          heroBadgeAlignment={contentJson.hero_badge_alignment || contentJson.text_alignment || 'center'}
+          heroBadgeAlignment={contentJson.hero_badge_alignment}
           heroBadgeColorLight={contentJson.hero_badge_color_light}
           heroBadgeColorDark={contentJson.hero_badge_color_dark}
           heroBadgeSize={contentJson.hero_badge_size}
+          heroMobileAlignment={contentJson.hero_mobile_alignment || 'center'}
           videoSpeed={contentJson.video_speed !== undefined ? Number(contentJson.video_speed) : 0.75}
         />
 

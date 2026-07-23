@@ -70,6 +70,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     hero_badge_color_light: '',
     hero_badge_color_dark: '',
     hero_badge_size: 'normal',
+    hero_mobile_alignment: 'center',
     intro_h2: '',
     intro_content: '',
     stats_visible: true,
@@ -189,12 +190,12 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       primary_cta_label: String(c.primary_cta_label || 'Explore Projects'),
       primary_cta_link: String(c.primary_cta_link || '/projects'),
       secondary_cta_label: String(c.secondary_cta_label || 'Contact Us'),
-      hero_h1_alignment: String(c.hero_h1_alignment || c.text_alignment || 'center'),
+      hero_h1_alignment: String(c.hero_h1_alignment || ''),
       hero_h1_color_light: String(c.hero_h1_color_light || ''),
       hero_h1_color_dark: String(c.hero_h1_color_dark || ''),
       hero_h1_size: String(c.hero_h1_size || 'normal'),
       hero_h1_transform: String(c.hero_h1_transform || 'none'),
-      hero_subtitle_alignment: String(c.hero_subtitle_alignment || c.text_alignment || 'center'),
+      hero_subtitle_alignment: String(c.hero_subtitle_alignment || ''),
       hero_sub_color_light: String(c.hero_sub_color_light || ''),
       hero_sub_color_dark: String(c.hero_sub_color_dark || ''),
       hero_sub_size: String(c.hero_sub_size || 'normal'),
@@ -210,10 +211,11 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       hero_offset_y: c.hero_offset_y !== undefined ? Number(c.hero_offset_y) : 0,
       hero_badge_text: String(c.hero_badge_text || 'DTCP & RERA Approved Layouts'),
       hero_badge_visible: c.hero_badge_visible !== false,
-      hero_badge_alignment: String(c.hero_badge_alignment || c.text_alignment || 'center'),
+      hero_badge_alignment: String(c.hero_badge_alignment || ''),
       hero_badge_color_light: String(c.hero_badge_color_light || ''),
       hero_badge_color_dark: String(c.hero_badge_color_dark || ''),
       hero_badge_size: String(c.hero_badge_size || 'normal'),
+      hero_mobile_alignment: String(c.hero_mobile_alignment || 'center'),
       intro_h2: String(c.intro_h2 || 'Find Residential Plots and Dream Villas in Namakkal and Paramathi Velur'),
       intro_content: String(c.intro_content || ''),
       stats_visible: c.stats_visible !== false,
@@ -340,6 +342,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         hero_badge_color_light: formData.hero_badge_color_light,
         hero_badge_color_dark: formData.hero_badge_color_dark,
         hero_badge_size: formData.hero_badge_size,
+        hero_mobile_alignment: formData.hero_mobile_alignment,
         intro_h2: formData.intro_h2,
         intro_content: formData.intro_content,
         stats_visible: formData.stats_visible,
@@ -624,12 +627,13 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <Label>Alignment</Label>
+                      <Label>Alignment <span className="text-slate-500 font-normal">(leave as Auto to follow Grid)</span></Label>
                       <select
                         value={formData.hero_badge_alignment}
                         onChange={(e) => setFormData({ ...formData, hero_badge_alignment: e.target.value as 'left' | 'center' | 'right' })}
                         className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
                       >
+                        <option value="">Auto (follows 9-Point Grid)</option>
                         <option value="center">Center</option>
                         <option value="left">Left</option>
                         <option value="right">Right</option>
@@ -652,7 +656,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
                     <div>
-                      <Label>Badge Light Mode Color</Label>
+                      <Label>Badge Light Mode Color <button type="button" onClick={() => setFormData({ ...formData, hero_badge_color_light: '' })} className="ml-2 text-[10px] text-slate-500 hover:text-red-400">✕ Clear</button></Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input
                           type="color"
@@ -670,7 +674,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                     </div>
 
                     <div>
-                      <Label>Badge Dark Mode Color</Label>
+                      <Label>Badge Dark Mode Color <button type="button" onClick={() => setFormData({ ...formData, hero_badge_color_dark: '' })} className="ml-2 text-[10px] text-slate-500 hover:text-red-400">✕ Clear</button></Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input
                           type="color"
@@ -701,12 +705,13 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                     <div>
-                      <Label>Alignment</Label>
+                      <Label>Alignment <span className="text-slate-500 font-normal">(leave as Auto to follow Grid)</span></Label>
                       <select
                         value={formData.hero_h1_alignment}
                         onChange={(e) => setFormData({ ...formData, hero_h1_alignment: e.target.value as 'left' | 'center' | 'right' })}
                         className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
                       >
+                        <option value="">Auto (follows 9-Point Grid)</option>
                         <option value="center">Center</option>
                         <option value="left">Left</option>
                         <option value="right">Right</option>
@@ -756,7 +761,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
                     <div>
-                      <Label>H1 Title Light Mode Color</Label>
+                      <Label>H1 Title Light Mode Color <button type="button" onClick={() => setFormData({ ...formData, hero_h1_color_light: '' })} className="ml-2 text-[10px] text-slate-500 hover:text-red-400">✕ Clear</button></Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input
                           type="color"
@@ -774,7 +779,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                     </div>
 
                     <div>
-                      <Label>H1 Title Dark Mode Color</Label>
+                      <Label>H1 Title Dark Mode Color <button type="button" onClick={() => setFormData({ ...formData, hero_h1_color_dark: '' })} className="ml-2 text-[10px] text-slate-500 hover:text-red-400">✕ Clear</button></Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input
                           type="color"
@@ -803,12 +808,13 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <Label>Alignment</Label>
+                      <Label>Alignment <span className="text-slate-500 font-normal">(leave as Auto to follow Grid)</span></Label>
                       <select
                         value={formData.hero_subtitle_alignment}
                         onChange={(e) => setFormData({ ...formData, hero_subtitle_alignment: e.target.value as 'left' | 'center' | 'right' })}
                         className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
                       >
+                        <option value="">Auto (follows 9-Point Grid)</option>
                         <option value="center">Center</option>
                         <option value="left">Left</option>
                         <option value="right">Right</option>
@@ -845,7 +851,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
                     <div>
-                      <Label>Subtitle Light Mode Color</Label>
+                      <Label>Subtitle Light Mode Color <button type="button" onClick={() => setFormData({ ...formData, hero_sub_color_light: '' })} className="ml-2 text-[10px] text-slate-500 hover:text-red-400">✕ Clear</button></Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input
                           type="color"
@@ -863,7 +869,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                     </div>
 
                     <div>
-                      <Label>Subtitle Dark Mode Color</Label>
+                      <Label>Subtitle Dark Mode Color <button type="button" onClick={() => setFormData({ ...formData, hero_sub_color_dark: '' })} className="ml-2 text-[10px] text-slate-500 hover:text-red-400">✕ Clear</button></Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input
                           type="color"
@@ -886,14 +892,14 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                 <div className="p-3 bg-slate-950/80 border border-slate-800/80 rounded-xl space-y-3">
                   <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">3. Action &amp; Overall Section Position Controls</h4>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <Label>Secondary CTA Label</Label>
                       <Input value={formData.secondary_cta_label} onChange={(e) => setFormData({ ...formData, secondary_cta_label: e.target.value })} placeholder="Contact Us" />
                     </div>
 
                     <div>
-                      <Label>Overall Hero Text Alignment</Label>
+                      <Label>Desktop Hero Text Alignment</Label>
                       <select
                         value={formData.text_alignment}
                         onChange={(e) => setFormData({ ...formData, text_alignment: e.target.value as 'left' | 'center' | 'right' })}
@@ -902,6 +908,20 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                         <option value="center">Center</option>
                         <option value="left">Left</option>
                         <option value="right">Right</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label>Mobile Smartphone Alignment</Label>
+                      <select
+                        value={formData.hero_mobile_alignment}
+                        onChange={(e) => setFormData({ ...formData, hero_mobile_alignment: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="center">Center Aligned (Recommended)</option>
+                        <option value="same_as_desktop">Match Desktop Alignment</option>
+                        <option value="left">Left Aligned</option>
+                        <option value="right">Right Aligned</option>
                       </select>
                     </div>
                   </div>
@@ -936,7 +956,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
                     <div>
-                      <Label>Header Section Light Mode Text Color</Label>
+                      <Label>Header Section Light Mode Text Color <button type="button" onClick={() => setFormData({ ...formData, header_light_text_color: '' })} className="ml-2 text-[10px] text-slate-500 hover:text-red-400">✕ Clear</button></Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input
                           type="color"
@@ -954,7 +974,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                     </div>
 
                     <div>
-                      <Label>Header Section Dark Mode Text Color</Label>
+                      <Label>Header Section Dark Mode Text Color <button type="button" onClick={() => setFormData({ ...formData, header_dark_text_color: '' })} className="ml-2 text-[10px] text-slate-500 hover:text-red-400">✕ Clear</button></Label>
                       <div className="flex items-center gap-2 mt-1">
                         <input
                           type="color"

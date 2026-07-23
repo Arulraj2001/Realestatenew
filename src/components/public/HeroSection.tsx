@@ -48,6 +48,7 @@ export interface HeroSectionProps {
   heroBadgeColorLight?: string;
   heroBadgeColorDark?: string;
   heroBadgeSize?: 'small' | 'normal' | 'large' | string;
+  heroMobileAlignment?: 'center' | 'left' | 'right' | 'same_as_desktop' | string;
   heroEnabled?: boolean;
   videoSpeed?: number;
 }
@@ -98,12 +99,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   heroBadgeColorLight,
   heroBadgeColorDark,
   heroBadgeSize,
+  heroMobileAlignment = 'center',
   heroEnabled = true,
   videoSpeed = 0.75,
 }) => {
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const { theme } = useTheme();
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     if (videoRef.current && typeof videoSpeed === 'number') {
@@ -111,20 +118,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     }
   }, [videoSpeed]);
 
+  // Derived client-side origin — empty string on server to avoid hydration mismatch
+  const pageOrigin = isMounted ? window.location.origin : '';
+
   const secondaryLabel = secondaryCtaLabel || 'Schedule a Site Visit';
   const isContactAction = secondaryLabel.toLowerCase().includes('contact');
 
   if (heroEnabled === false) return null;
 
-  // Safeguard against empty string database configurations
   const safeDesktopImage = desktopImage || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80';
   const safePosterImage = posterImage || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1200&q=80';
+  const activeYoutubeId = getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo);
+  const activeDirectVideo = desktopVideo || mobileVideo;
+  const activeImage = safeDesktopImage || safePosterImage;
 
   // Derive YouTube thumbnail for video poster when explicit poster image is not configured
   const videoPosterUrl = (() => {
     if (posterImage) return posterImage;
-    const ytId = getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo);
-    if (ytId) return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+    if (activeYoutubeId) return `https://img.youtube.com/vi/${activeYoutubeId}/hqdefault.jpg`;
     return undefined;
   })();
 
@@ -133,13 +144,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   const blurPx = mediaType === 'video' ? 0 : (Math.max(0, Math.min(100, heroBlur)) / 100) * 20;
   const blurStyle: React.CSSProperties = blurPx > 0 ? { filter: `blur(${blurPx.toFixed(1)}px)`, transform: 'scale(1.05)' } : {};
 
-  const effectiveH1Align = heroH1Alignment || textAlignment;
-  const effectiveSubAlign = heroSubtitleAlignment || textAlignment;
+  // Derive grid horizontal alignment from 9-point grid selection
+  const gridHorizontalPos = heroBoxPosition
+    ? heroBoxPosition.includes('left')
+      ? 'left'
+      : heroBoxPosition.includes('right')
+      ? 'right'
+      : 'center'
+    : 'center';
+
+  const effectiveH1Align = heroH1Alignment || gridHorizontalPos || textAlignment;
+  const effectiveSubAlign = heroSubtitleAlignment || gridHorizontalPos || textAlignment;
+  const effectiveBadgeAlign = heroBadgeAlignment || gridHorizontalPos || textAlignment;
 
   const alignClasses =
-    textAlignment === 'left'
+    (gridHorizontalPos || textAlignment) === 'left'
       ? 'text-left items-start'
-      : textAlignment === 'right'
+      : (gridHorizontalPos || textAlignment) === 'right'
       ? 'text-right items-end'
       : 'text-center items-center';
 
@@ -156,6 +177,13 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       : effectiveSubAlign === 'right'
       ? 'justify-end text-right'
       : 'justify-center text-center';
+
+  const ctaFlexAlign =
+    effectiveH1Align === 'left'
+      ? 'justify-start'
+      : effectiveH1Align === 'right'
+      ? 'justify-end'
+      : 'justify-center';
 
   const h1CustomColor = theme === 'light' ? (heroH1ColorLight || headerLightTextColor) : (heroH1ColorDark || headerDarkTextColor);
   const subCustomColor = theme === 'light' ? (heroSubColorLight || headerLightTextColor) : (heroSubColorDark || headerDarkTextColor);
@@ -215,25 +243,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       ? 'mt-5'
       : '';
 
-  // 9-Point Box Position alignment mapping
+  // 9-Point Box Position: justify = vertical, wrapperAlign = where the content block sits, align = internal text alignment
   const boxPosLayout = (() => {
     switch (heroBoxPosition) {
       case 'top-left':
-        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', align: 'items-start text-left' };
+        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', wrapperAlign: 'mr-auto', align: 'items-start text-left' };
       case 'top-center':
-        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', align: 'items-center text-center' };
+        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', wrapperAlign: 'mx-auto', align: 'items-center text-center' };
       case 'top-right':
-        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', align: 'items-end text-right' };
+        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', wrapperAlign: 'ml-auto', align: 'items-end text-right' };
       case 'center-left':
-        return { justify: 'justify-center pt-12 pb-12', align: 'items-start text-left' };
+        return { justify: 'justify-center pt-12 pb-12', wrapperAlign: 'mr-auto', align: 'items-start text-left' };
       case 'center-right':
-        return { justify: 'justify-center pt-12 pb-12', align: 'items-end text-right' };
+        return { justify: 'justify-center pt-12 pb-12', wrapperAlign: 'ml-auto', align: 'items-end text-right' };
       case 'bottom-left':
-        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', align: 'items-start text-left' };
+        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', wrapperAlign: 'mr-auto', align: 'items-start text-left' };
       case 'bottom-center':
-        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', align: 'items-center text-center' };
+        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', wrapperAlign: 'mx-auto', align: 'items-center text-center' };
       case 'bottom-right':
-        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', align: 'items-end text-right' };
+        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', wrapperAlign: 'ml-auto', align: 'items-end text-right' };
       case 'center':
       default:
         return {
@@ -243,6 +271,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               : heroVerticalPosition === 'bottom'
               ? 'justify-end pt-12 pb-24 sm:pb-32'
               : 'justify-center pt-16 sm:pt-24 pb-12',
+          wrapperAlign: 'mx-auto',
           align: alignClasses,
         };
     }
@@ -265,19 +294,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       : 'text-xs px-3.5 py-1';
 
   const badgeAlignClass =
-    (heroBadgeAlignment || textAlignment) === 'left'
+    effectiveBadgeAlign === 'left'
       ? 'self-start'
-      : (heroBadgeAlignment || textAlignment) === 'right'
+      : effectiveBadgeAlign === 'right'
       ? 'self-end'
       : 'self-center';
+  const mobileAlignClass =
+    heroMobileAlignment === 'left'
+      ? 'max-sm:items-start max-sm:text-left'
+      : heroMobileAlignment === 'right'
+      ? 'max-sm:items-end max-sm:text-right'
+      : heroMobileAlignment === 'same_as_desktop'
+      ? ''
+      : 'max-sm:items-center max-sm:text-center';
 
-  const offsetTransformStyle: React.CSSProperties =
-    heroOffsetX || heroOffsetY
-      ? { transform: `translate3d(${heroOffsetX || 0}px, ${heroOffsetY || 0}px, 0px)` }
-      : {};
+  const responsiveOffsetStyle = React.useMemo(() => {
+    return {
+      '--hero-offset-x': `${heroOffsetX || 0}px`,
+      '--hero-offset-y': `${heroOffsetY || 0}px`,
+    } as React.CSSProperties;
+  }, [heroOffsetX, heroOffsetY]);
 
   return (
-    <section className="relative min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-between overflow-hidden bg-slate-950 text-slate-100 pb-28 sm:pb-36">
+    <section className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-slate-950 text-slate-100">
       {/* Media Background Layer (Pure container, clips all rendering issues) */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {/* Blur/Scale Wrapper */}
@@ -288,77 +327,51 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               {videoPosterUrl && (
                 <Image
                   src={videoPosterUrl}
-                  alt="Your Choice Properties Banner"
+                  alt="Hero Background Poster"
                   fill
-                  priority
                   sizes="100vw"
-                  className="object-cover pointer-events-none z-0"
+                  className="object-cover object-center z-0"
+                  priority
+                  quality={90}
                 />
               )}
-              {/* Desktop YouTube Embed — immediate loading */}
-              {getYoutubeId(desktopVideo) && (
-                <div className={`absolute inset-0 w-full h-full overflow-hidden z-10 ${mobileVideo && getYoutubeId(mobileVideo) ? 'hidden md:block' : 'block'}`}>
-                  <iframe
-                    src={`https://www.youtube.com/embed/${getYoutubeId(desktopVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(desktopVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
-                    className="absolute top-1/2 left-1/2 pointer-events-none border-0"
-                    style={{
-                      width: '100vw',
-                      height: '56.25vw',
-                      minWidth: '177.78vh',
-                      minHeight: '100vh',
-                      transform: 'translate(-50%, -50%) scale(1.5)'
-                    }}
-                    allow="autoplay; encrypted-media"
-                  />
-                </div>
-              )}
-              {/* Mobile YouTube Embed — immediate loading */}
-              {mobileVideo && getYoutubeId(mobileVideo) && (
-                <div className="absolute inset-0 w-full h-full overflow-hidden z-10 block md:hidden">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${getYoutubeId(mobileVideo)}?autoplay=1&mute=1&loop=1&playlist=${getYoutubeId(mobileVideo)}&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&enablejsapi=1`}
-                    className="absolute top-1/2 left-1/2 pointer-events-none border-0"
-                    style={{
-                      width: '100vw',
-                      height: '177.78vw',
-                      minWidth: '56.25vh',
-                      minHeight: '100vh',
-                      transform: 'translate(-50%, -50%) scale(1.5)'
-                    }}
-                    allow="autoplay; encrypted-media"
-                  />
-                </div>
-              )}
-            </div>
-          ) : mediaType === 'video' && desktopVideo ? (
-            <video
-              ref={videoRef}
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              poster={posterImage || undefined}
-              className="w-full h-full object-cover origin-center"
-              style={{
-                transform: 'scale(1.35)'
-              }}
-            >
-              <source src={desktopVideo} type="video/mp4" />
-              {mobileVideo && mobileVideo !== desktopVideo && <source src={mobileVideo} type="video/mp4" />}
-            </video>
-          ) : (
-            <picture className="relative block w-full h-full">
-              {mobileImage && <source media="(max-width: 640px)" srcSet={mobileImage} />}
-              <Image
-                src={safeDesktopImage || safePosterImage}
-                alt="Your Choice Properties Banner"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover"
+
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${activeYoutubeId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${activeYoutubeId}&playsinline=1&enablejsapi=1&rel=0&iv_load_policy=3&disablekb=1&modestbranding=1&origin=${pageOrigin}`}
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300%] h-[300%] min-w-full min-h-full pointer-events-none border-0 z-10"
+                style={{ opacity: 0.9 }}
+                allow="autoplay; encrypted-media"
+                title="Hero Background Video"
+                suppressHydrationWarning
               />
-            </picture>
+            </div>
+          ) : activeDirectVideo ? (
+            <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
+              <video
+                key={activeDirectVideo}
+                ref={videoRef}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                poster={videoPosterUrl || desktopImage}
+                className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto -translate-x-1/2 -translate-y-1/2 object-cover object-center pointer-events-none z-10"
+              >
+                <source src={activeDirectVideo} type="video/mp4" />
+                <source src={activeDirectVideo} type="video/webm" />
+              </video>
+            </div>
+          ) : (
+            <Image
+              src={activeImage}
+              alt="Hero Background"
+              fill
+              sizes="100vw"
+              className="object-cover object-center transition-all duration-700 z-0"
+              priority
+              quality={90}
+            />
           )}
         </div>
 
@@ -374,9 +387,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         )}
       </div>
 
-      {/* Hero Content Section */}
-      <div className={`relative z-10 ${containerWidthClass} mx-auto px-4 sm:px-6 lg:px-8 flex-1 flex flex-col ${boxPosLayout.justify}`}>
-        <div className={`flex flex-col ${boxPosLayout.align} space-y-5`} style={offsetTransformStyle}>
+      {/* Hero Content Section — full-width flex column to allow 9-point grid positioning */}
+      <div className={`relative z-10 w-full px-4 sm:px-6 lg:px-8 pb-28 sm:pb-36 flex-1 flex flex-col ${boxPosLayout.justify}`}>
+        <div className={`hero-offset-transform ${containerWidthClass} ${boxPosLayout.wrapperAlign} flex flex-col ${boxPosLayout.align} ${mobileAlignClass} space-y-5`} style={responsiveOffsetStyle}>
           {/* Badge Tag */}
           {heroBadgeVisible !== false && (
             <div
@@ -390,7 +403,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* H1 Heading */}
           <h1
             style={h1Style}
-            className={`font-serif ${h1SizeClass} ${h1MarginTopClass} font-extrabold tracking-tight leading-tight max-w-4xl drop-shadow-md flex flex-wrap ${h1FlexAlign} gap-x-[0.25em] gap-y-1`}
+            className={`font-serif ${h1SizeClass} ${h1MarginTopClass} font-extrabold tracking-tight leading-tight w-full max-w-4xl drop-shadow-md flex flex-wrap ${h1FlexAlign} gap-x-[0.25em] gap-y-1`}
           >
             {heroTitle.split(' ').map((word, idx) => (
               <span
@@ -406,7 +419,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Description */}
           <p
             style={subStyle}
-            className={`${subSizeClass} ${subMarginTopClass} max-w-3xl leading-relaxed font-normal drop-shadow-sm flex flex-wrap ${subFlexAlign} gap-x-[0.22em] gap-y-1`}
+            className={`${subSizeClass} ${subMarginTopClass} w-full max-w-3xl leading-relaxed font-normal drop-shadow-sm flex flex-wrap ${subFlexAlign} gap-x-[0.22em] gap-y-1`}
           >
             {heroDescription.split(' ').map((word, idx) => (
               <span
@@ -420,7 +433,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </p>
 
           {/* Compact Designed CTA Buttons with Mouse Hover Animations */}
-          <div className="hero-animate-cta flex flex-wrap items-center justify-center gap-4 pt-3">
+          <div className={`hero-animate-cta w-full flex flex-wrap items-center ${ctaFlexAlign} gap-4 pt-3`}>
             {theme === 'light' ? (
               <>
                 <Link href={primaryCtaLink} className="group">

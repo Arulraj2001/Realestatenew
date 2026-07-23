@@ -2219,6 +2219,16 @@ html:not(.light-theme) .contact-banner-bg-container {
   animation-delay: 1.35s;
 }
 
+/* Responsive Mobile Offset Transformer */
+.hero-offset-transform {
+  transform: translate3d(calc(var(--hero-offset-x, 0px) * 0.35), calc(var(--hero-offset-y, 0px) * 0.35), 0px);
+}
+@media (min-width: 640px) {
+  .hero-offset-transform {
+    transform: translate3d(var(--hero-offset-x, 0px), var(--hero-offset-y, 0px), 0px);
+  }
+}
+
 /* ── HERO GRADIENT BANNER DUAL-THEME SYSTEM ────────────────────────── */
 
 /* DARK MODE (Default) */
