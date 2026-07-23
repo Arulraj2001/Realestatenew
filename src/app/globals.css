@@ -2258,17 +2258,20 @@ html:not(.light-theme) .contact-banner-bg-container {
 .light-theme .hero-dark-overlay h2,
 .light-theme .hero-gradient-banner h3,
 .light-theme .hero-dark-overlay h3 {
-  color: #091e3a !important; /* Rich Dark Navy */
+  color: #091e3a; /* Rich Dark Navy */
   text-shadow: none !important;
 }
 
 .light-theme .hero-gradient-banner p,
 .light-theme .hero-dark-overlay p {
-  color: #334155 !important;
+  color: #334155;
 }
 
 .light-theme .hero-gradient-banner span,
-.light-theme .hero-dark-overlay span,
+.light-theme .hero-dark-overlay span {
+  color: inherit;
+}
+
 .light-theme .hero-gradient-banner div,
 .light-theme .hero-dark-overlay div {
   color: #1e293b;
@@ -2294,7 +2297,7 @@ html:not(.light-theme) .contact-banner-bg-container {
 .light-theme .hero-dark-overlay [class*="text-amber-400"],
 .light-theme .hero-gradient-banner .text-amber-300,
 .light-theme .hero-dark-overlay .text-amber-300 {
-  color: #0284c7 !important; /* Crisp Blue Accent in Light Theme */
+  color: #0284c7; /* Crisp Blue Accent in Light Theme */
 }
 
 .light-theme .hero-gradient-banner .border-slate-800,

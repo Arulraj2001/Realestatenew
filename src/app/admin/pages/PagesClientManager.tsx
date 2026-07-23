@@ -45,7 +45,31 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     primary_cta_label: '',
     primary_cta_link: '',
     secondary_cta_label: '',
+    hero_h1_alignment: 'center',
+    hero_h1_color_light: '',
+    hero_h1_color_dark: '',
+    hero_h1_size: 'normal',
+    hero_h1_transform: 'none',
+    hero_subtitle_alignment: 'center',
+    hero_sub_color_light: '',
+    hero_sub_color_dark: '',
+    hero_sub_size: 'normal',
     text_alignment: 'center',
+    header_light_text_color: '',
+    header_dark_text_color: '',
+    hero_vertical_position: 'center',
+    hero_content_width: '5xl',
+    hero_h1_margin_top: 'normal',
+    hero_sub_margin_top: 'normal',
+    hero_box_position: 'center',
+    hero_offset_x: 0,
+    hero_offset_y: 0,
+    hero_badge_text: 'DTCP & RERA Approved Layouts',
+    hero_badge_visible: true,
+    hero_badge_alignment: 'center',
+    hero_badge_color_light: '',
+    hero_badge_color_dark: '',
+    hero_badge_size: 'normal',
     intro_h2: '',
     intro_content: '',
     stats_visible: true,
@@ -165,7 +189,31 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       primary_cta_label: String(c.primary_cta_label || 'Explore Projects'),
       primary_cta_link: String(c.primary_cta_link || '/projects'),
       secondary_cta_label: String(c.secondary_cta_label || 'Contact Us'),
+      hero_h1_alignment: String(c.hero_h1_alignment || c.text_alignment || 'center'),
+      hero_h1_color_light: String(c.hero_h1_color_light || ''),
+      hero_h1_color_dark: String(c.hero_h1_color_dark || ''),
+      hero_h1_size: String(c.hero_h1_size || 'normal'),
+      hero_h1_transform: String(c.hero_h1_transform || 'none'),
+      hero_subtitle_alignment: String(c.hero_subtitle_alignment || c.text_alignment || 'center'),
+      hero_sub_color_light: String(c.hero_sub_color_light || ''),
+      hero_sub_color_dark: String(c.hero_sub_color_dark || ''),
+      hero_sub_size: String(c.hero_sub_size || 'normal'),
       text_alignment: String(c.text_alignment || 'center'),
+      header_light_text_color: String(c.header_light_text_color || ''),
+      header_dark_text_color: String(c.header_dark_text_color || ''),
+      hero_vertical_position: String(c.hero_vertical_position || 'center'),
+      hero_content_width: String(c.hero_content_width || '5xl'),
+      hero_h1_margin_top: String(c.hero_h1_margin_top || 'normal'),
+      hero_sub_margin_top: String(c.hero_sub_margin_top || 'normal'),
+      hero_box_position: String(c.hero_box_position || 'center'),
+      hero_offset_x: c.hero_offset_x !== undefined ? Number(c.hero_offset_x) : 0,
+      hero_offset_y: c.hero_offset_y !== undefined ? Number(c.hero_offset_y) : 0,
+      hero_badge_text: String(c.hero_badge_text || 'DTCP & RERA Approved Layouts'),
+      hero_badge_visible: c.hero_badge_visible !== false,
+      hero_badge_alignment: String(c.hero_badge_alignment || c.text_alignment || 'center'),
+      hero_badge_color_light: String(c.hero_badge_color_light || ''),
+      hero_badge_color_dark: String(c.hero_badge_color_dark || ''),
+      hero_badge_size: String(c.hero_badge_size || 'normal'),
       intro_h2: String(c.intro_h2 || 'Find Residential Plots and Dream Villas in Namakkal and Paramathi Velur'),
       intro_content: String(c.intro_content || ''),
       stats_visible: c.stats_visible !== false,
@@ -267,7 +315,31 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         primary_cta_label: formData.primary_cta_label,
         primary_cta_link: formData.primary_cta_link,
         secondary_cta_label: formData.secondary_cta_label,
+        hero_h1_alignment: formData.hero_h1_alignment,
+        hero_h1_color_light: formData.hero_h1_color_light,
+        hero_h1_color_dark: formData.hero_h1_color_dark,
+        hero_h1_size: formData.hero_h1_size,
+        hero_h1_transform: formData.hero_h1_transform,
+        hero_subtitle_alignment: formData.hero_subtitle_alignment,
+        hero_sub_color_light: formData.hero_sub_color_light,
+        hero_sub_color_dark: formData.hero_sub_color_dark,
+        hero_sub_size: formData.hero_sub_size,
         text_alignment: formData.text_alignment,
+        header_light_text_color: formData.header_light_text_color,
+        header_dark_text_color: formData.header_dark_text_color,
+        hero_vertical_position: formData.hero_vertical_position,
+        hero_content_width: formData.hero_content_width,
+        hero_h1_margin_top: formData.hero_h1_margin_top,
+        hero_sub_margin_top: formData.hero_sub_margin_top,
+        hero_box_position: formData.hero_box_position,
+        hero_offset_x: formData.hero_offset_x,
+        hero_offset_y: formData.hero_offset_y,
+        hero_badge_text: formData.hero_badge_text,
+        hero_badge_visible: formData.hero_badge_visible,
+        hero_badge_alignment: formData.hero_badge_alignment,
+        hero_badge_color_light: formData.hero_badge_color_light,
+        hero_badge_color_dark: formData.hero_badge_color_dark,
+        hero_badge_size: formData.hero_badge_size,
         intro_h2: formData.intro_h2,
         intro_content: formData.intro_content,
         stats_visible: formData.stats_visible,
@@ -523,31 +595,450 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
               <div className="admin-form-card bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
                 <div className="flex items-center gap-2 pb-2 border-b border-slate-800/80">
                   <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">Hero Headlines &amp; Call to Action</h3>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-400">Hero Headlines &amp; Call to Action Controls</h3>
                 </div>
 
-                <div>
-                  <Label>Hero H1 Title</Label>
-                  <Textarea rows={2} value={formData.hero_h1} onChange={(e) => setFormData({ ...formData, hero_h1: e.target.value })} />
-                </div>
+                {/* Section 0: Hero Badge Tag Controls */}
+                <div className="p-3 bg-slate-950/80 border border-slate-800/80 rounded-xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">0. Hero Badge Tag Settings ("DTCP &amp; RERA Approved")</h4>
+                    <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.hero_badge_visible}
+                        onChange={(e) => setFormData({ ...formData, hero_badge_visible: e.target.checked })}
+                        className="rounded border-slate-700 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                      />
+                      <span>Show Badge Tag</span>
+                    </label>
+                  </div>
 
-                <div>
-                  <Label>Hero Subtitle / Description</Label>
-                  <Textarea rows={3} value={formData.hero_description} onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })} />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <Label>Secondary CTA Label</Label>
-                    <Input value={formData.secondary_cta_label} onChange={(e) => setFormData({ ...formData, secondary_cta_label: e.target.value })} placeholder="Contact Us" />
+                    <Label>Badge Text</Label>
+                    <Input
+                      value={formData.hero_badge_text}
+                      onChange={(e) => setFormData({ ...formData, hero_badge_text: e.target.value })}
+                      placeholder="DTCP & RERA Approved Layouts"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label>Alignment</Label>
+                      <select
+                        value={formData.hero_badge_alignment}
+                        onChange={(e) => setFormData({ ...formData, hero_badge_alignment: e.target.value as 'left' | 'center' | 'right' })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="center">Center</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label>Badge Size</Label>
+                      <select
+                        value={formData.hero_badge_size}
+                        onChange={(e) => setFormData({ ...formData, hero_badge_size: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="small">Small</option>
+                        <option value="normal">Normal (Default)</option>
+                        <option value="large">Large</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
+                    <div>
+                      <Label>Badge Light Mode Color</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <input
+                          type="color"
+                          value={formData.hero_badge_color_light || '#b45309'}
+                          onChange={(e) => setFormData({ ...formData, hero_badge_color_light: e.target.value })}
+                          className="w-8 h-8 p-1 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <Input
+                          value={formData.hero_badge_color_light}
+                          onChange={(e) => setFormData({ ...formData, hero_badge_color_light: e.target.value })}
+                          placeholder="e.g. #b45309"
+                          className="flex-1 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Badge Dark Mode Color</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <input
+                          type="color"
+                          value={formData.hero_badge_color_dark || '#fbbf24'}
+                          onChange={(e) => setFormData({ ...formData, hero_badge_color_dark: e.target.value })}
+                          className="w-8 h-8 p-1 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <Input
+                          value={formData.hero_badge_color_dark}
+                          onChange={(e) => setFormData({ ...formData, hero_badge_color_dark: e.target.value })}
+                          placeholder="e.g. #fbbf24"
+                          className="flex-1 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2A: Hero H1 Title Controls */}
+                <div className="p-3 bg-slate-950/80 border border-slate-800/80 rounded-xl space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold text-emerald-400 uppercase tracking-wider">1. Hero H1 Title Settings</h4>
                   </div>
                   <div>
-                    <Label>Text Alignment</Label>
-                    <select value={formData.text_alignment} onChange={(e) => setFormData({ ...formData, text_alignment: e.target.value as 'left' | 'center' | 'right' })} className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white">
-                      <option value="center">Center</option>
-                      <option value="left">Left</option>
-                      <option value="right">Right</option>
-                    </select>
+                    <Label>Hero H1 Title Text</Label>
+                    <Textarea rows={2} value={formData.hero_h1} onChange={(e) => setFormData({ ...formData, hero_h1: e.target.value })} />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                    <div>
+                      <Label>Alignment</Label>
+                      <select
+                        value={formData.hero_h1_alignment}
+                        onChange={(e) => setFormData({ ...formData, hero_h1_alignment: e.target.value as 'left' | 'center' | 'right' })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="center">Center</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label>Title Size</Label>
+                      <select
+                        value={formData.hero_h1_size}
+                        onChange={(e) => setFormData({ ...formData, hero_h1_size: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="normal">Normal (Default)</option>
+                        <option value="large">Large</option>
+                        <option value="xlarge">Extra Large</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label>Text Case</Label>
+                      <select
+                        value={formData.hero_h1_transform}
+                        onChange={(e) => setFormData({ ...formData, hero_h1_transform: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="none">Normal Case</option>
+                        <option value="capitalize">Capitalize</option>
+                        <option value="uppercase">UPPERCASE</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label>Title Top Offset</Label>
+                      <select
+                        value={formData.hero_h1_margin_top}
+                        onChange={(e) => setFormData({ ...formData, hero_h1_margin_top: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="normal">Normal Offset</option>
+                        <option value="none">Compact (No Margin)</option>
+                        <option value="small">Small Offset</option>
+                        <option value="large">Spacious Offset</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
+                    <div>
+                      <Label>H1 Title Light Mode Color</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <input
+                          type="color"
+                          value={formData.hero_h1_color_light || '#091e3a'}
+                          onChange={(e) => setFormData({ ...formData, hero_h1_color_light: e.target.value })}
+                          className="w-8 h-8 p-1 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <Input
+                          value={formData.hero_h1_color_light}
+                          onChange={(e) => setFormData({ ...formData, hero_h1_color_light: e.target.value })}
+                          placeholder="e.g. #091e3a"
+                          className="flex-1 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>H1 Title Dark Mode Color</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <input
+                          type="color"
+                          value={formData.hero_h1_color_dark || '#ffffff'}
+                          onChange={(e) => setFormData({ ...formData, hero_h1_color_dark: e.target.value })}
+                          className="w-8 h-8 p-1 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <Input
+                          value={formData.hero_h1_color_dark}
+                          onChange={(e) => setFormData({ ...formData, hero_h1_color_dark: e.target.value })}
+                          placeholder="e.g. #ffffff"
+                          className="flex-1 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2B: Hero Subtitle / Description Controls */}
+                <div className="p-3 bg-slate-950/80 border border-slate-800/80 rounded-xl space-y-3">
+                  <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wider">2. Hero Subtitle / Description Settings</h4>
+                  <div>
+                    <Label>Subtitle Text</Label>
+                    <Textarea rows={3} value={formData.hero_description} onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })} />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                      <Label>Alignment</Label>
+                      <select
+                        value={formData.hero_subtitle_alignment}
+                        onChange={(e) => setFormData({ ...formData, hero_subtitle_alignment: e.target.value as 'left' | 'center' | 'right' })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="center">Center</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label>Subtitle Font Size</Label>
+                      <select
+                        value={formData.hero_sub_size}
+                        onChange={(e) => setFormData({ ...formData, hero_sub_size: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="small">Small</option>
+                        <option value="normal">Normal (Default)</option>
+                        <option value="large">Large</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label>Subtitle Top Offset</Label>
+                      <select
+                        value={formData.hero_sub_margin_top}
+                        onChange={(e) => setFormData({ ...formData, hero_sub_margin_top: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="normal">Normal Offset</option>
+                        <option value="none">Compact (No Gap)</option>
+                        <option value="small">Small Gap</option>
+                        <option value="large">Spacious Gap</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
+                    <div>
+                      <Label>Subtitle Light Mode Color</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <input
+                          type="color"
+                          value={formData.hero_sub_color_light || '#334155'}
+                          onChange={(e) => setFormData({ ...formData, hero_sub_color_light: e.target.value })}
+                          className="w-8 h-8 p-1 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <Input
+                          value={formData.hero_sub_color_light}
+                          onChange={(e) => setFormData({ ...formData, hero_sub_color_light: e.target.value })}
+                          placeholder="e.g. #334155"
+                          className="flex-1 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Subtitle Dark Mode Color</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <input
+                          type="color"
+                          value={formData.hero_sub_color_dark || '#e2e8f0'}
+                          onChange={(e) => setFormData({ ...formData, hero_sub_color_dark: e.target.value })}
+                          className="w-8 h-8 p-1 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <Input
+                          value={formData.hero_sub_color_dark}
+                          onChange={(e) => setFormData({ ...formData, hero_sub_color_dark: e.target.value })}
+                          placeholder="e.g. #e2e8f0"
+                          className="flex-1 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2C: CTA & Header Section Global Controls */}
+                <div className="p-3 bg-slate-950/80 border border-slate-800/80 rounded-xl space-y-3">
+                  <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">3. Action &amp; Overall Section Position Controls</h4>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <Label>Secondary CTA Label</Label>
+                      <Input value={formData.secondary_cta_label} onChange={(e) => setFormData({ ...formData, secondary_cta_label: e.target.value })} placeholder="Contact Us" />
+                    </div>
+
+                    <div>
+                      <Label>Overall Hero Text Alignment</Label>
+                      <select
+                        value={formData.text_alignment}
+                        onChange={(e) => setFormData({ ...formData, text_alignment: e.target.value as 'left' | 'center' | 'right' })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                      >
+                        <option value="center">Center</option>
+                        <option value="left">Left</option>
+                        <option value="right">Right</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
+                    <div>
+                      <Label>Vertical Content Placement</Label>
+                      <select
+                        value={formData.hero_vertical_position}
+                        onChange={(e) => setFormData({ ...formData, hero_vertical_position: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white mt-1"
+                      >
+                        <option value="center">Middle / Center Aligned</option>
+                        <option value="top">Top Aligned</option>
+                        <option value="bottom">Bottom Aligned</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <Label>Container Content Width</Label>
+                      <select
+                        value={formData.hero_content_width}
+                        onChange={(e) => setFormData({ ...formData, hero_content_width: e.target.value })}
+                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white mt-1"
+                      >
+                        <option value="5xl">Standard (5XL)</option>
+                        <option value="3xl">Narrow (3XL)</option>
+                        <option value="7xl">Wide (7XL)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
+                    <div>
+                      <Label>Header Section Light Mode Text Color</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <input
+                          type="color"
+                          value={formData.header_light_text_color || '#ffffff'}
+                          onChange={(e) => setFormData({ ...formData, header_light_text_color: e.target.value })}
+                          className="w-8 h-8 p-1 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <Input
+                          value={formData.header_light_text_color}
+                          onChange={(e) => setFormData({ ...formData, header_light_text_color: e.target.value })}
+                          placeholder="e.g. #ffffff"
+                          className="flex-1 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label>Header Section Dark Mode Text Color</Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <input
+                          type="color"
+                          value={formData.header_dark_text_color || '#ffffff'}
+                          onChange={(e) => setFormData({ ...formData, header_dark_text_color: e.target.value })}
+                          className="w-8 h-8 p-1 bg-slate-900 border border-slate-700 rounded-lg cursor-pointer"
+                        />
+                        <Input
+                          value={formData.header_dark_text_color}
+                          onChange={(e) => setFormData({ ...formData, header_dark_text_color: e.target.value })}
+                          placeholder="e.g. #ffffff"
+                          className="flex-1 font-mono text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 9-Point Placement Grid & Fine-Tuning Sliders */}
+                  <div className="pt-3 border-t border-slate-800/80 space-y-3">
+                    <div className="flex justify-between items-center">
+                      <Label className="text-emerald-400 font-bold">Header 9-Point Placement Grid</Label>
+                      <span className="text-[10px] text-slate-400 font-mono">Current: {formData.hero_box_position}</span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-1.5 p-2 bg-slate-900/90 border border-slate-800 rounded-xl max-w-xs mx-auto">
+                      {[
+                        { pos: 'top-left', label: '↖ Top L' },
+                        { pos: 'top-center', label: '↑ Top C' },
+                        { pos: 'top-right', label: '↗ Top R' },
+                        { pos: 'center-left', label: '← Mid L' },
+                        { pos: 'center', label: '• Center' },
+                        { pos: 'center-right', label: '→ Mid R' },
+                        { pos: 'bottom-left', label: '↙ Bot L' },
+                        { pos: 'bottom-center', label: '↓ Bot C' },
+                        { pos: 'bottom-right', label: '↘ Bot R' },
+                      ].map((item) => (
+                        <button
+                          key={item.pos}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, hero_box_position: item.pos })}
+                          className={`py-2 px-1 text-[11px] font-bold rounded-lg transition-colors border ${
+                            formData.hero_box_position === item.pos
+                              ? 'bg-amber-500 text-slate-950 border-amber-400 font-extrabold shadow-md'
+                              : 'bg-slate-950 hover:bg-slate-800 text-slate-300 border-slate-800'
+                          }`}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-center text-xs">
+                          <Label>Horizontal Position Offset (X)</Label>
+                          <span className="text-amber-400 font-mono font-bold">{formData.hero_offset_x}px</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="-300"
+                          max="300"
+                          step="5"
+                          value={formData.hero_offset_x}
+                          onChange={(e) => setFormData({ ...formData, hero_offset_x: Number(e.target.value) })}
+                          className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="flex justify-between items-center text-xs">
+                          <Label>Vertical Position Offset (Y)</Label>
+                          <span className="text-amber-400 font-mono font-bold">{formData.hero_offset_y}px</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="-300"
+                          max="300"
+                          step="5"
+                          value={formData.hero_offset_y}
+                          onChange={(e) => setFormData({ ...formData, hero_offset_y: Number(e.target.value) })}
+                          className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

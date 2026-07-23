@@ -84,6 +84,30 @@ export default async function HomePage() {
           overlayOpacity={contentJson.overlay_opacity !== undefined ? Number(contentJson.overlay_opacity) : 70}
           heroBlur={contentJson.hero_blur !== undefined ? Number(contentJson.hero_blur) : 0}
           textAlignment={contentJson.text_alignment || 'center'}
+          heroH1Alignment={contentJson.hero_h1_alignment || contentJson.text_alignment || 'center'}
+          heroH1ColorLight={contentJson.hero_h1_color_light}
+          heroH1ColorDark={contentJson.hero_h1_color_dark}
+          heroH1Size={contentJson.hero_h1_size}
+          heroH1Transform={contentJson.hero_h1_transform}
+          heroSubtitleAlignment={contentJson.hero_subtitle_alignment || contentJson.text_alignment || 'center'}
+          heroSubColorLight={contentJson.hero_sub_color_light}
+          heroSubColorDark={contentJson.hero_sub_color_dark}
+          heroSubSize={contentJson.hero_sub_size}
+          headerLightTextColor={contentJson.header_light_text_color}
+          headerDarkTextColor={contentJson.header_dark_text_color}
+          heroVerticalPosition={contentJson.hero_vertical_position || 'center'}
+          heroContentWidth={contentJson.hero_content_width || '5xl'}
+          heroH1MarginTop={contentJson.hero_h1_margin_top || 'normal'}
+          heroSubMarginTop={contentJson.hero_sub_margin_top || 'normal'}
+          heroBoxPosition={contentJson.hero_box_position || 'center'}
+          heroOffsetX={contentJson.hero_offset_x !== undefined ? Number(contentJson.hero_offset_x) : 0}
+          heroOffsetY={contentJson.hero_offset_y !== undefined ? Number(contentJson.hero_offset_y) : 0}
+          heroBadgeText={contentJson.hero_badge_text}
+          heroBadgeVisible={contentJson.hero_badge_visible !== false}
+          heroBadgeAlignment={contentJson.hero_badge_alignment || contentJson.text_alignment || 'center'}
+          heroBadgeColorLight={contentJson.hero_badge_color_light}
+          heroBadgeColorDark={contentJson.hero_badge_color_dark}
+          heroBadgeSize={contentJson.hero_badge_size}
           videoSpeed={contentJson.video_speed !== undefined ? Number(contentJson.video_speed) : 0.75}
         />
 
