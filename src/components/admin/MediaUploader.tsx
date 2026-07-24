@@ -317,7 +317,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
     const sh = Math.min(imgH - sy, ch * (imgH / rh));
 
     const canvas = document.createElement('canvas');
-    const maxDimension = 1920;
+    const maxDimension = 2560; // raised from 1920 for sharper full-screen hero backgrounds
     let targetW = sw;
     let targetH = sh;
     if (sw > maxDimension || sh > maxDimension) {
@@ -348,7 +348,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
         await processNextInQueue(croppedFile);
       },
       'image/jpeg',
-      0.92
+      0.97  // 97% quality — preserves detail for full-screen hero backgrounds
     );
   };
 
@@ -378,7 +378,7 @@ export const MediaUploader: React.FC<MediaUploaderProps> = ({
             {value.endsWith('.mp4') ? (
               <video src={getMediaUrl(value)} controls className="w-full h-full object-cover" />
             ) : (
-              <Image unoptimized src={getMediaUrl(value)} alt="Uploaded preview" fill className="object-contain" />
+              <Image unoptimized src={getMediaUrl(value)} alt="Uploaded preview" fill className="object-cover" />
             )}
           </div>
           <div className="flex items-center justify-between gap-2">

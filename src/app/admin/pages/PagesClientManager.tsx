@@ -58,6 +58,15 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     header_light_text_color: '',
     header_dark_text_color: '',
     hero_vertical_position: 'center',
+    location_cards_enabled: true,
+    location_cards_overlap_desktop: true,
+    location_cards_overlap_mobile: true,
+    location_cards_overlap_amount_desktop: 'medium',
+    location_cards_overlap_amount_mobile: 'medium',
+    location_cards_container_width: '6xl',
+    location_cards_aspect_ratio: '16/10',
+    location_cards_alignment: 'center',
+    location_cards_non_overlap_margin_top: 'medium',
     hero_content_width: '5xl',
     hero_h1_margin_top: 'normal',
     hero_sub_margin_top: 'normal',
@@ -71,6 +80,8 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     hero_badge_color_dark: '',
     hero_badge_size: 'normal',
     hero_mobile_alignment: 'center',
+    hero_height: 'screen',
+    hero_height_mobile: 'screen',
     intro_h2: '',
     intro_content: '',
     stats_visible: true,
@@ -203,6 +214,15 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       header_light_text_color: String(c.header_light_text_color || ''),
       header_dark_text_color: String(c.header_dark_text_color || ''),
       hero_vertical_position: String(c.hero_vertical_position || 'center'),
+      location_cards_enabled: c.location_cards_enabled !== false,
+      location_cards_overlap_desktop: c.location_cards_overlap_desktop !== undefined ? Boolean(c.location_cards_overlap_desktop) : (c.location_cards_overlap !== false),
+      location_cards_overlap_mobile: c.location_cards_overlap_mobile !== undefined ? Boolean(c.location_cards_overlap_mobile) : (c.location_cards_overlap !== false),
+      location_cards_overlap_amount_desktop: String(c.location_cards_overlap_amount_desktop || c.location_cards_overlap_amount || 'medium'),
+      location_cards_overlap_amount_mobile: String(c.location_cards_overlap_amount_mobile || c.location_cards_overlap_amount || 'medium'),
+      location_cards_container_width: String(c.location_cards_container_width || '6xl'),
+      location_cards_aspect_ratio: String(c.location_cards_aspect_ratio || '16/10'),
+      location_cards_alignment: String(c.location_cards_alignment || 'center'),
+      location_cards_non_overlap_margin_top: String(c.location_cards_non_overlap_margin_top || 'medium'),
       hero_content_width: String(c.hero_content_width || '5xl'),
       hero_h1_margin_top: String(c.hero_h1_margin_top || 'normal'),
       hero_sub_margin_top: String(c.hero_sub_margin_top || 'normal'),
@@ -216,6 +236,8 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       hero_badge_color_dark: String(c.hero_badge_color_dark || ''),
       hero_badge_size: String(c.hero_badge_size || 'normal'),
       hero_mobile_alignment: String(c.hero_mobile_alignment || 'center'),
+      hero_height: String(c.hero_height || 'screen'),
+      hero_height_mobile: String(c.hero_height_mobile || 'screen'),
       intro_h2: String(c.intro_h2 || 'Find Residential Plots and Dream Villas in Namakkal and Paramathi Velur'),
       intro_content: String(c.intro_content || ''),
       stats_visible: c.stats_visible !== false,
@@ -330,6 +352,15 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         header_light_text_color: formData.header_light_text_color,
         header_dark_text_color: formData.header_dark_text_color,
         hero_vertical_position: formData.hero_vertical_position,
+        location_cards_enabled: formData.location_cards_enabled,
+        location_cards_overlap_desktop: formData.location_cards_overlap_desktop,
+        location_cards_overlap_mobile: formData.location_cards_overlap_mobile,
+        location_cards_overlap_amount_desktop: formData.location_cards_overlap_amount_desktop,
+        location_cards_overlap_amount_mobile: formData.location_cards_overlap_amount_mobile,
+        location_cards_container_width: formData.location_cards_container_width,
+        location_cards_aspect_ratio: formData.location_cards_aspect_ratio,
+        location_cards_alignment: formData.location_cards_alignment,
+        location_cards_non_overlap_margin_top: formData.location_cards_non_overlap_margin_top,
         hero_content_width: formData.hero_content_width,
         hero_h1_margin_top: formData.hero_h1_margin_top,
         hero_sub_margin_top: formData.hero_sub_margin_top,
@@ -343,6 +374,8 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         hero_badge_color_dark: formData.hero_badge_color_dark,
         hero_badge_size: formData.hero_badge_size,
         hero_mobile_alignment: formData.hero_mobile_alignment,
+        hero_height: formData.hero_height,
+        hero_height_mobile: formData.hero_height_mobile,
         intro_h2: formData.intro_h2,
         intro_content: formData.intro_content,
         stats_visible: formData.stats_visible,
@@ -926,20 +959,42 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
-                    <div>
-                      <Label>Vertical Content Placement</Label>
-                      <select
-                        value={formData.hero_vertical_position}
-                        onChange={(e) => setFormData({ ...formData, hero_vertical_position: e.target.value })}
-                        className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white mt-1"
-                      >
-                        <option value="center">Middle / Center Aligned</option>
-                        <option value="top">Top Aligned</option>
-                        <option value="bottom">Bottom Aligned</option>
-                      </select>
+                  {/* Hero Section Height Controls — Desktop & Mobile */}
+                  <div className="pt-2 border-t border-slate-800/60 space-y-2">
+                    <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Hero Section Height</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <Label>🖥 Desktop Height</Label>
+                        <select
+                          value={formData.hero_height}
+                          onChange={(e) => setFormData({ ...formData, hero_height: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                        >
+                          <option value="screen">Full Screen — 100vh (Default)</option>
+                          <option value="large">Large — 85vh</option>
+                          <option value="medium">Medium — 70vh</option>
+                          <option value="small">Small — 55vh</option>
+                          <option value="compact">Compact — 45vh</option>
+                        </select>
+                      </div>
+                      <div>
+                        <Label>📱 Mobile Height</Label>
+                        <select
+                          value={formData.hero_height_mobile}
+                          onChange={(e) => setFormData({ ...formData, hero_height_mobile: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-900 border border-slate-700/80 rounded-lg text-xs text-white"
+                        >
+                          <option value="screen">Full Screen — 100vh (Default)</option>
+                          <option value="large">Large — 85vh</option>
+                          <option value="medium">Medium — 70vh</option>
+                          <option value="small">Small — 55vh</option>
+                          <option value="compact">Compact — 45vh</option>
+                        </select>
+                      </div>
                     </div>
+                  </div>
 
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800/60">
                     <div>
                       <Label>Container Content Width</Label>
                       <select
@@ -1078,6 +1133,185 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                   <Label>Mobile Video URL (.mp4)</Label>
                   <Input value={formData.mobile_video} onChange={(e) => setFormData({ ...formData, mobile_video: e.target.value })} placeholder="https://your-storage/mobile-video.mp4" />
                 </div>
+              </div>
+
+              {/* Card 3.5: Location Cards Section Controls */}
+              <div className="admin-form-card bg-slate-900/60 border border-slate-800 rounded-xl p-4 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-800/80">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-rose-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-rose-400">Location Cards Section</h3>
+                  </div>
+                  {/* Show / Hide Toggle */}
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <span className="text-[11px] text-slate-400 font-semibold">{formData.location_cards_enabled ? 'Visible' : 'Hidden'}</span>
+                    <div
+                      onClick={() => setFormData({ ...formData, location_cards_enabled: !formData.location_cards_enabled })}
+                      className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${formData.location_cards_enabled ? 'bg-rose-500' : 'bg-slate-700'}`}
+                    >
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${formData.location_cards_enabled ? 'translate-x-5' : 'translate-x-0'}`} />
+                    </div>
+                  </label>
+                </div>
+
+                {formData.location_cards_enabled && (
+                  <div className="space-y-4">
+                    {/* Overlap Controls Grid: Desktop & Mobile */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {/* Desktop Overlap */}
+                      <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs font-bold text-slate-200">🖥 Desktop Hero Overlap</p>
+                            <p className="text-[10px] text-slate-400">Float cards over hero on widescreen</p>
+                          </div>
+                          <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 ml-2">
+                            <span className="text-[11px] text-slate-400">{formData.location_cards_overlap_desktop ? 'ON' : 'OFF'}</span>
+                            <div
+                              onClick={() => setFormData({ ...formData, location_cards_overlap_desktop: !formData.location_cards_overlap_desktop })}
+                              className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${formData.location_cards_overlap_desktop ? 'bg-amber-500' : 'bg-slate-700'}`}
+                            >
+                              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${formData.location_cards_overlap_desktop ? 'translate-x-5' : 'translate-x-0'}`} />
+                            </div>
+                          </label>
+                        </div>
+
+                        {formData.location_cards_overlap_desktop && (
+                          <div className="pt-2 border-t border-slate-800">
+                            <Label className="text-[11px]">Desktop Overlap Distance</Label>
+                            <div className="grid grid-cols-4 gap-1 mt-1">
+                              {[
+                                { val: 'small', label: 'Sm', sub: '16px' },
+                                { val: 'medium', label: 'Med', sub: '80px' },
+                                { val: 'large', label: 'Lg', sub: '128px' },
+                                { val: 'xl', label: 'XL', sub: '192px' },
+                              ].map((opt) => (
+                                <button
+                                  key={opt.val}
+                                  type="button"
+                                  onClick={() => setFormData({ ...formData, location_cards_overlap_amount_desktop: opt.val })}
+                                  className={`py-1.5 px-1 rounded-lg border text-center transition-colors ${formData.location_cards_overlap_amount_desktop === opt.val ? 'bg-amber-500 border-amber-400 text-slate-950 font-bold' : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'}`}
+                                >
+                                  <p className="text-[10px] font-bold">{opt.label}</p>
+                                  <p className="text-[9px] opacity-70">{opt.sub}</p>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Mobile Overlap */}
+                      <div className="p-3 bg-slate-950/70 border border-slate-800 rounded-xl space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs font-bold text-slate-200">📱 Mobile Hero Overlap</p>
+                            <p className="text-[10px] text-slate-400 font-normal">Float cards over hero on phones</p>
+                          </div>
+                          <label className="flex items-center gap-2 cursor-pointer select-none shrink-0 ml-2">
+                            <span className="text-[11px] text-slate-400">{formData.location_cards_overlap_mobile ? 'ON' : 'OFF'}</span>
+                            <div
+                              onClick={() => setFormData({ ...formData, location_cards_overlap_mobile: !formData.location_cards_overlap_mobile })}
+                              className={`relative w-10 h-5 rounded-full transition-colors cursor-pointer ${formData.location_cards_overlap_mobile ? 'bg-rose-500' : 'bg-slate-700'}`}
+                            >
+                              <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform ${formData.location_cards_overlap_mobile ? 'translate-x-5' : 'translate-x-0'}`} />
+                            </div>
+                          </label>
+                        </div>
+
+                        {formData.location_cards_overlap_mobile && (
+                          <div className="pt-2 border-t border-slate-800">
+                            <Label className="text-[11px]">Mobile Overlap Distance</Label>
+                            <div className="grid grid-cols-4 gap-1 mt-1">
+                              {[
+                                { val: 'small', label: 'Sm', sub: '8px' },
+                                { val: 'medium', label: 'Med', sub: '32px' },
+                                { val: 'large', label: 'Lg', sub: '64px' },
+                                { val: 'xl', label: 'XL', sub: '96px' },
+                              ].map((opt) => (
+                                <button
+                                  key={opt.val}
+                                  type="button"
+                                  onClick={() => setFormData({ ...formData, location_cards_overlap_amount_mobile: opt.val })}
+                                  className={`py-1.5 px-1 rounded-lg border text-center transition-colors ${formData.location_cards_overlap_amount_mobile === opt.val ? 'bg-rose-500 border-rose-400 text-white font-bold' : 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800'}`}
+                                >
+                                  <p className="text-[10px] font-bold">{opt.label}</p>
+                                  <p className="text-[9px] opacity-70">{opt.sub}</p>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Card Size, Aspect Ratio, Alignment & Normal Flow Margins */}
+                    <div className="pt-3 border-t border-slate-800/80 space-y-3">
+                      <p className="text-[11px] text-amber-400 font-bold uppercase tracking-wider">Card Size, Aspect Ratio &amp; Layout Controls</p>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        {/* Container Max Width / Card Scale */}
+                        <div>
+                          <Label>Container Width / Card Scale</Label>
+                          <select
+                            value={formData.location_cards_container_width}
+                            onChange={(e) => setFormData({ ...formData, location_cards_container_width: e.target.value })}
+                            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/80 rounded-lg text-xs text-white mt-1"
+                          >
+                            <option value="4xl">Compact (4XL — Smaller Cards)</option>
+                            <option value="5xl">Medium (5XL — Balanced)</option>
+                            <option value="6xl">Standard (6XL — Default)</option>
+                            <option value="7xl">Wide (7XL — Maximum Banner)</option>
+                          </select>
+                        </div>
+
+                        {/* Card Image Aspect Ratio / Height */}
+                        <div>
+                          <Label>Card Height / Image Ratio</Label>
+                          <select
+                            value={formData.location_cards_aspect_ratio}
+                            onChange={(e) => setFormData({ ...formData, location_cards_aspect_ratio: e.target.value })}
+                            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/80 rounded-lg text-xs text-white mt-1"
+                          >
+                            <option value="16/8">Slim Banner (16:8)</option>
+                            <option value="16/10">Standard Ratio (16:10)</option>
+                            <option value="4/3">Tall Card (4:3)</option>
+                            <option value="16/12">Compact Square-ish (16:12)</option>
+                          </select>
+                        </div>
+
+                        {/* Grid Alignment */}
+                        <div>
+                          <Label>Card Grid Alignment</Label>
+                          <select
+                            value={formData.location_cards_alignment}
+                            onChange={(e) => setFormData({ ...formData, location_cards_alignment: e.target.value })}
+                            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/80 rounded-lg text-xs text-white mt-1"
+                          >
+                            <option value="center">Center Aligned</option>
+                            <option value="left">Left Aligned</option>
+                            <option value="right">Right Aligned</option>
+                          </select>
+                        </div>
+
+                        {/* Non-Overlap Top Margin (Normal Mode) */}
+                        <div>
+                          <Label>Normal Margin Top (Overlap OFF)</Label>
+                          <select
+                            value={formData.location_cards_non_overlap_margin_top}
+                            onChange={(e) => setFormData({ ...formData, location_cards_non_overlap_margin_top: e.target.value })}
+                            className="w-full px-3 py-2 bg-slate-950 border border-slate-700/80 rounded-lg text-xs text-white mt-1"
+                          >
+                            <option value="none">No Spacing (Flush)</option>
+                            <option value="small">Small Spacing (16px)</option>
+                            <option value="medium">Medium Spacing (32px)</option>
+                            <option value="large">Large Spacing (56px)</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
                 {/* Card 4: Additional Section & Stats Controls */}

@@ -109,11 +109,26 @@ export default async function HomePage() {
           heroBadgeColorDark={contentJson.hero_badge_color_dark}
           heroBadgeSize={contentJson.hero_badge_size}
           heroMobileAlignment={contentJson.hero_mobile_alignment || 'center'}
+          heroHeight={contentJson.hero_height || 'screen'}
+          heroHeightMobile={contentJson.hero_height_mobile || 'screen'}
           videoSpeed={contentJson.video_speed !== undefined ? Number(contentJson.video_speed) : 0.75}
         />
 
         {/* 2. Two Central Location-Selection Cards (Overlapping Hero Lower Area) */}
-        <LocationCardsSection locations={locations} />
+        <LocationCardsSection
+          locations={locations}
+          enabled={contentJson.location_cards_enabled !== false}
+          overlap={contentJson.location_cards_overlap !== false}
+          overlapAmount={contentJson.location_cards_overlap_amount || 'medium'}
+          overlapDesktop={contentJson.location_cards_overlap_desktop !== undefined ? Boolean(contentJson.location_cards_overlap_desktop) : (contentJson.location_cards_overlap !== false)}
+          overlapMobile={contentJson.location_cards_overlap_mobile !== undefined ? Boolean(contentJson.location_cards_overlap_mobile) : (contentJson.location_cards_overlap !== false)}
+          overlapAmountDesktop={contentJson.location_cards_overlap_amount_desktop || contentJson.location_cards_overlap_amount || 'medium'}
+          overlapAmountMobile={contentJson.location_cards_overlap_amount_mobile || contentJson.location_cards_overlap_amount || 'medium'}
+          containerWidth={contentJson.location_cards_container_width || '6xl'}
+          aspectRatio={contentJson.location_cards_aspect_ratio || '16/10'}
+          gridAlignment={contentJson.location_cards_alignment || 'center'}
+          nonOverlapMarginTop={contentJson.location_cards_non_overlap_margin_top || 'medium'}
+        />
 
         {/* 3. Short Company Introduction Section */}
         <CompanyIntroSection

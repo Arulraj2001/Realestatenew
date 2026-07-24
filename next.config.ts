@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
     // Allow direct loading of remote CDNs to prevent Node.js proxy timeouts
     unoptimized: true,
     dangerouslyAllowLocalIP: process.env.NODE_ENV === 'development',
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: 'https',

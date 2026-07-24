@@ -6,9 +6,115 @@ import { Location } from '@/types/database';
 
 export interface LocationCardsSectionProps {
   locations: Location[];
+  /** Show or hide the entire section */
+  enabled?: boolean;
+  /** Legacy single overlap prop */
+  overlap?: boolean;
+  /** Legacy single overlap amount prop */
+  overlapAmount?: 'small' | 'medium' | 'large' | 'xl' | string;
+  /** Desktop Overlap ON/OFF */
+  overlapDesktop?: boolean;
+  /** Mobile Overlap ON/OFF */
+  overlapMobile?: boolean;
+  /** Desktop Overlap Distance */
+  overlapAmountDesktop?: 'small' | 'medium' | 'large' | 'xl' | string;
+  /** Mobile Overlap Distance */
+  overlapAmountMobile?: 'small' | 'medium' | 'large' | 'xl' | string;
+  /** Container Max Width (4xl, 5xl, 6xl, 7xl) */
+  containerWidth?: '4xl' | '5xl' | '6xl' | '7xl' | string;
+  /** Card Image Aspect Ratio (16/8, 16/10, 4/3, 16/12) */
+  aspectRatio?: '16/8' | '16/10' | '4/3' | '16/12' | string;
+  /** Card Grid Alignment (center, left, right) */
+  gridAlignment?: 'center' | 'left' | 'right' | string;
+  /** Normal Top Margin when Overlap is OFF (none, small, medium, large) */
+  nonOverlapMarginTop?: 'none' | 'small' | 'medium' | 'large' | string;
 }
 
-export const LocationCardsSection: React.FC<LocationCardsSectionProps> = ({ locations }) => {
+const MOBILE_OVERLAP_MAP: Record<string, string> = {
+  small:  '-mt-2',
+  medium: '-mt-8',
+  large:  '-mt-16',
+  xl:     '-mt-24',
+};
+
+const DESKTOP_OVERLAP_MAP: Record<string, string> = {
+  small:  'sm:-mt-4',
+  medium: 'sm:-mt-20',
+  large:  'sm:-mt-32',
+  xl:     'sm:-mt-48',
+};
+
+const NON_OVERLAP_MOBILE_MARGIN_MAP: Record<string, string> = {
+  none:   'mt-0',
+  small:  'mt-4',
+  medium: 'mt-8',
+  large:  'mt-14',
+};
+
+const NON_OVERLAP_DESKTOP_MARGIN_MAP: Record<string, string> = {
+  none:   'sm:mt-0',
+  small:  'sm:mt-6',
+  medium: 'sm:mt-12',
+  large:  'sm:mt-20',
+};
+
+const CONTAINER_WIDTH_MAP: Record<string, string> = {
+  '4xl': 'max-w-4xl',
+  '5xl': 'max-w-5xl',
+  '6xl': 'max-w-6xl',
+  '7xl': 'max-w-7xl',
+};
+
+const ASPECT_RATIO_MAP: Record<string, string> = {
+  '16/8':  'aspect-[16/8]',
+  '16/10': 'aspect-[16/10]',
+  '4/3':   'aspect-[4/3]',
+  '16/12': 'aspect-[16/12]',
+};
+
+export const LocationCardsSection: React.FC<LocationCardsSectionProps> = ({
+  locations,
+  enabled = true,
+  overlap,
+  overlapAmount,
+  overlapDesktop,
+  overlapMobile,
+  overlapAmountDesktop,
+  overlapAmountMobile,
+  containerWidth = '6xl',
+  aspectRatio = '16/10',
+  gridAlignment = 'center',
+  nonOverlapMarginTop = 'medium',
+}) => {
+  if (!enabled) return null;
+
+  // Resolve desktop overlap (use overlapDesktop if defined, otherwise fallback to overlap)
+  const isDesktopOverlap = overlapDesktop !== undefined ? overlapDesktop : (overlap !== false);
+  // Resolve mobile overlap (use overlapMobile if defined, otherwise fallback to overlap)
+  const isMobileOverlap = overlapMobile !== undefined ? overlapMobile : (overlap !== false);
+
+  // Resolve Desktop overlap/margin class
+  const desktopAmountKey = overlapAmountDesktop || overlapAmount || 'medium';
+  const desktopClass = isDesktopOverlap
+    ? (DESKTOP_OVERLAP_MAP[desktopAmountKey] ?? DESKTOP_OVERLAP_MAP.medium)
+    : (NON_OVERLAP_DESKTOP_MARGIN_MAP[nonOverlapMarginTop] ?? NON_OVERLAP_DESKTOP_MARGIN_MAP.medium);
+
+  // Resolve Mobile overlap/margin class
+  const mobileAmountKey = overlapAmountMobile || overlapAmount || 'medium';
+  const mobileClass = isMobileOverlap
+    ? (MOBILE_OVERLAP_MAP[mobileAmountKey] ?? MOBILE_OVERLAP_MAP.medium)
+    : (NON_OVERLAP_MOBILE_MARGIN_MAP[nonOverlapMarginTop] ?? NON_OVERLAP_MOBILE_MARGIN_MAP.medium);
+
+  // Resolve container width and grid align classes
+  const widthClass = CONTAINER_WIDTH_MAP[containerWidth] ?? CONTAINER_WIDTH_MAP['6xl'];
+  const alignClass =
+    gridAlignment === 'left' ? 'mr-auto ml-0' :
+    gridAlignment === 'right' ? 'ml-auto mr-0' :
+    'mx-auto';
+
+  // Resolve aspect ratio class
+  const aspectClass = ASPECT_RATIO_MAP[aspectRatio] ?? ASPECT_RATIO_MAP['16/10'];
+
   const fallbackImages: Record<string, string> = {
     namakkal: 'https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=1000&q=80',
     'paramathi-velur': 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1000&q=80',
@@ -25,8 +131,8 @@ export const LocationCardsSection: React.FC<LocationCardsSectionProps> = ({ loca
   if (featuredLocations.length === 0) return null;
 
   return (
-    <section className="relative z-20 max-w-6xl mx-auto px-2 sm:px-6 lg:px-8 -mt-16 sm:-mt-20 mb-6 pb-2">
-      {/* Location Cards — always single row, auto-fill up to 3 columns */}
+    <section className={`relative z-20 ${widthClass} ${alignClass} px-2 sm:px-6 lg:px-8 ${mobileClass} ${desktopClass} mb-6 pb-2`}>
+      {/* Location Cards — single row flex grid */}
       <div className={`grid gap-3 sm:gap-6 ${
         featuredLocations.length === 1
           ? 'grid-cols-1 max-w-sm mx-auto'
@@ -52,7 +158,7 @@ export const LocationCardsSection: React.FC<LocationCardsSectionProps> = ({ loca
               className="group relative rounded-2xl overflow-hidden bg-slate-900 border border-slate-800 shadow-2xl transition-all duration-300 hover:-translate-y-1.5 hover:border-amber-500/50 hover:shadow-amber-500/20 flex flex-col justify-between"
             >
               {/* Image Banner */}
-              <div className="relative aspect-[16/10] overflow-hidden">
+              <div className={`relative ${aspectClass} overflow-hidden`}>
                 <Image
                   src={imageSrc}
                   alt={loc.name}

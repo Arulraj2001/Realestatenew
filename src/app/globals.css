@@ -2229,6 +2229,18 @@ html:not(.light-theme) .contact-banner-bg-container {
   }
 }
 
+/* ── HERO SECTION RESPONSIVE HEIGHT SYSTEM ─────────────────────────── */
+/* Mobile-first: uses --hero-height-mobile custom prop */
+.hero-section-responsive {
+  min-height: var(--hero-height-mobile, 100vh);
+}
+/* Desktop (sm breakpoint 640px+): uses --hero-height-desktop custom prop */
+@media (min-width: 640px) {
+  .hero-section-responsive {
+    min-height: var(--hero-height-desktop, 100vh);
+  }
+}
+
 /* ── HERO GRADIENT BANNER DUAL-THEME SYSTEM ────────────────────────── */
 
 /* DARK MODE (Default) */

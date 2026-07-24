@@ -51,6 +51,8 @@ export interface HeroSectionProps {
   heroMobileAlignment?: 'center' | 'left' | 'right' | 'same_as_desktop' | string;
   heroEnabled?: boolean;
   videoSpeed?: number;
+  heroHeight?: 'screen' | 'large' | 'medium' | 'small' | 'compact' | string;
+  heroHeightMobile?: 'screen' | 'large' | 'medium' | 'small' | 'compact' | string;
 }
 
 const getYoutubeId = (url?: string | null) => {
@@ -102,11 +104,28 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   heroMobileAlignment = 'center',
   heroEnabled = true,
   videoSpeed = 0.75,
+  heroHeight = 'screen',
+  heroHeightMobile = 'screen',
 }) => {
   const [isVisitModalOpen, setIsVisitModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const { theme } = useTheme();
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Resolve vh value from keyword for a given height setting
+  const resolveVh = (h: string) =>
+    h === 'large' ? '85vh'
+    : h === 'medium' ? '70vh'
+    : h === 'small' ? '55vh'
+    : h === 'compact' ? '45vh'
+    : '100vh';
+
+  // Build a server-rendered responsive style block so the height is always correct
+  // regardless of Tailwind purging or CSS hot-reload issues.
+  const heroStyleBlock = `
+    #hero-section-main { min-height: ${resolveVh(heroHeightMobile)}; }
+    @media (min-width: 640px) { #hero-section-main { min-height: ${resolveVh(heroHeight)}; } }
+  `;
 
   useEffect(() => {
     setIsMounted(true);
@@ -243,34 +262,55 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       ? 'mt-5'
       : '';
 
+  // Dynamic bottom container padding based on desktop and mobile hero heights
+  const contentPaddingClass = (() => {
+    const isSmallCompactDesktop = heroHeight === 'small' || heroHeight === 'compact';
+    const isSmallCompactMobile = heroHeightMobile === 'small' || heroHeightMobile === 'compact';
+    const isMediumDesktop = heroHeight === 'medium';
+    const isMediumMobile = heroHeightMobile === 'medium';
+
+    if (isSmallCompactDesktop && isSmallCompactMobile) {
+      return 'pb-8 sm:pb-12';
+    } else if (isSmallCompactDesktop) {
+      return 'pb-20 sm:pb-12';
+    } else if (isSmallCompactMobile) {
+      return 'pb-8 sm:pb-28';
+    } else if (isMediumDesktop || isMediumMobile) {
+      return 'pb-16 sm:pb-20';
+    }
+    return 'pb-28 sm:pb-36';
+  })();
+
   // 9-Point Box Position: justify = vertical, wrapperAlign = where the content block sits, align = internal text alignment
   const boxPosLayout = (() => {
+    const isSmallCompact = heroHeight === 'small' || heroHeight === 'compact' || heroHeightMobile === 'small' || heroHeightMobile === 'compact';
+    const isMedium = heroHeight === 'medium' || heroHeightMobile === 'medium';
+
+    const ptTop = isSmallCompact ? 'pt-6 sm:pt-8' : isMedium ? 'pt-10 sm:pt-14' : 'pt-16 sm:pt-20';
+    const ptMid = isSmallCompact ? 'pt-4 sm:pt-6' : isMedium ? 'pt-8 sm:pt-10' : 'pt-12 sm:pt-16';
+    const ptBot = isSmallCompact ? 'pt-2 sm:pt-4' : isMedium ? 'pt-4 sm:pt-6' : 'pt-8 sm:pt-12';
+
     switch (heroBoxPosition) {
       case 'top-left':
-        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', wrapperAlign: 'mr-auto', align: 'items-start text-left' };
+        return { justify: `justify-start ${ptTop} pb-2`, wrapperAlign: 'mr-auto', align: 'items-start text-left' };
       case 'top-center':
-        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', wrapperAlign: 'mx-auto', align: 'items-center text-center' };
+        return { justify: `justify-start ${ptTop} pb-2`, wrapperAlign: 'mx-auto', align: 'items-center text-center' };
       case 'top-right':
-        return { justify: 'justify-start pt-16 sm:pt-20 pb-8', wrapperAlign: 'ml-auto', align: 'items-end text-right' };
+        return { justify: `justify-start ${ptTop} pb-2`, wrapperAlign: 'ml-auto', align: 'items-end text-right' };
       case 'center-left':
-        return { justify: 'justify-center pt-12 pb-12', wrapperAlign: 'mr-auto', align: 'items-start text-left' };
+        return { justify: `justify-center ${ptMid} pb-2`, wrapperAlign: 'mr-auto', align: 'items-start text-left' };
       case 'center-right':
-        return { justify: 'justify-center pt-12 pb-12', wrapperAlign: 'ml-auto', align: 'items-end text-right' };
+        return { justify: `justify-center ${ptMid} pb-2`, wrapperAlign: 'ml-auto', align: 'items-end text-right' };
       case 'bottom-left':
-        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', wrapperAlign: 'mr-auto', align: 'items-start text-left' };
+        return { justify: `justify-end ${ptBot} pb-4 sm:pb-8`, wrapperAlign: 'mr-auto', align: 'items-start text-left' };
       case 'bottom-center':
-        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', wrapperAlign: 'mx-auto', align: 'items-center text-center' };
+        return { justify: `justify-end ${ptBot} pb-4 sm:pb-8`, wrapperAlign: 'mx-auto', align: 'items-center text-center' };
       case 'bottom-right':
-        return { justify: 'justify-end pt-8 pb-24 sm:pb-32', wrapperAlign: 'ml-auto', align: 'items-end text-right' };
+        return { justify: `justify-end ${ptBot} pb-4 sm:pb-8`, wrapperAlign: 'ml-auto', align: 'items-end text-right' };
       case 'center':
       default:
         return {
-          justify:
-            heroVerticalPosition === 'top'
-              ? 'justify-start pt-20 sm:pt-28 pb-12'
-              : heroVerticalPosition === 'bottom'
-              ? 'justify-end pt-12 pb-24 sm:pb-32'
-              : 'justify-center pt-16 sm:pt-24 pb-12',
+          justify: `justify-center ${ptMid} pb-2`,
           wrapperAlign: 'mx-auto',
           align: alignClasses,
         };
@@ -316,11 +356,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   }, [heroOffsetX, heroOffsetY]);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-between overflow-hidden bg-slate-950 text-slate-100">
+    <>
+      {/* Responsive hero height — server-rendered style block, always fresh */}
+      <style dangerouslySetInnerHTML={{ __html: heroStyleBlock }} />
+      <section id="hero-section-main" className="relative flex flex-col justify-between overflow-hidden bg-slate-950 text-slate-100">
       {/* Media Background Layer (Pure container, clips all rendering issues) */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Blur/Scale Wrapper */}
-        <div className="w-full h-full overflow-hidden" style={blurStyle}>
+        {/* Blur/Scale Wrapper — must be relative so fill Images have a positioned parent */}
+        <div className="relative w-full h-full overflow-hidden" style={blurStyle}>
           {mediaType === 'video' && (getYoutubeId(desktopVideo) || getYoutubeId(mobileVideo)) ? (
             <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
               {/* Optional Poster image shown while YouTube iframe initializes */}
@@ -388,7 +431,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       </div>
 
       {/* Hero Content Section — full-width flex column to allow 9-point grid positioning */}
-      <div className={`relative z-10 w-full px-4 sm:px-6 lg:px-8 pb-28 sm:pb-36 flex-1 flex flex-col ${boxPosLayout.justify}`}>
+      <div className={`relative z-10 w-full px-4 sm:px-6 lg:px-8 ${contentPaddingClass} flex-1 flex flex-col ${boxPosLayout.justify}`}>
         <div className={`hero-offset-transform ${containerWidthClass} ${boxPosLayout.wrapperAlign} flex flex-col ${boxPosLayout.align} ${mobileAlignClass} space-y-5`} style={responsiveOffsetStyle}>
           {/* Badge Tag */}
           {heroBadgeVisible !== false && (
@@ -542,5 +585,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </defs>
       </svg>
     </section>
+    </>
   );
 };
