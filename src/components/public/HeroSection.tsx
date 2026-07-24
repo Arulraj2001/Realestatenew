@@ -42,6 +42,8 @@ export interface HeroSectionProps {
   heroBoxPosition?: string;
   heroOffsetX?: number;
   heroOffsetY?: number;
+  heroMobileOffsetX?: number;
+  heroMobileOffsetY?: number;
   heroBadgeText?: string;
   heroBadgeVisible?: boolean;
   heroBadgeAlignment?: 'left' | 'center' | 'right';
@@ -95,6 +97,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   heroBoxPosition = 'center',
   heroOffsetX = 0,
   heroOffsetY = 0,
+  heroMobileOffsetX = 0,
+  heroMobileOffsetY = 0,
   heroBadgeText = 'DTCP & RERA Approved Layouts',
   heroBadgeVisible = true,
   heroBadgeAlignment,
@@ -352,8 +356,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     return {
       '--hero-offset-x': `${heroOffsetX || 0}px`,
       '--hero-offset-y': `${heroOffsetY || 0}px`,
+      '--hero-mobile-offset-x': `${heroMobileOffsetX || 0}px`,
+      '--hero-mobile-offset-y': `${heroMobileOffsetY || 0}px`,
     } as React.CSSProperties;
-  }, [heroOffsetX, heroOffsetY]);
+  }, [heroOffsetX, heroOffsetY, heroMobileOffsetX, heroMobileOffsetY]);
 
   return (
     <>

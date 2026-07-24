@@ -102,6 +102,8 @@ export default async function HomePage() {
           heroBoxPosition={contentJson.hero_box_position || 'center'}
           heroOffsetX={contentJson.hero_offset_x !== undefined ? Number(contentJson.hero_offset_x) : 0}
           heroOffsetY={contentJson.hero_offset_y !== undefined ? Number(contentJson.hero_offset_y) : 0}
+          heroMobileOffsetX={contentJson.hero_mobile_offset_x !== undefined ? Number(contentJson.hero_mobile_offset_x) : 0}
+          heroMobileOffsetY={contentJson.hero_mobile_offset_y !== undefined ? Number(contentJson.hero_mobile_offset_y) : 0}
           heroBadgeText={contentJson.hero_badge_text}
           heroBadgeVisible={contentJson.hero_badge_visible !== false}
           heroBadgeAlignment={contentJson.hero_badge_alignment}

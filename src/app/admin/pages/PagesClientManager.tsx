@@ -73,6 +73,8 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     hero_box_position: 'center',
     hero_offset_x: 0,
     hero_offset_y: 0,
+    hero_mobile_offset_x: 0,
+    hero_mobile_offset_y: 0,
     hero_badge_text: 'DTCP & RERA Approved Layouts',
     hero_badge_visible: true,
     hero_badge_alignment: 'center',
@@ -230,6 +232,8 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       hero_box_position: String(c.hero_box_position || 'center'),
       hero_offset_x: c.hero_offset_x !== undefined ? Number(c.hero_offset_x) : 0,
       hero_offset_y: c.hero_offset_y !== undefined ? Number(c.hero_offset_y) : 0,
+      hero_mobile_offset_x: c.hero_mobile_offset_x !== undefined ? Number(c.hero_mobile_offset_x) : 0,
+      hero_mobile_offset_y: c.hero_mobile_offset_y !== undefined ? Number(c.hero_mobile_offset_y) : 0,
       hero_badge_text: String(c.hero_badge_text || 'DTCP & RERA Approved Layouts'),
       hero_badge_visible: c.hero_badge_visible !== false,
       hero_badge_alignment: String(c.hero_badge_alignment || ''),
@@ -369,6 +373,8 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         hero_box_position: formData.hero_box_position,
         hero_offset_x: formData.hero_offset_x,
         hero_offset_y: formData.hero_offset_y,
+        hero_mobile_offset_x: formData.hero_mobile_offset_x,
+        hero_mobile_offset_y: formData.hero_mobile_offset_y,
         hero_badge_text: formData.hero_badge_text,
         hero_badge_visible: formData.hero_badge_visible,
         hero_badge_alignment: formData.hero_badge_alignment,
@@ -1135,6 +1141,42 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                 <div>
                   <Label>Mobile Video URL (.mp4)</Label>
                   <Input value={formData.mobile_video} onChange={(e) => setFormData({ ...formData, mobile_video: e.target.value })} placeholder="https://your-storage/mobile-video.mp4" />
+                </div>
+
+                {/* Independent Mobile Position Offset Sliders */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-slate-800">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs">
+                      <Label className="text-sky-400">Mobile Horizontal Offset (X)</Label>
+                      <span className="text-sky-400 font-mono font-bold">{formData.hero_mobile_offset_x}px</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-100"
+                      max="100"
+                      step="5"
+                      value={formData.hero_mobile_offset_x}
+                      onChange={(e) => setFormData({ ...formData, hero_mobile_offset_x: Number(e.target.value) })}
+                      className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400"
+                    />
+                    <p className="text-[10px] text-slate-400 mt-0.5">Default is 0px (keeps mobile text safe inside phone screen)</p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center text-xs">
+                      <Label className="text-sky-400">Mobile Vertical Offset (Y)</Label>
+                      <span className="text-sky-400 font-mono font-bold">{formData.hero_mobile_offset_y}px</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-100"
+                      max="100"
+                      step="5"
+                      value={formData.hero_mobile_offset_y}
+                      onChange={(e) => setFormData({ ...formData, hero_mobile_offset_y: Number(e.target.value) })}
+                      className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-sky-400"
+                    />
+                  </div>
                 </div>
               </div>
 

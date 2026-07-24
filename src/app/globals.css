@@ -2221,7 +2221,8 @@ html:not(.light-theme) .contact-banner-bg-container {
 
 /* Responsive Mobile Offset Transformer */
 .hero-offset-transform {
-  transform: translate3d(calc(var(--hero-offset-x, 0px) * 0.35), calc(var(--hero-offset-y, 0px) * 0.35), 0px);
+  transform: translate3d(var(--hero-mobile-offset-x, 0px), var(--hero-mobile-offset-y, 0px), 0px);
+  max-width: 100%;
 }
 @media (min-width: 640px) {
   .hero-offset-transform {
