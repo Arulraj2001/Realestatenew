@@ -479,7 +479,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <div className={`hero-animate-cta w-full flex flex-wrap items-center ${ctaFlexAlign} gap-4 pt-3`}>
             {theme === 'light' ? (
               <>
-                <Link href={primaryCtaLink} className="group">
+                <Link href={primaryCtaLink || '/projects'} className="group">
                   <Button
                     variant="gold"
                     size="sm"
@@ -515,7 +515,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </>
             ) : (
               <>
-                <Link href={primaryCtaLink} className="blob-btn blob-btn-explore">
+                <Link href={primaryCtaLink || '/projects'} className="blob-btn blob-btn-explore">
                   <span>{primaryCtaLabel}</span>
                   <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1 pointer-events-none" />
                   <span className="blob-btn__inner">

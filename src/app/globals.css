@@ -258,7 +258,7 @@ body:has(.light-theme) {
 
 /* Desktop nav links */
 .light-theme header nav a {
-  color: #1a3020 !important;
+  color: var(--header-custom-text-color, #1a3020) !important;
 }
 
 .light-theme header nav a:hover {

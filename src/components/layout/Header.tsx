@@ -50,17 +50,31 @@ export interface HeaderProps {
   navLocations?: { current: HeaderNavLocation[]; upcoming: HeaderNavLocation[] };
   socialLinks?: SocialLinks | null;
   announcement?: GlobalAnnouncement | null;
+  headerLightTextColor?: string;
+  headerDarkTextColor?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   navLocations: navLocationsProp,
   socialLinks,
   announcement,
+  headerLightTextColor,
+  headerDarkTextColor,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLocationsDropdownOpen, setIsLocationsDropdownOpen] = useState(false);
   const [isMobileLocationsAccordionOpen, setIsMobileLocationsAccordionOpen] = useState(true);
   const { theme, toggleTheme } = useTheme();
+
+  // Resolve custom header text color dynamically when theme toggles between light & dark
+  const activeHeaderTextColor =
+    theme === 'light'
+      ? (headerLightTextColor && headerLightTextColor.trim() !== '' ? headerLightTextColor : undefined)
+      : (headerDarkTextColor && headerDarkTextColor.trim() !== '' ? headerDarkTextColor : undefined);
+
+  const customHeaderStyle = activeHeaderTextColor
+    ? ({ '--header-custom-text-color': activeHeaderTextColor } as React.CSSProperties)
+    : undefined;
 
   const navLocations = navLocationsProp ?? DEFAULT_NAV_LOCATIONS;
 
@@ -73,7 +87,10 @@ export const Header: React.FC<HeaderProps> = ({
   const isRunning = announcement?.running ?? true;
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0f2e21]/95 backdrop-blur-md border-b border-emerald-900/60 shadow-md">
+    <header
+      className="sticky top-0 z-40 bg-[#0f2e21]/95 backdrop-blur-md border-b border-emerald-900/60 shadow-md"
+      style={customHeaderStyle}
+    >
       {/* Top Notification Bar */}
       {showAnnouncement && (
         <div className="header-top-bar text-xs py-1.5 border-b border-emerald-900/40">

@@ -134,6 +134,7 @@ export default async function HomePage() {
         <CompanyIntroSection
           introHeading={contentJson.intro_h2}
           introContent={contentJson.intro_content}
+          introImage={contentJson.intro_image || '/certifivate.jpeg'}
         />
 
         {/* Key Statistics Highlights */}

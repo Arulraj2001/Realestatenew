@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { ToastProvider } from '@/components/ui/toast';
-import { getNavLocations, getSocialLinks, getIntegrationsSettings, getGlobalAnnouncement } from '@/lib/data';
+import { getNavLocations, getSocialLinks, getIntegrationsSettings, getGlobalAnnouncement, getContentPage } from '@/lib/data';
 
 // Lazy-load interactive below-the-fold components to reduce initial JS bundle
 const StickyActionBar = dynamic(
@@ -21,13 +21,16 @@ export default async function PublicLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Fetch nav locations, social links, tracking integrations, and global announcement from DB
-  const [navLocations, socialLinks, integrations, announcement] = await Promise.all([
+  // Fetch nav locations, social links, tracking integrations, global announcement, and home page content from DB
+  const [navLocations, socialLinks, integrations, announcement, homePage] = await Promise.all([
     getNavLocations(),
     getSocialLinks(),
     getIntegrationsSettings(),
     getGlobalAnnouncement(),
+    getContentPage('home'),
   ]);
+
+  const homeContent = (homePage?.content || {}) as Record<string, any>;
 
   return (
     <ToastProvider>
@@ -112,7 +115,13 @@ export default async function PublicLayout({
             __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=${integrations.google_tag_manager}" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
           }} />
         )}
-        <Header navLocations={navLocations} socialLinks={socialLinks} announcement={announcement} />
+        <Header
+          navLocations={navLocations}
+          socialLinks={socialLinks}
+          announcement={announcement}
+          headerLightTextColor={homeContent.header_light_text_color}
+          headerDarkTextColor={homeContent.header_dark_text_color}
+        />
         <main id="main-content" className="flex-1">
           {children}
         </main>

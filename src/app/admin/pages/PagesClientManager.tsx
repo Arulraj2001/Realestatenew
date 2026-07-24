@@ -84,6 +84,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
     hero_height_mobile: 'screen',
     intro_h2: '',
     intro_content: '',
+    intro_image: '/certifivate.jpeg',
     stats_visible: true,
     stats_list: [] as Array<{ label: string; value: string; icon?: string }>,
     why_choose_us_items: [] as Array<{ title: string; description: string }>,
@@ -240,6 +241,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
       hero_height_mobile: String(c.hero_height_mobile || 'screen'),
       intro_h2: String(c.intro_h2 || 'Find Residential Plots and Dream Villas in Namakkal and Paramathi Velur'),
       intro_content: String(c.intro_content || ''),
+      intro_image: String(c.intro_image || '/certifivate.jpeg'),
       stats_visible: c.stats_visible !== false,
       stats_list: resolvedStatsList,
       why_choose_us_items: resolvedWhyChooseUs,
@@ -378,6 +380,7 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
         hero_height_mobile: formData.hero_height_mobile,
         intro_h2: formData.intro_h2,
         intro_content: formData.intro_content,
+        intro_image: formData.intro_image,
         stats_visible: formData.stats_visible,
         stats_list: formData.stats_list,
         why_choose_us_items: formData.why_choose_us_items,
@@ -1331,6 +1334,15 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                     <Label>Primary CTA Link</Label>
                     <Input value={formData.primary_cta_link} onChange={(e) => setFormData({ ...formData, primary_cta_link: e.target.value })} placeholder="/projects" />
                   </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800">
+                  <MediaUploader
+                    label="Company Intro Certificate / Feature Photo"
+                    value={formData.intro_image}
+                    folder="content"
+                    onChange={(url) => setFormData({ ...formData, intro_image: url })}
+                  />
                 </div>
 
                 {/* Stats List Editor */}
