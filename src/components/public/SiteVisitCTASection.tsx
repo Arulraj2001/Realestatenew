@@ -6,7 +6,7 @@ import { WhatsAppIcon } from '@/components/ui/icons';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
 import { SiteVisitForm } from '@/components/forms/SiteVisitForm';
-import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
 
 export interface SiteVisitCTASectionProps {
   heading?: string;
@@ -20,6 +20,8 @@ export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
   description = 'Tell us which location or property you are interested in, and our team will arrange a guided site visit.',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const siteSettings = useSiteSettings();
+  const whatsappUrl = siteSettings.getWhatsAppUrl('Hi Your Choice Properties team, I would like to contact your sales team regarding your layouts.');
 
   return (
     <>
@@ -90,9 +92,7 @@ export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
             </Button>
 
             <a
-              href={buildWhatsAppUrl({
-                customMessage: 'Hi Your Choice Properties team, I would like to contact your sales team regarding your layouts.',
-              })}
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto"

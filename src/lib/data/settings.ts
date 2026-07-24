@@ -23,6 +23,27 @@ export async function getSiteSetting(key: string): Promise<SiteSetting | null> {
   }
 }
 
+export interface ContactInfo {
+  company_name?: string;
+  phone?: string;
+  whatsapp?: string;
+  email?: string;
+  address?: string;
+  map_url?: string;
+  working_hours?: string;
+}
+
+/** Fetch contact info from site_settings['contact_info']. */
+export async function getContactInfo(): Promise<ContactInfo | null> {
+  try {
+    const setting = await getSiteSetting('contact_info');
+    if (!setting || typeof setting.value !== 'object' || setting.value === null) return null;
+    return setting.value as ContactInfo;
+  } catch {
+    return null;
+  }
+}
+
 /** Fetch homepage stats from site_settings['homepage_stats']. Returns null if not set (callers use their own defaults). */
 export async function getHomepageStats(): Promise<StatItem[] | null> {
   try {

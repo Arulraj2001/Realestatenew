@@ -5,10 +5,9 @@ import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock, MessageSquare, ChevronRight, ExternalLink, Share2 } from 'lucide-react';
 import { FacebookIcon, InstagramIcon, YoutubeIcon } from '@/components/ui/icons';
 import { siteConfig } from '@/config/site';
-import { getFAQs, getContentPage, getSocialLinks } from '@/lib/data';
+import { getFAQs, getContentPage, getSocialLinks, getContactInfo } from '@/lib/data';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { FAQSection } from '@/components/public/FAQSection';
-import { createPublicClient } from '@/lib/supabase/server';
 
 export const metadata: Metadata = {
   title: 'Contact Your Choice Properties | Villas & Plots in Namakkal & Paramathi velur',
@@ -20,10 +19,19 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactUsPage() {
-  const [faqs, socialLinks] = await Promise.all([
+  const [faqs, socialLinks, dbContactInfo] = await Promise.all([
     getFAQs(),
     getSocialLinks(),
+    getContactInfo(),
   ]);
+
+  const contactInfo = dbContactInfo || {};
+  const phone = contactInfo.phone || siteConfig.contact.phone;
+  const whatsapp = contactInfo.whatsapp || siteConfig.contact.whatsapp;
+  const email = contactInfo.email || siteConfig.contact.email;
+  const address = contactInfo.address || siteConfig.contact.address;
+  const workingHours = contactInfo.working_hours || 'Mon - Sun: 9:00 AM - 8:00 PM';
+  const mapUrl = contactInfo.map_url || null;
 
   const fbUrl = socialLinks?.facebook || 'https://facebook.com/yourchoiceproperties';
   const instaUrl = socialLinks?.instagram || 'https://instagram.com/yourchoiceproperties';
@@ -37,17 +45,6 @@ export default async function ContactUsPage() {
   const bannerHeading = contentJson.heading || contentJson.title || 'Contact Your Choice Properties';
   const bannerSubtitle = contentJson.subtitle || 'Looking for your dream home or the perfect investment?';
   const bannerBody = contentJson.body || 'Our property experts are here to guide you through every step—from selecting the right plot or villa to documentation and loan assistance. Schedule your site visit today and explore our premium projects.';
-
-  // Load live contact info (map_url) from DB — using public client (no service role needed)
-  const supabase = createPublicClient();
-  const { data: settingsData } = await supabase
-    .from('site_settings')
-    .select('key, value')
-    .eq('key', 'contact_info')
-    .single();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const contactInfo = ((settingsData as any)?.value as Record<string, string>) || {};
-  const mapUrl = contactInfo.map_url || null;
 
   const localBusinessJsonLd = {
     '@context': 'https://schema.org',
@@ -176,7 +173,7 @@ export default async function ContactUsPage() {
                   <MapPin className="w-6 h-6 text-amber-400 shrink-0 mt-1" />
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-white text-sm">Office Address</h3>
-                    <p className="text-sm sm:text-base text-slate-200 mt-1">{siteConfig.contact.address}</p>
+                    <p className="text-sm sm:text-base text-slate-200 mt-1">{address}</p>
                     {mapUrl && (
                       <a
                         href={mapUrl}
@@ -203,8 +200,8 @@ export default async function ContactUsPage() {
                   <Phone className="w-6 h-6 text-emerald-400 shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-white text-sm">Phone Hotline</h3>
-                    <a href={`tel:${siteConfig.contact.phone}`} className="text-sm sm:text-base font-bold text-amber-400 hover:underline mt-1 block">
-                      {siteConfig.contact.phone}
+                    <a href={`tel:${phone.replace(/[^0-[#\*\+0-9]/g, '')}`} className="text-sm sm:text-base font-bold text-amber-400 hover:underline mt-1 block">
+                      {phone}
                     </a>
                   </div>
                 </div>
@@ -214,12 +211,12 @@ export default async function ContactUsPage() {
                   <div>
                     <h3 className="font-bold text-white text-sm">WhatsApp Assistance</h3>
                     <a
-                      href={`https://wa.me/${siteConfig.contact.whatsapp.replace(/[^0-9]/g, '')}`}
+                      href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, '')}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-sm sm:text-base font-bold text-emerald-400 hover:underline mt-1 block"
                     >
-                      Chat on WhatsApp ({siteConfig.contact.whatsapp})
+                      Chat on WhatsApp ({whatsapp})
                     </a>
                   </div>
                 </div>
@@ -228,8 +225,8 @@ export default async function ContactUsPage() {
                   <Mail className="w-6 h-6 text-amber-400 shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-white text-sm">Email Inbox</h3>
-                    <a href={`mailto:${siteConfig.contact.email}`} className="text-sm sm:text-base text-slate-200 hover:underline mt-1 block">
-                      {siteConfig.contact.email}
+                    <a href={`mailto:${email}`} className="text-sm sm:text-base text-slate-200 hover:underline mt-1 block">
+                      {email}
                     </a>
                   </div>
                 </div>
@@ -238,7 +235,7 @@ export default async function ContactUsPage() {
                   <Clock className="w-6 h-6 text-amber-400 shrink-0 mt-1" />
                   <div>
                     <h3 className="font-bold text-white text-sm">Working Hours</h3>
-                    <p className="text-sm sm:text-base text-slate-200 mt-1">Monday - Sunday: 9:00 AM - 8:00 PM</p>
+                    <p className="text-sm sm:text-base text-slate-200 mt-1">{workingHours}</p>
                   </div>
                 </div>
 

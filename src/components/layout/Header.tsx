@@ -26,7 +26,8 @@ import { Drawer } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/components/layout/ThemeProvider';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
-import { SocialLinks, GlobalAnnouncement } from '@/lib/data/settings';
+import { SocialLinks, GlobalAnnouncement, ContactInfo } from '@/lib/data/settings';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
 
 export interface HeaderNavLocation {
   id: string;
@@ -50,6 +51,7 @@ export interface HeaderProps {
   navLocations?: { current: HeaderNavLocation[]; upcoming: HeaderNavLocation[] };
   socialLinks?: SocialLinks | null;
   announcement?: GlobalAnnouncement | null;
+  contactInfo?: ContactInfo | null;
   headerLightTextColor?: string;
   headerDarkTextColor?: string;
 }
@@ -58,9 +60,13 @@ export const Header: React.FC<HeaderProps> = ({
   navLocations: navLocationsProp,
   socialLinks,
   announcement,
+  contactInfo,
   headerLightTextColor,
   headerDarkTextColor,
 }) => {
+  const siteSettings = useSiteSettings();
+  const phone = contactInfo?.phone || siteSettings.contactInfo.phone || siteConfig.contact.phone;
+  const callUrl = siteSettings.getCallUrl(phone);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLocationsDropdownOpen, setIsLocationsDropdownOpen] = useState(false);
   const [isMobileLocationsAccordionOpen, setIsMobileLocationsAccordionOpen] = useState(true);
@@ -107,8 +113,8 @@ export const Header: React.FC<HeaderProps> = ({
               </p>
             )}
             <div className="header-top-phone hidden md:flex items-center gap-4">
-              <a href={`tel:${siteConfig.contact.phone}`} className="hover:text-amber-400 transition-colors flex items-center gap-1 font-semibold">
-                <Phone className="w-3 h-3 text-amber-400" /> {siteConfig.contact.phone}
+              <a href={callUrl} className="hover:text-amber-400 transition-colors flex items-center gap-1 font-semibold">
+                <Phone className="w-3 h-3 text-amber-400" /> {phone}
               </a>
 
               <div className="h-3 w-px bg-emerald-800/80" />

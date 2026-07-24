@@ -158,7 +158,7 @@ export const PropertyMediaGallery: React.FC<PropertyMediaGalleryProps> = ({
                   fill
                   sizes="(max-width: 1200px) 100vw, 1200px"
                   priority
-                  className="object-cover"
+                  className="object-contain bg-black"
                 />
               )}
             </div>

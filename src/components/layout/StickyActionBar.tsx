@@ -2,12 +2,15 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Phone, MessageSquare, Calendar, ChevronLeft, GripVertical } from 'lucide-react';
-import { buildWhatsAppUrl, buildCallUrl } from '@/lib/utils/whatsapp';
 import { trackConversionEvent } from '@/lib/utils/analytics';
 import { Dialog } from '@/components/ui/dialog';
 import { SiteVisitForm } from '@/components/forms/SiteVisitForm';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
 
 export const StickyActionBar: React.FC = () => {
+  const siteSettings = useSiteSettings();
+  const whatsappUrl = siteSettings.getWhatsAppUrl('Hi Your Choice Properties team, I am interested in property details.');
+  const callUrl = siteSettings.getCallUrl();
   const [isSiteVisitOpen, setIsSiteVisitOpen] = useState(false);
   const [posY, setPosY] = useState<number | null>(null);
 
@@ -87,7 +90,7 @@ export const StickyActionBar: React.FC = () => {
 
           {/* 1. WhatsApp Button (Right Dock - Original WhatsApp SVG Icon & Color) */}
           <a
-            href={buildWhatsAppUrl({ customMessage: 'Hi Your Choice Properties team, I am interested in property details.' })}
+            href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackConversionEvent('whatsapp_clicked', { source: 'desktop_sticky_dock' })}
@@ -105,7 +108,7 @@ export const StickyActionBar: React.FC = () => {
 
           {/* 2. Contact / Call Button (Right Dock) */}
           <a
-            href={buildCallUrl()}
+            href={callUrl}
             onClick={() => trackConversionEvent('call_clicked', { source: 'desktop_sticky_dock' })}
             className="w-full flex items-center justify-end bg-slate-950 hover:bg-slate-900 text-white py-2.5 px-3 rounded-xl shadow-lg border border-slate-800 hover:border-amber-400/60 transition-all duration-300 hover:pl-4"
             title="Call Sales Advisor"
@@ -139,7 +142,7 @@ export const StickyActionBar: React.FC = () => {
       <div className="md:hidden fixed bottom-6 right-4 z-50 flex flex-col gap-3 select-none">
         {/* 1. Mobile WhatsApp Button */}
         <a
-          href={buildWhatsAppUrl({ customMessage: 'Hi Your Choice Properties team, I am interested in property details.' })}
+          href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => trackConversionEvent('whatsapp_clicked', { source: 'mobile_sticky_float' })}
@@ -153,7 +156,7 @@ export const StickyActionBar: React.FC = () => {
 
         {/* 2. Mobile Contact Button */}
         <a
-          href={buildCallUrl()}
+          href={callUrl}
           onClick={() => trackConversionEvent('call_clicked', { source: 'mobile_sticky_float' })}
           className="w-12 h-12 flex items-center justify-center bg-slate-900 border border-slate-800 text-amber-400 rounded-full shadow-xl hover:border-amber-400/60 transition-transform active:scale-95 cursor-pointer"
           title="Call Sales Advisor"

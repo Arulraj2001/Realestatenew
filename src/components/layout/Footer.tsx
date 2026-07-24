@@ -9,13 +9,17 @@ import { FacebookIcon, InstagramIcon, YoutubeIcon } from '@/components/ui/icons'
 import { siteConfig } from '@/config/site';
 import { submitContactEnquiryAction } from '@/app/actions/enquiries';
 import { useToast } from '@/components/ui/toast';
-import { SocialLinks } from '@/lib/data/settings';
+import { SocialLinks, ContactInfo } from '@/lib/data/settings';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
 
 export interface FooterProps {
   socialLinks?: SocialLinks | null;
+  contactInfo?: ContactInfo | null;
 }
 
-export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
+export const Footer: React.FC<FooterProps> = ({ socialLinks, contactInfo: contactProp }) => {
+  const siteSettings = useSiteSettings();
+  const contact = contactProp || siteSettings.contactInfo;
   const { toast } = useToast();
   const [formData, setFormData] = useState({ name: '', phone: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -180,15 +184,15 @@ export const Footer: React.FC<FooterProps> = ({ socialLinks }) => {
             <div className="space-y-3 text-sm text-slate-400">
               <p className="flex items-start gap-2">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <span className="break-all">{siteConfig.contact.email}</span>
+                <span className="break-all">{contact.email || siteConfig.contact.email}</span>
               </p>
               <p className="flex items-start gap-2">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <span>{siteConfig.contact.phone}</span>
+                <span>{contact.phone || siteConfig.contact.phone}</span>
               </p>
               <p className="flex items-start gap-2">
                 <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                <span>Mon - Sun: 9:00 AM - 7:00 PM</span>
+                <span>{contact.working_hours || 'Mon - Sun: 9:00 AM - 8:00 PM'}</span>
               </p>
             </div>
           </div>
