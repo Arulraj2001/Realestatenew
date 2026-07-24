@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronRight, ShieldCheck } from 'lucide-react';
-import { getContentPage } from '@/lib/data';
+import { getContentPage, getContactInfo } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 
 export const metadata: Metadata = {
@@ -14,7 +14,14 @@ export const metadata: Metadata = {
 };
 
 export default async function PrivacyPolicyPage() {
-  const page = await getContentPage('privacy');
+  const [page, contactInfo] = await Promise.all([
+    getContentPage('privacy'),
+    getContactInfo(),
+  ]);
+
+  const phone = contactInfo?.phone || siteConfig.contact.phone;
+  const email = contactInfo?.email || siteConfig.contact.email;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const contentJson = (page?.content as Record<string, any>) || {};
   const heading = contentJson.heading || page?.title || 'Privacy Policy';
@@ -76,7 +83,7 @@ export default async function PrivacyPolicyPage() {
 
               <h2 className="font-serif text-xl font-bold text-white pt-2 border-b border-slate-800 pb-2">4. Contact Information</h2>
               <p>
-                If you have any questions regarding this policy or wish to update your contact preferences, please reach out to us at <strong>{siteConfig.contact.email}</strong> or call <strong>{siteConfig.contact.phone}</strong>.
+                If you have any questions regarding this policy or wish to update your contact preferences, please reach out to us at <strong>{email}</strong> or call <strong>{phone}</strong>.
               </p>
             </>
           )}

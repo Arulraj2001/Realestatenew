@@ -19,6 +19,7 @@ import {
   getPublishedConfigurations,
   getProjectAmenities,
   getPublishedGalleryItems,
+  getContactInfo,
 } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { getSeoOverride, buildMetadataFromOverride, getConfigurationJsonLd, resolveJsonLd } from '@/lib/seo/metadata';
@@ -68,13 +69,17 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     notFound();
   }
 
-  // Fetch parallel relations + SEO override
-  const [projectAmenities, galleryItems, siblingConfigurations, seoOverride] = await Promise.all([
+  // Fetch parallel relations + SEO override + live contact info
+  const [projectAmenities, galleryItems, siblingConfigurations, seoOverride, contactInfo] = await Promise.all([
     config.project_id ? getProjectAmenities(config.project_id) : Promise.resolve([]),
     getPublishedGalleryItems({ propertyConfigurationId: config.id }),
     config.project_id ? getPublishedConfigurations({ projectId: config.project_id }) : Promise.resolve([]),
     getSeoOverride('configuration', config.id),
+    getContactInfo(),
   ]);
+
+  const phone = contactInfo?.phone || siteConfig.contact.phone;
+  const whatsapp = contactInfo?.whatsapp || siteConfig.contact.whatsapp;
 
   if (seoOverride?.redirect_url) {
     if (seoOverride.redirect_type === 301) {
@@ -241,7 +246,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
             {/* Action Buttons */}
             <div className="space-y-3 pt-2">
-              <a href={`tel:${siteConfig.contact.phone}`}>
+              <a href={`tel:${phone.replace(/[^0-[#\*\+0-9]/g, '')}`}>
                 <Button variant="gold" size="lg" className="w-full font-bold shadow-lg">
                   <PhoneCall className="w-4 h-4 mr-2" /> Call Sales Advisor
                 </Button>
@@ -249,6 +254,7 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
 
               <a
                 href={buildWhatsAppUrl({
+                  phone: whatsapp,
                   customMessage: `Hi! I'm interested in ${config.name} at ${config.project?.name || 'Your Choice Properties'}. Please share layout details & pricing.`,
                 })}
                 target="_blank"

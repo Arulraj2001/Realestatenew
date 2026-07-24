@@ -10,6 +10,7 @@ import {
   getProjectLandmarks,
   getPublishedConfigurations,
   getPublishedGalleryItems,
+  getContactInfo,
 } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { getSeoOverride, buildMetadataFromOverride, getProjectJsonLd, resolveJsonLd } from '@/lib/seo/metadata';
@@ -77,13 +78,17 @@ export default async function HierarchicalProjectPage({ params }: HierarchicalPr
     notFound();
   }
 
-  const [amenities, landmarks, allConfigurations, galleryItems, seoOverride] = await Promise.all([
+  const [amenities, landmarks, allConfigurations, galleryItems, seoOverride, contactInfo] = await Promise.all([
     getProjectAmenities(project.id),
     getProjectLandmarks(project.id),
     getPublishedConfigurations({ projectId: project.id }),
     getPublishedGalleryItems({ projectId: project.id }),
     getSeoOverride('project', project.id),
+    getContactInfo(),
   ]);
+
+  const phone = contactInfo?.phone || siteConfig.contact.phone;
+  const whatsapp = contactInfo?.whatsapp || siteConfig.contact.whatsapp;
 
   if (seoOverride?.redirect_url) {
     if (seoOverride.redirect_type === 301) {
@@ -173,13 +178,16 @@ export default async function HierarchicalProjectPage({ params }: HierarchicalPr
 
               <div className="flex flex-wrap items-center gap-2.5 shrink-0">
                 <a
-                  href={`tel:${siteConfig.contact.phone}`}
+                  href={`tel:${phone.replace(/[^0-[#\*\+0-9]/g, '')}`}
                   className="px-3.5 py-2 bg-slate-900 border border-slate-800 text-amber-400 text-xs font-bold rounded-xl flex items-center gap-2 hover:bg-slate-800 transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5" /> Call Project Expert
                 </a>
                 <a
-                  href={whatsappUrl}
+                  href={buildWhatsAppUrl({
+                    phone: whatsapp,
+                    customMessage: `Hi! I'm interested in ${project.name} in ${locName}. Please share layout availability and pricing details.`,
+                  })}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-3.5 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold rounded-xl flex items-center gap-2 hover:bg-emerald-500/20 transition-colors"

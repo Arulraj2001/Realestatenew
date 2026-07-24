@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Camera, MapPin, Phone, Film, Tv2, Share2 } from 'lucide-react';
 import { GalleryItem, Project, Location } from '@/types/database';
 import { WhatsAppIcon, YoutubeIcon, InstagramIcon } from '@/components/ui/icons';
-import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
 import { siteConfig } from '@/config/site';
 import { Badge } from '@/components/ui/badge';
 import { GalleryLightbox } from '@/components/public/GalleryLightbox';
@@ -19,8 +19,6 @@ export interface GalleryClientViewProps {
   locations: Location[];
 }
 
-
-
 // ─── Per-project section ───────────────────────────────────────────────────────
 function ProjectGallerySection({
   project,
@@ -31,6 +29,10 @@ function ProjectGallerySection({
   items: GalleryItem[];
   locationName: string;
 }) {
+  const siteSettings = useSiteSettings();
+  const whatsappUrl = siteSettings.getWhatsAppUrl(`Hello, I am interested in ${project.name}, ${locationName}. Please share availability.`);
+  const callUrl = siteSettings.getCallUrl();
+
   return (
     <section className="bg-slate-900/50 border border-slate-800/90 rounded-2xl p-3.5 sm:p-4 space-y-3.5 shadow-xl relative overflow-hidden">
       {/* Ambient accent */}
@@ -64,9 +66,7 @@ function ProjectGallerySection({
       {/* CTA Buttons */}
       <div className="pt-2.5 flex flex-wrap items-center justify-center gap-2.5 border-t border-slate-800/60 relative z-10">
         <a
-          href={buildWhatsAppUrl({
-            customMessage: `Hello, I am interested in ${project.name}, ${locationName}. Please share availability.`,
-          })}
+          href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="py-1.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold rounded-lg flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
@@ -75,7 +75,7 @@ function ProjectGallerySection({
           <span>WhatsApp Enquiry — {project.name}</span>
         </a>
         <a
-          href={`tel:${siteConfig.contact.phone}`}
+          href={callUrl}
           className="py-1.5 px-4 bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-100 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
         >
           <Phone className="w-3.5 h-3.5 text-emerald-400" />
@@ -93,6 +93,7 @@ export const GalleryClientView: React.FC<GalleryClientViewProps> = ({
   locations,
 }) => {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('all');
+  const siteSettings = useSiteSettings();
 
   // Build lookup maps
   const locationNames: Record<string, string> = {};
@@ -100,120 +101,88 @@ export const GalleryClientView: React.FC<GalleryClientViewProps> = ({
 
   // Group items by project
   const projectItemMap = new Map<string, GalleryItem[]>();
-  const assignedIds = new Set<string>();
+  const generalItems: GalleryItem[] = [];
+
   galleryItems.forEach((item) => {
-    if (item.project_id && projects.find((p) => p.id === item.project_id)) {
+    if (item.project_id) {
       if (!projectItemMap.has(item.project_id)) projectItemMap.set(item.project_id, []);
       projectItemMap.get(item.project_id)!.push(item);
-      assignedIds.add(item.id);
+    } else {
+      generalItems.push(item);
     }
   });
-  const generalItems = galleryItems.filter((i) => !assignedIds.has(i.id));
 
-  // Visible project ids (those that have items)
-  const activeProjects = projects.filter((p) => (projectItemMap.get(p.id) || []).length > 0);
+  // Projects that have items
+  const activeProjects = projects.filter((p) => projectItemMap.has(p.id));
 
-  // Determine which sections to show
-  const showAll = selectedProjectId === 'all';
-  const showGeneral = selectedProjectId === 'all' || selectedProjectId === 'general';
-
-  const TAB_CLS = (active: boolean) =>
-    `px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-      active
-        ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/20'
-        : 'bg-slate-950 border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white'
-    }`;
+  // Projects to render based on dropdown filter
+  const displayedProjects = selectedProjectId === 'all'
+    ? activeProjects
+    : activeProjects.filter((p) => p.id === selectedProjectId);
 
   return (
-    <div className="space-y-5">
-      {/* ── Project Tab Bar ── */}
-      <div className="bg-slate-900/80 border border-slate-800/80 rounded-xl p-3 backdrop-blur-sm">
-        <div className="flex flex-wrap items-center gap-1.5">
-          {/* All */}
-          <button onClick={() => setSelectedProjectId('all')} className={TAB_CLS(selectedProjectId === 'all')}>
-            <span>All Projects</span>
-            <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-black/20 font-mono">{galleryItems.length}</span>
-          </button>
-
-          {/* Per project */}
-          {activeProjects.map((proj) => {
-            const count = (projectItemMap.get(proj.id) || []).length;
-            return (
-              <button key={proj.id} onClick={() => setSelectedProjectId(proj.id)} className={TAB_CLS(selectedProjectId === proj.id)}>
-                <span>{proj.name}</span>
-                <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-black/20 font-mono">{count}</span>
-              </button>
-            );
-          })}
-
-          {/* General */}
-          {generalItems.length > 0 && (
-            <button onClick={() => setSelectedProjectId('general')} className={TAB_CLS(selectedProjectId === 'general')}>
-              <span>General</span>
-              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-black/20 font-mono">{generalItems.length}</span>
-            </button>
-          )}
+    <div className="space-y-6">
+      {/* Dynamic Project Filter dropdown */}
+      <div className="flex items-center justify-between gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md">
+        <div>
+          <h3 className="text-xs uppercase font-bold text-slate-400 tracking-wider">Filter Showcase</h3>
+          <p className="text-sm font-bold text-white mt-0.5">Select Layout or Project</p>
         </div>
+        <select
+          value={selectedProjectId}
+          onChange={(e) => setSelectedProjectId(e.target.value)}
+          className="bg-slate-950 border border-slate-800 text-amber-400 font-bold text-xs rounded-xl px-4 py-2.5 focus:ring-amber-500 cursor-pointer max-w-xs"
+        >
+          <option value="all">🌟 All Projects ({activeProjects.length})</option>
+          {activeProjects.map((p) => (
+            <option key={p.id} value={p.id}>
+              📍 {p.name} ({projectItemMap.get(p.id)?.length || 0})
+            </option>
+          ))}
+        </select>
       </div>
 
-      {/* ── Project Sections ── */}
-      <div className="space-y-6">
-        {activeProjects.map((proj) => {
-          if (!showAll && selectedProjectId !== proj.id) return null;
-          const items = projectItemMap.get(proj.id) || [];
-          const locName = proj.location?.name || locationNames[proj.location_id] || 'Tamil Nadu';
-          return (
-            <ProjectGallerySection
-              key={proj.id}
-              project={proj}
-              items={items}
-              locationName={locName}
-            />
-          );
-        })}
+      {/* Render Project Sections */}
+      {displayedProjects.map((project) => (
+        <ProjectGallerySection
+          key={project.id}
+          project={project}
+          items={projectItemMap.get(project.id) || []}
+          locationName={locationNames[project.location_id || ''] || 'Namakkal & Paramathi Velur'}
+        />
+      ))}
 
-        {/* General section */}
-        {showGeneral && generalItems.length > 0 && (
-          <section className="bg-slate-900/50 border border-slate-800/90 rounded-2xl p-3.5 sm:p-4 space-y-3.5 shadow-xl relative overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-400 block mb-0.5">General Showcase</span>
-                <h2 className="font-serif text-lg sm:text-xl font-bold text-white">
-                  Township Infrastructure &amp; Site Progress
-                </h2>
-              </div>
-              <span className="px-2.5 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[10px] font-mono font-bold rounded-full">
-                {generalItems.length} Assets
-              </span>
+      {/* General Showcase Items */}
+      {selectedProjectId === 'all' && generalItems.length > 0 && (
+        <section className="bg-slate-900/50 border border-slate-800/90 rounded-2xl p-3.5 sm:p-4 space-y-3.5 shadow-xl relative overflow-hidden">
+          <div className="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+            <div>
+              <span className="text-[11px] text-amber-400 font-bold uppercase tracking-wider block">Company Highlights</span>
+              <h2 className="font-serif text-lg sm:text-xl font-bold text-white">General Media &amp; Completed Layouts</h2>
             </div>
-            <GalleryLightbox items={generalItems} activeKind="photo" />
-            <div className="pt-2.5 flex flex-wrap items-center justify-center gap-2.5 border-t border-slate-800/60">
-              <a
-                href={buildWhatsAppUrl({ customMessage: 'Hello, I would like to inquire about your property developments.' })}
-                target="_blank" rel="noopener noreferrer"
-                className="py-1.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold rounded-lg flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
-              >
-                <WhatsAppIcon className="w-3.5 h-3.5" /> WhatsApp Enquiry
-              </a>
-              <a
-                href={`tel:${siteConfig.contact.phone}`}
-                className="py-2.5 px-5 bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-100 text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-lg active:scale-95 cursor-pointer"
-              >
-                <Phone className="w-4 h-4 text-emerald-400" /> Call Us
-              </a>
-            </div>
-          </section>
-        )}
-
-        {/* Empty state */}
-        {!showAll && selectedProjectId !== 'general' && (projectItemMap.get(selectedProjectId) || []).length === 0 && (
-          <div className="text-center py-16 text-slate-500">
-            <Camera className="w-10 h-10 mx-auto mb-3 opacity-30" />
-            <p className="text-sm">No media found for this project yet.</p>
+            <span className="px-2.5 py-0.5 bg-slate-950 border border-slate-800 text-slate-300 text-[10px] font-mono font-bold rounded-full">
+              {generalItems.length} Assets
+            </span>
           </div>
-        )}
-      </div>
+
+          <GalleryLightbox items={generalItems} activeKind="photo" />
+          <div className="pt-2.5 flex flex-wrap items-center justify-center gap-2.5 border-t border-slate-800/60">
+            <a
+              href={siteSettings.getWhatsAppUrl('Hello, I would like to inquire about your property developments.')}
+              target="_blank" rel="noopener noreferrer"
+              className="py-1.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold rounded-lg flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
+            >
+              <WhatsAppIcon className="w-3.5 h-3.5" /> WhatsApp Enquiry
+            </a>
+            <a
+              href={siteSettings.getCallUrl()}
+              className="py-2.5 px-5 bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-100 text-xs font-bold rounded-xl flex items-center gap-2 transition-all shadow-lg active:scale-95 cursor-pointer"
+            >
+              <Phone className="w-4 h-4 text-emerald-400" /> Call Us
+            </a>
+          </div>
+        </section>
+      )}
     </div>
   );
 };
-

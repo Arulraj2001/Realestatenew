@@ -9,6 +9,7 @@ import {
   getProjectLandmarks,
   getPublishedConfigurations,
   getPublishedGalleryItems,
+  getContactInfo,
 } from '@/lib/data';
 
 import {
@@ -73,13 +74,17 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const [amenities, landmarks, allConfigurations, galleryItems, seoOverride] = await Promise.all([
+  const [amenities, landmarks, allConfigurations, galleryItems, seoOverride, contactInfo] = await Promise.all([
     getProjectAmenities(project.id),
     getProjectLandmarks(project.id),
     getPublishedConfigurations({ projectId: project.id }),
     getPublishedGalleryItems({ projectId: project.id }),
     getSeoOverride('project', project.id),
+    getContactInfo(),
   ]);
+
+  const phone = contactInfo?.phone || siteConfig.contact.phone;
+  const whatsapp = contactInfo?.whatsapp || siteConfig.contact.whatsapp;
 
   if (seoOverride?.redirect_url) {
     if (seoOverride.redirect_type === 301) {
@@ -155,13 +160,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
             {/* CTA Buttons */}
             <div className="flex flex-wrap gap-2.5 pt-0.5">
-              <a href={`tel:${siteConfig.contact.phone}`}>
+              <a href={`tel:${phone.replace(/[^0-[#\*\+0-9]/g, '')}`}>
                 <Button variant="gold" size="sm" className="font-bold shadow-md text-xs">
                   <Phone className="w-3.5 h-3.5 mr-1.5 pointer-events-none" /> Call Now for Site Visit
                 </Button>
               </a>
               <a
                 href={buildWhatsAppUrl({
+                  phone: whatsapp,
                   customMessage: `Hi! I'm interested in ${project.name}. Please share availability and pricing.`,
                 })}
                 target="_blank"

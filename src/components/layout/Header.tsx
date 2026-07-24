@@ -247,7 +247,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Action Buttons & Theme Toggle */}
         <div className="hidden md:flex items-center gap-3">
-          <a href={`tel:${siteConfig.contact.phone}`}>
+          <a href={callUrl}>
             <Button variant="gold" size="sm" className="font-bold">
               <Phone className="w-3.5 h-3.5 mr-1" /> Contact Us
             </Button>
@@ -394,16 +394,14 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Quick Action Touch Buttons at Bottom of Mobile Drawer */}
           <div className="pt-4 border-t border-slate-800 space-y-3">
-            <a href={`tel:${siteConfig.contact.phone}`} className="block">
+            <a href={callUrl} className="block">
               <Button variant="gold" size="md" className="w-full justify-center py-3 text-xs font-bold">
-                <Phone className="w-4 h-4 mr-2" /> Direct Phone Call ({siteConfig.contact.phone})
+                <Phone className="w-4 h-4 mr-2" /> Direct Phone Call ({phone})
               </Button>
             </a>
 
             <a
-              href={buildWhatsAppUrl({
-                customMessage: 'Hi Your Choice Properties, I am reaching out from your website mobile menu.',
-              })}
+              href={siteSettings.getWhatsAppUrl('Hi Your Choice Properties, I am reaching out from your website mobile menu.')}
               target="_blank"
               rel="noopener noreferrer"
               className="block"
