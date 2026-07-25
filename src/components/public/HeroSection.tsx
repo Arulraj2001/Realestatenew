@@ -64,6 +64,43 @@ const getYoutubeId = (url?: string | null) => {
   return match && match[2].length === 11 ? match[2] : null;
 };
 
+function parseHeroRichText(text?: string | null): React.ReactNode {
+  if (!text) return null;
+
+  if (!/<(b|i|u|gold|mark|strong|em)[^>]*>/i.test(text)) {
+    return text;
+  }
+
+  const regex = /<(b|i|u|gold|mark|strong|em)>(.*?)<\/\1>/gi;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    const tagName = match[1].toLowerCase();
+    const content = match[2];
+
+    if (tagName === 'b' || tagName === 'strong') {
+      parts.push(<strong key={match.index} className="font-extrabold">{content}</strong>);
+    } else if (tagName === 'i' || tagName === 'em') {
+      parts.push(<em key={match.index} className="italic font-serif">{content}</em>);
+    } else if (tagName === 'u') {
+      parts.push(<u key={match.index} className="underline decoration-amber-400 decoration-2 underline-offset-4">{content}</u>);
+    } else if (tagName === 'gold' || tagName === 'mark') {
+      parts.push(<span key={match.index} className="text-amber-400 font-extrabold drop-shadow">{content}</span>);
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+
+  return parts;
+}
+
 export const HeroSection: React.FC<HeroSectionProps> = ({
   heroTitle = 'Your Choice Properties – Trusted Plots, Villas and Houses in Namakkal and Paramathi Velur',
   heroDescription = 'Explore residential plots, gated-community villas and independent houses across our projects in Namakkal and Paramathi Velur.',
@@ -439,13 +476,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* Hero Content Section — full-width flex column to allow 9-point grid positioning */}
       <div className={`relative z-10 w-full px-4 sm:px-6 lg:px-8 ${contentPaddingClass} flex-1 flex flex-col ${boxPosLayout.justify}`}>
         <div className={`hero-offset-transform ${containerWidthClass} ${boxPosLayout.wrapperAlign} flex flex-col ${boxPosLayout.align} ${mobileAlignClass} space-y-5`} style={responsiveOffsetStyle}>
+
           {/* Badge Tag */}
           {heroBadgeVisible !== false && (
             <div
               style={badgeStyle}
               className={`hero-animate-badge ${badgeAlignClass} inline-flex items-center gap-2 ${badgeSizeClass} ${badgeBgColorClass} ${badgeBorderColorClass} border rounded-full ${badgeTextColorClass} font-bold uppercase tracking-widest backdrop-blur-md shadow-xl`}
             >
-              <Sparkles className="w-3.5 h-3.5" style={badgeCustomColor ? { color: badgeCustomColor } : undefined} /> {heroBadgeText || 'DTCP & RERA Approved Layouts'}
+              <Sparkles className="w-3.5 h-3.5" style={badgeCustomColor ? { color: badgeCustomColor } : undefined} />
+              <span>{parseHeroRichText(heroBadgeText || 'DTCP & RERA Approved Layouts')}</span>
             </div>
           )}
 
@@ -454,15 +493,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             style={h1Style}
             className={`font-serif ${h1SizeClass} ${h1MarginTopClass} font-extrabold tracking-tight leading-tight w-full max-w-4xl drop-shadow-md flex flex-wrap ${h1FlexAlign} gap-x-[0.25em] gap-y-1`}
           >
-            {heroTitle.split(' ').map((word, idx) => (
-              <span
-                key={idx}
-                className="hero-word-left inline-block"
-                style={{ ...h1Style, animationDelay: `${0.5 + idx * 0.045}s` }}
-              >
-                {word}
-              </span>
-            ))}
+            {/<(b|i|u|gold|mark|strong|em)[^>]*>/i.test(heroTitle)
+              ? parseHeroRichText(heroTitle)
+              : heroTitle.split(' ').map((word, idx) => (
+                  <span
+                    key={idx}
+                    className="hero-word-left inline-block"
+                    style={{ ...h1Style, animationDelay: `${0.5 + idx * 0.045}s` }}
+                  >
+                    {word}
+                  </span>
+                ))}
           </h1>
 
           {/* Description */}
@@ -470,15 +511,17 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             style={subStyle}
             className={`${subSizeClass} ${subMarginTopClass} w-full max-w-3xl leading-relaxed font-normal drop-shadow-sm flex flex-wrap ${subFlexAlign} gap-x-[0.22em] gap-y-1`}
           >
-            {heroDescription.split(' ').map((word, idx) => (
-              <span
-                key={idx}
-                className="hero-word-right inline-block"
-                style={{ ...subStyle, animationDelay: `${0.9 + idx * 0.035}s` }}
-              >
-                {word}
-              </span>
-            ))}
+            {/<(b|i|u|gold|mark|strong|em)[^>]*>/i.test(heroDescription)
+              ? parseHeroRichText(heroDescription)
+              : heroDescription.split(' ').map((word, idx) => (
+                  <span
+                    key={idx}
+                    className="hero-word-right inline-block"
+                    style={{ ...subStyle, animationDelay: `${0.9 + idx * 0.035}s` }}
+                  >
+                    {word}
+                  </span>
+                ))}
           </p>
 
           {/* Compact Designed CTA Buttons with Mouse Hover Animations */}

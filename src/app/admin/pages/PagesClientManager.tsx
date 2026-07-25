@@ -20,6 +20,177 @@ const ICON_OPTIONS = [
   { value: 'Home',      label: '🏠 Home' },
 ];
 
+function renderPreviewRichText(text?: string | null): React.ReactNode {
+  if (!text) return null;
+  const regex = /<(b|i|u|gold|mark|strong|em)>(.*?)<\/\1>/gi;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    const tagName = match[1].toLowerCase();
+    const content = match[2];
+
+    if (tagName === 'b' || tagName === 'strong') {
+      parts.push(<strong key={match.index} className="font-extrabold text-white">{content}</strong>);
+    } else if (tagName === 'i' || tagName === 'em') {
+      parts.push(<em key={match.index} className="italic text-amber-200">{content}</em>);
+    } else if (tagName === 'u') {
+      parts.push(<u key={match.index} className="underline decoration-amber-400 decoration-2 underline-offset-4">{content}</u>);
+    } else if (tagName === 'gold' || tagName === 'mark') {
+      parts.push(<span key={match.index} className="text-amber-400 font-extrabold">{content}</span>);
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  return parts.length > 0 ? parts : text;
+}
+
+function RichTextToolbar({
+  targetId,
+  value,
+  onChange,
+  toast,
+}: {
+  targetId: string;
+  value: string;
+  onChange: (val: string) => void;
+  toast?: (options: { type: 'warning' | 'info' | 'success' | 'error'; title: string; message?: string }) => void;
+}) {
+  const lastSelectionRef = React.useRef<{ start: number; end: number } | null>(null);
+
+  React.useEffect(() => {
+    const handleSelection = () => {
+      const el = document.getElementById(targetId) as HTMLInputElement | HTMLTextAreaElement | null;
+      if (el && (document.activeElement === el || document.getSelection()?.containsNode(el, true))) {
+        if (typeof el.selectionStart === 'number' && typeof el.selectionEnd === 'number') {
+          if (el.selectionStart !== el.selectionEnd) {
+            lastSelectionRef.current = { start: el.selectionStart, end: el.selectionEnd };
+          }
+        }
+      }
+    };
+
+    document.addEventListener('selectionchange', handleSelection);
+    return () => document.removeEventListener('selectionchange', handleSelection);
+  }, [targetId]);
+
+  const applyTagToSelection = (tag: string) => {
+    const el = document.getElementById(targetId) as HTMLInputElement | HTMLTextAreaElement | null;
+    if (!el) return;
+
+    let start = el.selectionStart;
+    let end = el.selectionEnd;
+
+    if ((start === null || end === null || start === end) && lastSelectionRef.current) {
+      start = lastSelectionRef.current.start;
+      end = lastSelectionRef.current.end;
+    }
+
+    if (start === null || end === null || start === end) {
+      if (toast) {
+        toast({
+          type: 'warning',
+          title: 'Highlight Text First',
+          message: 'Please select/highlight the text inside the input box first, then click Bold, Italic, or Underline.',
+        });
+      }
+      return;
+    }
+
+    const s = Math.min(start, end);
+    const e = Math.max(start, end);
+
+    const selectedText = value.substring(s, e);
+    const openTag = `<${tag}>`;
+    const closeTag = `</${tag}>`;
+
+    const isAlreadyWrapped = selectedText.startsWith(openTag) && selectedText.endsWith(closeTag);
+
+    let newText = '';
+    let newEnd = e;
+
+    if (isAlreadyWrapped) {
+      const unwrapped = selectedText.substring(openTag.length, selectedText.length - closeTag.length);
+      newText = value.substring(0, s) + unwrapped + value.substring(e);
+      newEnd = s + unwrapped.length;
+    } else {
+      const wrapped = `${openTag}${selectedText}${closeTag}`;
+      newText = value.substring(0, s) + wrapped + value.substring(e);
+      newEnd = s + wrapped.length;
+    }
+
+    onChange(newText);
+
+    lastSelectionRef.current = { start: s, end: newEnd };
+
+    setTimeout(() => {
+      el.focus();
+      el.setSelectionRange(s, newEnd);
+    }, 40);
+  };
+
+  const removeTags = () => {
+    const cleaned = value.replace(/<\/?(b|i|u|gold|mark|strong|em)[^>]*>/gi, '');
+    onChange(cleaned);
+  };
+
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 mb-1.5 bg-slate-950/80 p-1.5 rounded-lg border border-slate-800">
+      <span className="text-[10px] font-bold uppercase text-slate-400 mr-1">Style Controls (Select text first):</span>
+      <button
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => applyTagToSelection('b')}
+        className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs rounded border border-slate-700 transition-colors cursor-pointer"
+        title="Highlight text in the box and click to make Bold"
+      >
+        <b>B</b> Bold
+      </button>
+      <button
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => applyTagToSelection('i')}
+        className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-200 italic text-xs rounded border border-slate-700 transition-colors cursor-pointer"
+        title="Highlight text in the box and click to make Italic"
+      >
+        <i>I</i> Italic
+      </button>
+      <button
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => applyTagToSelection('u')}
+        className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-200 underline text-xs rounded border border-slate-700 transition-colors cursor-pointer"
+        title="Highlight text in the box and click to Underline"
+      >
+        <u>U</u> Underline
+      </button>
+      <button
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => applyTagToSelection('gold')}
+        className="px-2 py-0.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 font-bold text-xs rounded border border-amber-500/40 transition-colors cursor-pointer"
+        title="Highlight text in the box and click to apply Gold Highlight"
+      >
+        ✨ Gold Highlight
+      </button>
+      <button
+        type="button"
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={removeTags}
+        className="px-2 py-0.5 bg-slate-900 hover:bg-red-950/80 text-slate-400 hover:text-red-300 text-[10px] rounded border border-slate-800 transition-colors ml-auto cursor-pointer"
+      >
+        ✕ Strip Formatting
+      </button>
+    </div>
+  );
+}
+
 export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ initialPages }) => {
   const { toast } = useToast();
   const [pages, setPages] = useState<ContentPage[]>(initialPages);
@@ -660,11 +831,24 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
 
                   <div>
                     <Label>Badge Text</Label>
+                    <RichTextToolbar
+                      targetId="hero-badge-input"
+                      value={formData.hero_badge_text}
+                      onChange={(val) => setFormData({ ...formData, hero_badge_text: val })}
+                      toast={toast}
+                    />
                     <Input
+                      id="hero-badge-input"
                       value={formData.hero_badge_text}
                       onChange={(e) => setFormData({ ...formData, hero_badge_text: e.target.value })}
                       placeholder="DTCP & RERA Approved Layouts"
                     />
+                    {formData.hero_badge_text && (
+                      <div className="mt-1.5 p-2 bg-slate-950/90 border border-slate-800 rounded-lg text-xs font-semibold text-slate-200 flex items-center gap-1.5">
+                        <span className="text-[10px] text-amber-400 font-bold uppercase shrink-0 font-mono">Live Preview:</span>
+                        <span>{renderPreviewRichText(formData.hero_badge_text)}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -742,7 +926,19 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                   </div>
                   <div>
                     <Label>Hero H1 Title Text</Label>
-                    <Textarea rows={2} value={formData.hero_h1} onChange={(e) => setFormData({ ...formData, hero_h1: e.target.value })} />
+                    <RichTextToolbar
+                      targetId="hero-h1-input"
+                      value={formData.hero_h1}
+                      onChange={(val) => setFormData({ ...formData, hero_h1: val })}
+                      toast={toast}
+                    />
+                    <Textarea id="hero-h1-input" rows={2} value={formData.hero_h1} onChange={(e) => setFormData({ ...formData, hero_h1: e.target.value })} />
+                    {formData.hero_h1 && (
+                      <div className="mt-1.5 p-2.5 bg-slate-950/90 border border-slate-800 rounded-lg text-sm font-serif font-bold text-slate-100 flex items-start gap-2">
+                        <span className="text-[10px] text-emerald-400 font-sans font-bold uppercase shrink-0 font-mono mt-0.5">Live Preview:</span>
+                        <div className="flex-1">{renderPreviewRichText(formData.hero_h1)}</div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -845,7 +1041,19 @@ export const PagesClientManager: React.FC<{ initialPages: ContentPage[] }> = ({ 
                   <h4 className="text-xs font-bold text-sky-400 uppercase tracking-wider">2. Hero Subtitle / Description Settings</h4>
                   <div>
                     <Label>Subtitle Text</Label>
-                    <Textarea rows={3} value={formData.hero_description} onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })} />
+                    <RichTextToolbar
+                      targetId="hero-desc-input"
+                      value={formData.hero_description}
+                      onChange={(val) => setFormData({ ...formData, hero_description: val })}
+                      toast={toast}
+                    />
+                    <Textarea id="hero-desc-input" rows={3} value={formData.hero_description} onChange={(e) => setFormData({ ...formData, hero_description: e.target.value })} />
+                    {formData.hero_description && (
+                      <div className="mt-1.5 p-2.5 bg-slate-950/90 border border-slate-800 rounded-lg text-xs font-normal text-slate-300 flex items-start gap-2">
+                        <span className="text-[10px] text-sky-400 font-bold uppercase shrink-0 font-mono mt-0.5">Live Preview:</span>
+                        <div className="flex-1 leading-relaxed">{renderPreviewRichText(formData.hero_description)}</div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
