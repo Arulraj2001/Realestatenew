@@ -200,8 +200,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   })();
 
   // Safe clamping of opacity 0-100 & blur (0-100% maps to 0-25px blur)
-  const safeOpacity = Math.max(0, Math.min(100, overlayOpacity)) / 100;
-  const blurPx = mediaType === 'video' ? 0 : (Math.max(0, Math.min(100, heroBlur)) / 100) * 20;
+  const safeOpacity = Math.max(0, Math.min(100, overlayOpacity ?? 70)) / 100;
+  const blurPx = (Math.max(0, Math.min(100, heroBlur || 0)) / 100) * 20;
   const blurStyle: React.CSSProperties = blurPx > 0 ? { filter: `blur(${blurPx.toFixed(1)}px)`, transform: 'scale(1.05)' } : {};
 
   // Derive grid horizontal alignment from 9-point grid selection
@@ -461,16 +461,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           )}
         </div>
 
-        {/* Dynamic Admin Controlled Dark Overlay Opacity (Unblurred, perfectly aligned, only shown for static images) */}
-        {mediaType !== 'video' && (
-          <>
-            <div
-              className="absolute inset-0 bg-slate-950"
-              style={{ opacity: safeOpacity }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40" />
-          </>
-        )}
+        {/* Dynamic Admin Controlled Dark Overlay Opacity (Applies to both video & image media background layers, behind text) */}
+        <div
+          className="absolute inset-0 bg-slate-950 pointer-events-none"
+          style={{ opacity: safeOpacity }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 pointer-events-none" />
       </div>
 
       {/* Hero Content Section — full-width flex column to allow 9-point grid positioning */}
@@ -509,7 +505,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           {/* Description */}
           <p
             style={subStyle}
-            className={`${subSizeClass} ${subMarginTopClass} w-full max-w-3xl leading-relaxed font-normal drop-shadow-sm flex flex-wrap ${subFlexAlign} gap-x-[0.22em] gap-y-1`}
+            className={`${subSizeClass} ${subMarginTopClass} w-full max-w-4xl sm:max-w-5xl leading-relaxed font-normal drop-shadow-sm flex flex-wrap ${subFlexAlign} gap-x-[0.22em] gap-y-1`}
           >
             {/<(b|i|u|gold|mark|strong|em)[^>]*>/i.test(heroDescription)
               ? parseHeroRichText(heroDescription)
