@@ -36,6 +36,8 @@ export interface Location {
   latitude: number | null;
   longitude: number | null;
   map_url: string | null;
+  phone?: string | null;
+  whatsapp?: string | null;
   display_order: number;
   published: boolean;
   featured: boolean;
@@ -64,6 +66,8 @@ export interface Project {
   latitude: number | null;
   longitude: number | null;
   map_url: string | null;
+  phone?: string | null;
+  whatsapp?: string | null;
   hero_image_path: string | null;
   hero_video_path: string | null;
   featured: boolean;

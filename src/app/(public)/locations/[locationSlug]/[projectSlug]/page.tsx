@@ -11,6 +11,7 @@ import {
   getPublishedConfigurations,
   getPublishedGalleryItems,
   getContactInfo,
+  resolveContactInfo,
 } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { getSeoOverride, buildMetadataFromOverride, getProjectJsonLd, resolveJsonLd } from '@/lib/seo/metadata';
@@ -87,8 +88,13 @@ export default async function HierarchicalProjectPage({ params }: HierarchicalPr
     getContactInfo(),
   ]);
 
-  const phone = contactInfo?.phone || siteConfig.contact.phone;
-  const whatsapp = contactInfo?.whatsapp || siteConfig.contact.whatsapp;
+  const resolvedContact = resolveContactInfo({
+    globalContact: contactInfo,
+    location: location || project.location,
+    project,
+  });
+  const phone = resolvedContact.phone || siteConfig.contact.phone;
+  const whatsapp = resolvedContact.whatsapp || siteConfig.contact.whatsapp;
 
   if (seoOverride?.redirect_url) {
     if (seoOverride.redirect_type === 301) {

@@ -13,15 +13,21 @@ export interface SiteVisitCTASectionProps {
   description?: string;
   locationId?: string;
   projectId?: string;
+  phone?: string;
+  whatsapp?: string;
 }
 
 export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
   heading = 'Contact Our Sales Team',
   description = 'Tell us which location or property you are interested in, and our team will arrange a guided site visit.',
+  whatsapp,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const siteSettings = useSiteSettings();
-  const whatsappUrl = siteSettings.getWhatsAppUrl('Hi Your Choice Properties team, I would like to contact your sales team regarding your layouts.');
+  const whatsappUrl = siteSettings.getWhatsAppUrl(
+    'Hi Your Choice Properties team, I would like to contact your sales team regarding your layouts.',
+    whatsapp
+  );
 
   return (
     <>

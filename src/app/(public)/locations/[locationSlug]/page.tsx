@@ -202,7 +202,7 @@ export default async function LocationDetailPage({ params }: LocationDetailPageP
           </section>
         )}
 
-        <SiteVisitCTASection />
+        <SiteVisitCTASection whatsapp={location.whatsapp || undefined} phone={location.phone || undefined} />
       </div>
     </>
   );

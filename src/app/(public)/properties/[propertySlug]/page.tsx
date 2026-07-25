@@ -20,6 +20,7 @@ import {
   getProjectAmenities,
   getPublishedGalleryItems,
   getContactInfo,
+  resolveContactInfo,
 } from '@/lib/data';
 import { siteConfig } from '@/config/site';
 import { getSeoOverride, buildMetadataFromOverride, getConfigurationJsonLd, resolveJsonLd } from '@/lib/seo/metadata';
@@ -78,8 +79,13 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
     getContactInfo(),
   ]);
 
-  const phone = contactInfo?.phone || siteConfig.contact.phone;
-  const whatsapp = contactInfo?.whatsapp || siteConfig.contact.whatsapp;
+  const resolvedContact = resolveContactInfo({
+    globalContact: contactInfo,
+    location: config.project?.location,
+    project: config.project,
+  });
+  const phone = resolvedContact.phone || siteConfig.contact.phone;
+  const whatsapp = resolvedContact.whatsapp || siteConfig.contact.whatsapp;
 
   if (seoOverride?.redirect_url) {
     if (seoOverride.redirect_type === 301) {

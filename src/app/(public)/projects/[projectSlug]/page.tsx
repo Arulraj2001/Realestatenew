@@ -10,6 +10,7 @@ import {
   getPublishedConfigurations,
   getPublishedGalleryItems,
   getContactInfo,
+  resolveContactInfo,
 } from '@/lib/data';
 
 import {
@@ -83,8 +84,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     getContactInfo(),
   ]);
 
-  const phone = contactInfo?.phone || siteConfig.contact.phone;
-  const whatsapp = contactInfo?.whatsapp || siteConfig.contact.whatsapp;
+  const resolvedContact = resolveContactInfo({
+    globalContact: contactInfo,
+    location: project.location,
+    project,
+  });
+  const phone = resolvedContact.phone || siteConfig.contact.phone;
+  const whatsapp = resolvedContact.whatsapp || siteConfig.contact.whatsapp;
 
   if (seoOverride?.redirect_url) {
     if (seoOverride.redirect_type === 301) {

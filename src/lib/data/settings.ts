@@ -1,5 +1,6 @@
 import { createPublicClient } from '@/lib/supabase/server';
 import { SiteSetting } from '@/types/database';
+import { siteConfig } from '@/config/site';
 import type { StatItem } from '@/components/public/StatsSection';
 import type { TestimonialItem } from '@/components/public/TestimonialsSection';
 import type { FAQItem } from '@/components/public/FAQSection';
@@ -42,6 +43,43 @@ export async function getContactInfo(): Promise<ContactInfo | null> {
   } catch {
     return null;
   }
+}
+
+export interface ContactInfoOptions {
+  globalContact?: ContactInfo | null;
+  location?: { phone?: string | null; whatsapp?: string | null } | null;
+  project?: { phone?: string | null; whatsapp?: string | null } | null;
+}
+
+/** Resolve effective phone and whatsapp numbers following Hierarchy: Project -> Location -> Global Contact Info -> siteConfig */
+export function resolveContactInfo(options?: ContactInfoOptions): ContactInfo {
+  const global = options?.globalContact || {};
+  const loc = options?.location || {};
+  const proj = options?.project || {};
+
+  const phone =
+    proj.phone && proj.phone.trim() !== ''
+      ? proj.phone
+      : loc.phone && loc.phone.trim() !== ''
+      ? loc.phone
+      : global.phone && global.phone.trim() !== ''
+      ? global.phone
+      : siteConfig.contact.phone;
+
+  const whatsapp =
+    proj.whatsapp && proj.whatsapp.trim() !== ''
+      ? proj.whatsapp
+      : loc.whatsapp && loc.whatsapp.trim() !== ''
+      ? loc.whatsapp
+      : global.whatsapp && global.whatsapp.trim() !== ''
+      ? global.whatsapp
+      : siteConfig.contact.whatsapp;
+
+  return {
+    ...global,
+    phone,
+    whatsapp,
+  };
 }
 
 /** Fetch homepage stats from site_settings['homepage_stats']. Returns null if not set (callers use their own defaults). */

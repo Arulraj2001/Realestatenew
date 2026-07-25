@@ -54,6 +54,8 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
     longitude: '',
     address: '',
     map_url: '',
+    phone: '',
+    whatsapp: '',
     hero_image_path: '',
     hero_video_path: '',
     display_order: 0,
@@ -80,6 +82,8 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
       longitude: '',
       address: '',
       map_url: '',
+      phone: '',
+      whatsapp: '',
       hero_image_path: '',
       hero_video_path: '',
       display_order: 0,
@@ -108,6 +112,8 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
       longitude: proj.longitude ? String(proj.longitude) : '',
       address: proj.address || '',
       map_url: proj.map_url || '',
+      phone: proj.phone || '',
+      whatsapp: proj.whatsapp || '',
       hero_image_path: proj.hero_image_path || '',
       hero_video_path: proj.hero_video_path || '',
       display_order: proj.display_order,
@@ -472,6 +478,29 @@ export const ProjectsClientManager: React.FC<ProjectsClientManagerProps> = ({
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               placeholder="Main Road, Mohanur Road Junction, Namakkal - 637001"
             />
+          </div>
+
+          {/* Project-Specific Phone & WhatsApp Override Fields */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-slate-800">
+            <div>
+              <Label>Project Specific Phone Hotline</Label>
+              <Input
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="Leave blank to use location/common phone"
+              />
+              <p className="text-[10px] text-slate-500 mt-0.5">Overrides location &amp; global phone on this project page</p>
+            </div>
+
+            <div>
+              <Label>Project Specific WhatsApp Number</Label>
+              <Input
+                value={formData.whatsapp}
+                onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                placeholder="Leave blank to use location/common WhatsApp"
+              />
+              <p className="text-[10px] text-slate-500 mt-0.5">Overrides location &amp; global WhatsApp on this project page</p>
+            </div>
           </div>
 
           <div>

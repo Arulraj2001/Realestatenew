@@ -25,13 +25,15 @@ function ProjectGallerySection({
   items,
   locationName,
 }: {
-  project: Project;
+  project: Project & { location_phone?: string; location_whatsapp?: string };
   items: GalleryItem[];
   locationName: string;
 }) {
   const siteSettings = useSiteSettings();
-  const whatsappUrl = siteSettings.getWhatsAppUrl(`Hello, I am interested in ${project.name}, ${locationName}. Please share availability.`);
-  const callUrl = siteSettings.getCallUrl();
+  const effectivePhone = project.phone || project.location_phone || undefined;
+  const effectiveWhatsapp = project.whatsapp || project.location_whatsapp || undefined;
+  const whatsappUrl = siteSettings.getWhatsAppUrl(`Hello, I am interested in ${project.name}, ${locationName}. Please share availability.`, effectiveWhatsapp);
+  const callUrl = siteSettings.getCallUrl(effectivePhone);
 
   return (
     <section className="bg-slate-900/50 border border-slate-800/90 rounded-2xl p-3.5 sm:p-4 space-y-3.5 shadow-xl relative overflow-hidden">

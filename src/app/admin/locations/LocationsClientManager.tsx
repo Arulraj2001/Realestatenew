@@ -27,6 +27,8 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
     full_description: '',
     address: '',
     map_url: '',
+    phone: '',
+    whatsapp: '',
     latitude: '',
     longitude: '',
     hero_image_path: '',
@@ -46,6 +48,8 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       full_description: '',
       address: '',
       map_url: '',
+      phone: '',
+      whatsapp: '',
       latitude: '',
       longitude: '',
       hero_image_path: '',
@@ -67,6 +71,8 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
       full_description: loc.full_description || '',
       address: loc.address || '',
       map_url: loc.map_url || '',
+      phone: loc.phone || '',
+      whatsapp: loc.whatsapp || '',
       latitude: loc.latitude ? String(loc.latitude) : '',
       longitude: loc.longitude ? String(loc.longitude) : '',
       hero_image_path: loc.hero_image_path || '',
@@ -311,6 +317,29 @@ export const LocationsClientManager: React.FC<{ initialLocations: Location[] }> 
               onChange={(e) => setFormData({ ...formData, map_url: e.target.value })}
               placeholder="https://www.google.com/maps/embed?pb=..."
             />
+          </div>
+
+          {/* Location-Specific Contact & WhatsApp Numbers */}
+          <div className="grid grid-cols-2 gap-3 pt-1 border-t border-slate-800">
+            <div>
+              <Label>Location Phone Hotline</Label>
+              <Input
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                placeholder="+91 98427 11111 (Leave blank to use common number)"
+              />
+              <p className="text-[10px] text-slate-500 mt-0.5">Used on /locations/{formData.slug || 'namakkal'} &amp; project pages</p>
+            </div>
+
+            <div>
+              <Label>Location WhatsApp Number</Label>
+              <Input
+                value={formData.whatsapp}
+                onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                placeholder="+91 98427 11111 (Leave blank to use common number)"
+              />
+              <p className="text-[10px] text-slate-500 mt-0.5">Direct WhatsApp channel for this location</p>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
