@@ -208,6 +208,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <SiteVisitCTASection
         heading={`Schedule a Free Site Visit to ${project.name}`}
         description="Our team will pick you up and show you available plots and villas. No obligation, completely free."
+        phone={phone}
+        whatsapp={whatsapp}
       />
     </div>
     </>

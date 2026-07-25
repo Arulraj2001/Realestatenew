@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar } from 'lucide-react';
+import { Calendar, Phone } from 'lucide-react';
 import { WhatsAppIcon } from '@/components/ui/icons';
 import { Button } from '@/components/ui/button';
 import { Dialog } from '@/components/ui/dialog';
@@ -20,6 +20,7 @@ export interface SiteVisitCTASectionProps {
 export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
   heading = 'Contact Our Sales Team',
   description = 'Tell us which location or property you are interested in, and our team will arrange a guided site visit.',
+  phone,
   whatsapp,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,6 +29,7 @@ export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
     'Hi Your Choice Properties team, I would like to contact your sales team regarding your layouts.',
     whatsapp
   );
+  const callUrl = siteSettings.getCallUrl(phone);
 
   return (
     <>
@@ -87,16 +89,19 @@ export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
             {description}
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-3">
-            <Button
-              variant="gold"
-              size="lg"
-              onClick={() => setIsOpen(true)}
-              className="cta-primary-btn font-extrabold w-full sm:w-auto shadow-2xl"
-            >
-              <Calendar className="w-5 h-5 mr-2 pointer-events-none" /> Contact Us
-            </Button>
+          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-3">
+            {/* 1. Direct Phone Call Dialer Button */}
+            <a href={callUrl} className="w-full sm:w-auto">
+              <Button
+                variant="gold"
+                size="lg"
+                className="cta-primary-btn font-extrabold w-full sm:w-auto shadow-2xl"
+              >
+                <Phone className="w-5 h-5 mr-2 pointer-events-none" /> Call Sales Expert
+              </Button>
+            </a>
 
+            {/* 2. Direct WhatsApp Button */}
             <a
               href={whatsappUrl}
               target="_blank"
@@ -111,6 +116,16 @@ export const SiteVisitCTASection: React.FC<SiteVisitCTASectionProps> = ({
                 <WhatsAppIcon className="w-5 h-5 mr-2 pointer-events-none" /> Chat on WhatsApp
               </Button>
             </a>
+
+            {/* 3. Popup Form Modal Button */}
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setIsOpen(true)}
+              className="font-bold w-full sm:w-auto border-amber-500/40 bg-slate-900/90 text-amber-400 hover:bg-slate-800 shadow-xl"
+            >
+              <Calendar className="w-5 h-5 mr-2 pointer-events-none" /> Schedule Site Visit
+            </Button>
           </div>
         </div>
       </section>

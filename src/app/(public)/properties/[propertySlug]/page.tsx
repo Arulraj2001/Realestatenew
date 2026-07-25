@@ -365,6 +365,8 @@ export default async function PropertyDetailPage({ params }: PropertyDetailPageP
       <SiteVisitCTASection
         heading={`Schedule a Guided Inspection for ${config.name}`}
         description="Pick a date and time that works best for your family. We will arrange transport to inspect the layout."
+        phone={phone}
+        whatsapp={whatsapp}
       />
     </div>
     </>

@@ -222,7 +222,7 @@ export default async function HierarchicalProjectPage({ params }: HierarchicalPr
           projectVideoUrl={projectVideoUrl}
         />
 
-        <SiteVisitCTASection />
+        <SiteVisitCTASection phone={phone} whatsapp={whatsapp} />
       </div>
     </>
   );
