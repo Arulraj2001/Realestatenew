@@ -466,7 +466,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           className="absolute inset-0 bg-slate-950 pointer-events-none"
           style={{ opacity: safeOpacity }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/40 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent pointer-events-none" />
       </div>
 
       {/* Hero Content Section — full-width flex column to allow 9-point grid positioning */}
