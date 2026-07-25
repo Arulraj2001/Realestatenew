@@ -44,6 +44,7 @@ import { ProjectVideoPlayer } from '@/components/public/ProjectVideoPlayer';
 import { ProjectLandmarksPopup } from '@/components/public/ProjectLandmarksPopup';
 import { ProjectLocationMapPopup } from '@/components/public/ProjectLocationMapPopup';
 import { SiteVisitForm } from '@/components/forms/SiteVisitForm';
+import { useSiteSettings } from '@/components/providers/SiteSettingsProvider';
 import { buildWhatsAppUrl } from '@/lib/utils/whatsapp';
 import {
   groupByKind, getKindLabel, GalleryMediaKind,
@@ -143,6 +144,9 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
   floorPlans,
   projectVideoUrl,
 }) => {
+  const siteSettings = useSiteSettings();
+  const effectivePhone = project.phone || project.location?.phone || undefined;
+  const callUrl = siteSettings.getCallUrl(effectivePhone);
   // Collapsible Accordion Panels Below Villas & Plots
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     video: true,
@@ -428,16 +432,18 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
                       {/* CTA Buttons */}
                       <div className="flex flex-col sm:flex-row items-center gap-3 pt-3 border-t border-slate-800">
-                        <Button
-                          variant="gold"
-                          size="md"
-                          className="w-full sm:flex-1 font-bold text-xs"
-                          onClick={() => setSelectedPropertyContext({ id: villa.id, name: villa.name })}
-                        >
-                          <Phone className="w-4 h-4 mr-1.5 pointer-events-none" /> Contact Us for {villa.name}
-                        </Button>
+                        <a href={callUrl} className="w-full sm:flex-1">
+                          <Button
+                            variant="gold"
+                            size="md"
+                            className="w-full font-bold text-xs"
+                          >
+                            <Phone className="w-4 h-4 mr-1.5 pointer-events-none" /> Call Us for {villa.name}
+                          </Button>
+                        </a>
                         <a
                           href={buildWhatsAppUrl({
+                            phone: project.whatsapp || project.location?.whatsapp || undefined,
                             customMessage: `Hi Your Choice Properties team, I am interested in ${villa.name} at ${project.name}.`,
                           })}
                           target="_blank"
@@ -647,16 +653,18 @@ export const ProjectAccordionSections: React.FC<ProjectAccordionSectionsProps> =
 
                       {/* CTA Buttons */}
                       <div className="flex flex-col sm:flex-row items-center gap-3 pt-3 border-t border-slate-800">
-                        <Button
-                          variant="gold"
-                          size="md"
-                          className="w-full sm:flex-1 font-bold text-xs"
-                          onClick={() => setSelectedPropertyContext({ id: plot.id, name: plot.name })}
-                        >
-                          <Phone className="w-4 h-4 mr-1.5 pointer-events-none" /> Contact Us for {plot.name}
-                        </Button>
+                        <a href={callUrl} className="w-full sm:flex-1">
+                          <Button
+                            variant="gold"
+                            size="md"
+                            className="w-full font-bold text-xs"
+                          >
+                            <Phone className="w-4 h-4 mr-1.5 pointer-events-none" /> Call Us for {plot.name}
+                          </Button>
+                        </a>
                         <a
                           href={buildWhatsAppUrl({
+                            phone: project.whatsapp || project.location?.whatsapp || undefined,
                             customMessage: `Hi Your Choice Properties team, I am interested in ${plot.name} at ${project.name}.`,
                           })}
                           target="_blank"
